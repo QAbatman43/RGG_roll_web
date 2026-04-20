@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://cbddv4h2wqvv"
-path="res://.godot/imported/rggweb.png-17a5aa6b216cf3a94623098e9f41231a.ctex"
+uid="uid://bklcntru6qqek"
+path="res://.godot/imported/rggweb.png-c3e533a26b2e44341fb3b2954a66319f.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://RGG_roll_web/rggweb.png"
-dest_files=["res://.godot/imported/rggweb.png-17a5aa6b216cf3a94623098e9f41231a.ctex"]
+source_file="res://rggweb.png"
+dest_files=["res://.godot/imported/rggweb.png-c3e533a26b2e44341fb3b2954a66319f.ctex"]
 
 [params]
 
