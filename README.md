@@ -6,6 +6,8 @@
 
 Запустить: https://qabatman43.github.io/RGG_roll_web/
 
+<img width="2048" height="1497" alt="image" src="https://github.com/user-attachments/assets/4476b0b5-8752-4d3d-b99d-f9e67438cce3" />  <img width="2048" height="1484" alt="image" src="https://github.com/user-attachments/assets/5e6d0101-5db9-4498-b8a6-783b45bc6f28" />
+
 ## Что умеет
 
 - Выбирает случайный пункт из выбранного списка.
