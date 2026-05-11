@@ -94,10 +94,93 @@ body {
 
 		<script src="rggweb.js"></script>
 		<script>
-const GODOT_CONFIG = {"args":[],"canvasResizePolicy":2,"emscriptenPoolSize":8,"ensureCrossOriginIsolationHeaders":true,"executable":"rggweb","experimentalVK":false,"fileSizes":{"rggweb.pck":51921144,"rggweb.wasm":37695054},"focusCanvas":true,"gdextensionLibs":[],"godotPoolSize":4};
+const GODOT_CONFIG = {"args":[],"canvasResizePolicy":2,"emscriptenPoolSize":8,"ensureCrossOriginIsolationHeaders":true,"executable":"rggweb","experimentalVK":false,"fileSizes":{"rggweb.pck":51923016,"rggweb.wasm":37695054},"focusCanvas":true,"gdextensionLibs":[],"godotPoolSize":4};
 const engine = new Engine(GODOT_CONFIG);
 
 (function () {
+	window.rggOpenUserFilePicker = function (kind, accept, callback) {
+		const input = document.createElement("input");
+		input.type = "file";
+		input.accept = accept || "";
+		input.style.display = "none";
+
+		function cleanup() {
+			if (input.parentNode) {
+				input.parentNode.removeChild(input);
+			}
+		}
+
+		function sendPayload(payload) {
+			try {
+				callback(JSON.stringify(payload));
+			} finally {
+				cleanup();
+			}
+		}
+
+		input.addEventListener("change", function () {
+			const file = input.files && input.files[0];
+			if (!file) {
+				sendPayload({ kind: kind || "", data_url: "" });
+				return;
+			}
+
+			if (kind === "background") {
+				const reader = new FileReader();
+				reader.onload = function (event) {
+					const sourceDataUrl = String((event.target && event.target.result) || "");
+					if (!sourceDataUrl) {
+						sendPayload({ kind: kind || "", data_url: "" });
+						return;
+					}
+
+					const image = new Image();
+					image.onload = function () {
+						const canvas = document.createElement("canvas");
+						canvas.width = image.naturalWidth || image.width || 1;
+						canvas.height = image.naturalHeight || image.height || 1;
+						const context = canvas.getContext("2d");
+						if (!context) {
+							sendPayload({ kind: kind || "", data_url: "" });
+							return;
+						}
+						context.drawImage(image, 0, 0);
+						sendPayload({
+							kind: kind || "",
+							name: file.name || "",
+							data_url: canvas.toDataURL("image/png")
+						});
+					};
+					image.onerror = function () {
+						sendPayload({ kind: kind || "", data_url: "" });
+					};
+					image.src = sourceDataUrl;
+				};
+				reader.onerror = function () {
+					sendPayload({ kind: kind || "", data_url: "" });
+				};
+				reader.readAsDataURL(file);
+				return;
+			}
+
+			const reader = new FileReader();
+			reader.onload = function (event) {
+				sendPayload({
+					kind: kind || "",
+					name: file.name || "",
+					data_url: String((event.target && event.target.result) || "")
+				});
+			};
+			reader.onerror = function () {
+				sendPayload({ kind: kind || "", data_url: "" });
+			};
+			reader.readAsDataURL(file);
+		});
+
+		document.body.appendChild(input);
+		input.click();
+	};
+
 	const statusOverlay = document.getElementById("status");
 	const statusProgress = document.getElementById("status-progress");
 	const statusNotice = document.getElementById("status-notice");
