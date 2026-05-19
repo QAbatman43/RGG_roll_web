@@ -1,0 +1,17 @@
+*.pck binary
+*.wasm binary
+*.png binary
+*.ctex binary
+*.mp3str binary
+*.sample binary
+*.fontdata binary
+*.bin binary
+*.dat text
+*.gd text eol=lf
+*.tscn text eol=lf
+*.godot text eol=lf
+*.cfg text eol=lf
+*.json text eol=lf
+*.md text eol=lf
+*.html text eol=lf
+*.js text eol=lf

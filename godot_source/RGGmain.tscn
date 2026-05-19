@@ -1,0 +1,746 @@
+[gd_scene format=3 uid="uid://bwl31pu8j0p7p"]
+
+[ext_resource type="Script" uid="uid://dxpvwgrmm4roe" path="res://RGGmain.gd" id="1"]
+[ext_resource type="Texture2D" uid="uid://bru8vh723i7yc" path="res://sprites/logo43.png" id="2"]
+[ext_resource type="Texture2D" uid="uid://dh3pkwa80i4av" path="res://sprites/links/MobyGames.png" id="3"]
+[ext_resource type="Texture2D" uid="uid://0m55d6n6y44p" path="res://sprites/links/gamefaqs.png" id="4"]
+[ext_resource type="Texture2D" uid="uid://dwqx6xkjghg0d" path="res://sprites/links/rgg.png" id="5"]
+[ext_resource type="Texture2D" uid="uid://ddu1gxyhqm3jl" path="res://sprites/main/guitman.png" id="6"]
+[ext_resource type="Texture2D" uid="uid://dab5nvkc11j01" path="res://sprites/main/platforms.png" id="7"]
+[ext_resource type="Texture2D" uid="uid://bi0aa0tn6om7f" path="res://sprites/main/cat.png" id="8"]
+[ext_resource type="Texture2D" uid="uid://bstpjnfvh8hho" path="res://sprites/main/wheel.png" id="9"]
+[ext_resource type="Texture2D" uid="uid://q24aj2dfx6jl" path="res://sprites/gamepadvot.png" id="10"]
+[ext_resource type="Texture2D" uid="uid://bwlmk0pd007su" path="res://sprites/main/box.png" id="11"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_roll"]
+bg_color = Color(0.27, 0.27, 0.27, 0.96)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.52, 0.52, 0.52, 1)
+corner_radius_top_left = 2
+corner_radius_top_right = 2
+corner_radius_bottom_right = 2
+corner_radius_bottom_left = 2
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_small"]
+bg_color = Color(0.24, 0.24, 0.24, 0.95)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.42, 0.42, 0.42, 1)
+corner_radius_top_left = 2
+corner_radius_top_right = 2
+corner_radius_bottom_right = 2
+corner_radius_bottom_left = 2
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_tile"]
+bg_color = Color(0.235294, 0.235294, 0.235294, 0.92)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.45, 0.45, 0.45, 1)
+corner_radius_top_left = 2
+corner_radius_top_right = 2
+corner_radius_bottom_right = 2
+corner_radius_bottom_left = 2
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_chip"]
+bg_color = Color(0.2, 0.2, 0.2, 0.92)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.46, 0.46, 0.46, 1)
+corner_radius_top_left = 1
+corner_radius_top_right = 1
+corner_radius_bottom_right = 1
+corner_radius_bottom_left = 1
+
+[node name="RGGMain" type="Control" unique_id=510054025]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1")
+
+[node name="Background" type="ColorRect" parent="." unique_id=2102495133]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -6.0
+offset_top = 3.0
+offset_right = -6.0
+offset_bottom = 3.0
+grow_horizontal = 2
+grow_vertical = 2
+scale = Vector2(1, 0.99875516)
+color = Color(0.17, 0.17, 0.17, 1)
+
+[node name="Logo43" type="TextureRect" parent="." unique_id=166413984]
+layout_mode = 0
+offset_top = -1.0
+offset_right = 88.0
+offset_bottom = 74.0
+texture = ExtResource("2")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="TopPlaceholder1" type="Label" parent="." unique_id=1998758537]
+layout_mode = 0
+offset_left = 480.0
+offset_top = 28.0
+offset_right = 522.0
+offset_bottom = 54.0
+theme_override_colors/font_color = Color(0.92, 0.92, 0.92, 1)
+theme_override_font_sizes/font_size = 24
+text = "-----"
+horizontal_alignment = 1
+
+[node name="TopPlaceholder2" type="Label" parent="." unique_id=441526844]
+layout_mode = 0
+offset_left = 470.0
+offset_top = 106.0
+offset_right = 532.0
+offset_bottom = 132.0
+theme_override_colors/font_color = Color(0.92, 0.92, 0.92, 1)
+theme_override_font_sizes/font_size = 24
+text = "------"
+horizontal_alignment = 1
+
+[node name="CenterPlaceholder" type="Label" parent="." unique_id=889048367]
+layout_mode = 0
+offset_left = 458.0
+offset_top = 234.0
+offset_right = 542.0
+offset_bottom = 260.0
+theme_override_colors/font_color = Color(0.92, 0.92, 0.92, 1)
+theme_override_font_sizes/font_size = 28
+text = "------"
+horizontal_alignment = 1
+
+[node name="BottomPlaceholder1" type="Label" parent="." unique_id=1938784460]
+layout_mode = 0
+offset_left = 470.0
+offset_top = 356.0
+offset_right = 530.0
+offset_bottom = 382.0
+theme_override_colors/font_color = Color(0.92, 0.92, 0.92, 1)
+theme_override_font_sizes/font_size = 24
+text = "-----"
+horizontal_alignment = 1
+
+[node name="BottomPlaceholder2" type="Label" parent="." unique_id=589660239]
+layout_mode = 0
+offset_left = 480.0
+offset_top = 438.0
+offset_right = 520.0
+offset_bottom = 464.0
+theme_override_colors/font_color = Color(0.92, 0.92, 0.92, 1)
+theme_override_font_sizes/font_size = 24
+text = "----"
+horizontal_alignment = 1
+
+[node name="SelectedListLabel" type="Label" parent="." unique_id=997351829]
+layout_mode = 0
+offset_left = 143.0
+offset_top = 535.0
+offset_right = 323.0
+offset_bottom = 562.0
+theme_override_colors/font_color = Color(0.9, 0.93, 0.98, 1)
+theme_override_font_sizes/font_size = 18
+text = "Текущий список: не выбран"
+horizontal_alignment = 1
+
+[node name="ListCountLabel" type="Label" parent="." unique_id=1253144468]
+layout_mode = 0
+offset_left = 166.0
+offset_top = 567.0
+offset_right = 300.0
+offset_bottom = 591.0
+theme_override_colors/font_color = Color(0.84, 0.88, 0.94, 1)
+theme_override_font_sizes/font_size = 15
+text = "Элементов: 0"
+horizontal_alignment = 1
+
+[node name="RollButton" type="Button" parent="." unique_id=1993059427]
+layout_mode = 0
+offset_left = 421.0
+offset_top = 514.0
+offset_right = 579.0
+offset_bottom = 588.0
+theme_override_colors/font_color = Color(0.05, 0.08, 0.12, 1)
+theme_override_font_sizes/font_size = 30
+theme_override_styles/normal = SubResource("StyleBoxFlat_roll")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_roll")
+theme_override_styles/hover = SubResource("StyleBoxFlat_roll")
+text = "Roll"
+
+[node name="Letterbox" type="LineEdit" parent="." unique_id=37650903]
+layout_mode = 0
+offset_left = 598.0
+offset_top = 530.00006
+offset_right = 642.0
+offset_bottom = 581.0
+theme_override_colors/font_color = Color(0.92, 0.92, 0.96, 1)
+theme_override_colors/font_placeholder_color = Color(0.52, 0.52, 0.56, 1)
+theme_override_constants/minimum_character_width = 0
+theme_override_font_sizes/font_size = 28
+theme_override_styles/normal = SubResource("StyleBoxFlat_small")
+theme_override_styles/read_only = SubResource("StyleBoxFlat_small")
+theme_override_styles/focus = SubResource("StyleBoxFlat_small")
+alignment = 1
+
+[node name="DigitsCheckBox" type="CheckBox" parent="." unique_id=1353272769]
+layout_mode = 0
+offset_left = 650.0
+offset_top = 540.0
+offset_right = 736.0
+offset_bottom = 570.0
+theme_override_colors/font_color = Color(0.48, 0.48, 0.52, 1)
+theme_override_font_sizes/font_size = 12
+text = "Цифры"
+
+[node name="UltraButton" type="Button" parent="." unique_id=1311850139]
+layout_mode = 0
+offset_left = 420.0
+offset_top = 598.0
+offset_right = 579.0
+offset_bottom = 623.0
+theme_override_colors/font_color = Color(0.56, 0.56, 0.6, 1)
+theme_override_font_sizes/font_size = 15
+theme_override_styles/normal = SubResource("StyleBoxFlat_small")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_small")
+theme_override_styles/hover = SubResource("StyleBoxFlat_small")
+text = "На ультратоненького"
+
+[node name="LinkButtons" type="Control" parent="." unique_id=1521272253]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+
+[node name="MobyGamesButton" type="TextureButton" parent="LinkButtons" unique_id=405796037]
+layout_mode = 0
+offset_left = 718.0
+offset_top = 536.0
+offset_right = 794.0
+offset_bottom = 570.0
+focus_mode = 0
+mouse_default_cursor_shape = 2
+texture_normal = ExtResource("3")
+texture_pressed = ExtResource("3")
+texture_hover = ExtResource("3")
+ignore_texture_size = true
+stretch_mode = 5
+
+[node name="GameFAQsButton" type="TextureButton" parent="LinkButtons" unique_id=1420454203]
+layout_mode = 0
+offset_left = 802.0
+offset_top = 527.0
+offset_right = 930.0
+offset_bottom = 581.0
+focus_mode = 0
+mouse_default_cursor_shape = 2
+texture_normal = ExtResource("4")
+texture_pressed = ExtResource("4")
+texture_hover = ExtResource("4")
+ignore_texture_size = true
+stretch_mode = 5
+
+[node name="RGGLandButton" type="TextureButton" parent="LinkButtons" unique_id=576724449]
+visible = false
+layout_mode = 0
+offset_left = 936.0
+offset_top = 527.0
+offset_right = 992.0
+offset_bottom = 583.0
+focus_mode = 0
+mouse_default_cursor_shape = 2
+texture_normal = ExtResource("5")
+texture_pressed = ExtResource("5")
+texture_hover = ExtResource("5")
+ignore_texture_size = true
+stretch_mode = 5
+
+[node name="BottomBar" type="Control" parent="." unique_id=1475301008]
+anchors_preset = 0
+offset_left = 304.0
+offset_top = 635.0
+offset_right = 787.0
+offset_bottom = 715.0
+
+[node name="HeroTile" type="Panel" parent="BottomBar" unique_id=2034769040]
+layout_mode = 0
+offset_right = 72.0
+offset_bottom = 80.0
+theme_override_styles/panel = SubResource("StyleBoxFlat_tile")
+
+[node name="HeroIcon" type="Label" parent="BottomBar/HeroTile" unique_id=413448667]
+visible = false
+layout_mode = 0
+offset_left = 11.0
+offset_top = 5.0
+offset_right = 61.0
+offset_bottom = 44.0
+theme_override_font_sizes/font_size = 34
+text = "😎"
+horizontal_alignment = 1
+
+[node name="HeroSprite" type="TextureRect" parent="BottomBar/HeroTile" unique_id=1147129404]
+layout_mode = 0
+offset_left = 8.0
+offset_top = 6.0
+offset_right = 64.0
+offset_bottom = 43.0
+texture = ExtResource("6")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="HeroLabel" type="Label" parent="BottomBar/HeroTile" unique_id=724802249]
+layout_mode = 0
+offset_left = 6.0
+offset_top = 48.0
+offset_right = 66.0
+offset_bottom = 75.0
+theme_override_colors/font_color = Color(0.92, 0.92, 0.96, 1)
+theme_override_font_sizes/font_size = 10
+text = "Гитман"
+horizontal_alignment = 1
+
+[node name="HeroButton" type="Button" parent="BottomBar/HeroTile" unique_id=86046312]
+layout_mode = 0
+offset_right = 72.0
+offset_bottom = 80.0
+focus_mode = 0
+flat = true
+
+[node name="PlatformsTile" type="Panel" parent="BottomBar" unique_id=1422247270]
+layout_mode = 0
+offset_left = 79.0
+offset_right = 157.0
+offset_bottom = 80.0
+theme_override_styles/panel = SubResource("StyleBoxFlat_tile")
+
+[node name="PlatformsIcon" type="Label" parent="BottomBar/PlatformsTile" unique_id=51584672]
+visible = false
+layout_mode = 0
+offset_left = 15.0
+offset_top = 8.0
+offset_right = 62.0
+offset_bottom = 41.0
+theme_override_font_sizes/font_size = 28
+text = "🎮"
+horizontal_alignment = 1
+
+[node name="PlatformsSprite" type="TextureRect" parent="BottomBar/PlatformsTile" unique_id=1362198430]
+layout_mode = 0
+offset_left = 9.0
+offset_top = 6.0
+offset_right = 69.0
+offset_bottom = 43.0
+texture = ExtResource("7")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="PlatformsLabel" type="Label" parent="BottomBar/PlatformsTile" unique_id=109309388]
+layout_mode = 0
+offset_left = 4.0
+offset_top = 49.0
+offset_right = 74.0
+offset_bottom = 74.0
+theme_override_colors/font_color = Color(0.88, 0.9, 0.94, 1)
+theme_override_font_sizes/font_size = 10
+text = "Платформы"
+horizontal_alignment = 1
+
+[node name="PlatformsButton" type="Button" parent="BottomBar/PlatformsTile" unique_id=1226563904]
+layout_mode = 0
+offset_right = 78.0
+offset_bottom = 80.0
+focus_mode = 0
+flat = true
+
+[node name="BagTile" type="Panel" parent="BottomBar" unique_id=1010503234]
+layout_mode = 0
+offset_left = 161.0
+offset_right = 239.0
+offset_bottom = 80.0
+theme_override_styles/panel = SubResource("StyleBoxFlat_tile")
+
+[node name="BagIcon" type="Label" parent="BottomBar/BagTile" unique_id=2099355403]
+visible = false
+layout_mode = 0
+offset_left = 12.0
+offset_top = 6.0
+offset_right = 65.0
+offset_bottom = 43.0
+theme_override_font_sizes/font_size = 30
+text = "🐱"
+horizontal_alignment = 1
+
+[node name="BagSprite" type="TextureRect" parent="BottomBar/BagTile" unique_id=471554921]
+layout_mode = 0
+offset_left = 9.0
+offset_top = 6.0
+offset_right = 69.0
+offset_bottom = 43.0
+texture = ExtResource("8")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="BagLabel" type="Label" parent="BottomBar/BagTile" unique_id=2027779039]
+layout_mode = 0
+offset_left = 3.0
+offset_top = 47.0
+offset_right = 75.0
+offset_bottom = 76.0
+theme_override_colors/font_color = Color(0.92, 0.92, 0.96, 1)
+theme_override_font_sizes/font_size = 10
+text = "Кот в мешке"
+horizontal_alignment = 1
+autowrap_mode = 2
+
+[node name="CatBagButton" type="Button" parent="BottomBar/BagTile" unique_id=2104552847]
+layout_mode = 0
+offset_right = 78.0
+offset_bottom = 80.0
+focus_mode = 0
+flat = true
+
+[node name="WheelTile" type="Panel" parent="BottomBar" unique_id=616720144]
+layout_mode = 0
+offset_left = 243.0
+offset_right = 321.0
+offset_bottom = 80.0
+theme_override_styles/panel = SubResource("StyleBoxFlat_tile")
+
+[node name="WheelIcon" type="Label" parent="BottomBar/WheelTile" unique_id=50090377]
+visible = false
+layout_mode = 0
+offset_left = 12.0
+offset_top = 6.0
+offset_right = 65.0
+offset_bottom = 43.0
+theme_override_font_sizes/font_size = 28
+text = "🛞"
+horizontal_alignment = 1
+
+[node name="WheelSprite" type="TextureRect" parent="BottomBar/WheelTile" unique_id=691187970]
+layout_mode = 0
+offset_left = 9.0
+offset_top = 6.0
+offset_right = 69.0
+offset_bottom = 43.0
+texture = ExtResource("9")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="WheelLabel" type="Label" parent="BottomBar/WheelTile" unique_id=609794127]
+layout_mode = 0
+offset_left = 10.0
+offset_top = 49.0
+offset_right = 68.0
+offset_bottom = 75.0
+theme_override_colors/font_color = Color(0.92, 0.92, 0.96, 1)
+theme_override_font_sizes/font_size = 10
+text = "Колесо"
+horizontal_alignment = 1
+
+[node name="WheelButton" type="Button" parent="BottomBar/WheelTile" unique_id=194559291]
+layout_mode = 0
+offset_right = 78.0
+offset_bottom = 80.0
+focus_mode = 0
+flat = true
+
+[node name="ExtraTile" type="Panel" parent="BottomBar" unique_id=915320171]
+layout_mode = 0
+offset_left = 325.0
+offset_right = 403.0
+offset_bottom = 80.0
+theme_override_styles/panel = SubResource("StyleBoxFlat_tile")
+
+[node name="ExtraIcon" type="Label" parent="BottomBar/ExtraTile" unique_id=1224292163]
+layout_mode = 0
+offset_left = 13.0
+offset_top = 4.0
+offset_right = 64.0
+offset_bottom = 42.0
+theme_override_font_sizes/font_size = 34
+text = "+"
+horizontal_alignment = 1
+
+[node name="ExtraLabel" type="Label" parent="BottomBar/ExtraTile" unique_id=1504448854]
+layout_mode = 0
+offset_left = 1.0
+offset_top = 45.0
+offset_right = 76.0
+offset_bottom = 80.0
+theme_override_colors/font_color = Color(0.92, 0.92, 0.96, 1)
+theme_override_font_sizes/font_size = 10
+text = "EXTRA"
+horizontal_alignment = 1
+
+[node name="LooseChipLeft" type="Control" parent="." unique_id=1639141346]
+anchors_preset = 0
+offset_left = 208.0
+offset_top = 650.0
+offset_right = 298.0
+offset_bottom = 722.0
+
+[node name="LooseChipIcon" type="Label" parent="LooseChipLeft" unique_id=1943300204]
+visible = false
+layout_mode = 0
+offset_left = 5.0
+offset_top = 3.0
+offset_right = 34.0
+offset_bottom = 24.0
+theme_override_font_sizes/font_size = 18
+text = "🎮"
+horizontal_alignment = 1
+
+[node name="LooseChipTriangle" type="Polygon2D" parent="LooseChipLeft" unique_id=1880249897]
+position = Vector2(45, 36)
+color = Color(0.72, 0.72, 0.72, 1)
+polygon = PackedVector2Array(0, -36, -45, 36, 45, 36)
+
+[node name="LooseChipInner" type="Polygon2D" parent="LooseChipLeft" unique_id=1056709618]
+position = Vector2(45, 36)
+color = Color(0.21, 0.21, 0.21, 1)
+polygon = PackedVector2Array(0, -28, -35, 28, 35, 28)
+
+[node name="LooseChipSprite" type="TextureRect" parent="LooseChipLeft" unique_id=1306644070]
+layout_mode = 0
+offset_left = 13.0
+offset_top = 28.0
+offset_right = 77.0
+offset_bottom = 63.0
+texture = ExtResource("10")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="TriangleWheel" type="Label" parent="." unique_id=352970991]
+visible = false
+layout_mode = 0
+offset_left = 720.0
+offset_top = 676.0
+offset_right = 782.0
+offset_bottom = 718.0
+theme_override_colors/font_color = Color(0.7, 0.7, 0.7, 1)
+theme_override_font_sizes/font_size = 40
+text = "◢"
+
+[node name="TriangleWheelColor" type="Label" parent="." unique_id=1985007893]
+visible = false
+layout_mode = 0
+offset_left = 739.0
+offset_top = 680.0
+offset_right = 775.0
+offset_bottom = 714.0
+theme_override_font_sizes/font_size = 24
+text = "🛞"
+
+[node name="ChestIcon" type="Label" parent="." unique_id=1142748448]
+visible = false
+layout_mode = 0
+offset_left = 800.0
+offset_top = 677.0
+offset_right = 848.0
+offset_bottom = 715.0
+theme_override_font_sizes/font_size = 30
+text = "🪤"
+horizontal_alignment = 1
+
+[node name="UpdateButton" type="Button" parent="." unique_id=1881796220]
+visible = false
+layout_mode = 0
+offset_left = 882.0
+offset_top = 690.0
+offset_right = 960.0
+offset_bottom = 716.0
+theme_override_colors/font_color = Color(0.82, 0.86, 0.92, 1)
+theme_override_font_sizes/font_size = 13
+theme_override_styles/normal = SubResource("StyleBoxFlat_small")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_small")
+theme_override_styles/hover = SubResource("StyleBoxFlat_small")
+text = "Update lists"
+
+[node name="SoundMuteButton" type="Button" parent="." unique_id=358096286]
+layout_mode = 0
+offset_left = 922.0
+offset_top = 656.0
+offset_right = 990.0
+offset_bottom = 684.0
+focus_mode = 0
+theme_override_colors/font_color = Color(0.92, 0.92, 0.96, 1)
+theme_override_font_sizes/font_size = 12
+theme_override_styles/normal = SubResource("StyleBoxFlat_small")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_small")
+theme_override_styles/hover = SubResource("StyleBoxFlat_small")
+text = "MUTE"
+flat = true
+
+[node name="TTSButton" type="Button" parent="." unique_id=1891754222]
+layout_mode = 0
+offset_left = 938.0
+offset_top = 686.0
+offset_right = 982.0
+offset_bottom = 730.0
+focus_mode = 0
+theme_override_colors/font_color = Color(0.92, 0.92, 0.96, 1)
+theme_override_font_sizes/font_size = 16
+text = "TTS"
+flat = true
+
+[node name="SettingsIcon" type="Label" parent="." unique_id=962673910]
+visible = false
+layout_mode = 0
+offset_left = 972.0
+offset_top = 682.0
+offset_right = 1008.0
+offset_bottom = 718.0
+theme_override_colors/font_color = Color(0.96, 0.96, 0.96, 1)
+theme_override_font_sizes/font_size = 28
+text = "⚙"
+
+[node name="ServerChips" type="VBoxContainer" parent="." unique_id=1355354775]
+visible = false
+layout_mode = 0
+offset_left = 939.0
+offset_top = 651.0
+offset_right = 971.0
+offset_bottom = 688.0
+theme_override_constants/separation = 1
+
+[node name="Chip1" type="Panel" parent="ServerChips" unique_id=1178743718]
+custom_minimum_size = Vector2(18, 11)
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_chip")
+
+[node name="Chip1Text" type="Label" parent="ServerChips/Chip1" unique_id=1611395054]
+layout_mode = 0
+offset_left = 2.0
+offset_top = -6.0
+offset_right = 16.0
+offset_bottom = 10.0
+theme_override_font_sizes/font_size = 10
+text = "+"
+horizontal_alignment = 1
+
+[node name="Chip2" type="Panel" parent="ServerChips" unique_id=727501783]
+custom_minimum_size = Vector2(18, 11)
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_chip")
+
+[node name="Chip2Text" type="Label" parent="ServerChips/Chip2" unique_id=1096471711]
+layout_mode = 0
+offset_left = 2.0
+offset_top = -6.0
+offset_right = 16.0
+offset_bottom = 10.0
+theme_override_font_sizes/font_size = 10
+text = "-"
+horizontal_alignment = 1
+
+[node name="OrangeBar" type="ColorRect" parent="." unique_id=582798999]
+visible = false
+layout_mode = 0
+offset_left = 958.0
+offset_top = 651.0
+offset_right = 971.0
+offset_bottom = 687.0
+color = Color(1, 0.55, 0.18, 1)
+
+[node name="SpecialRollsChip" type="Control" parent="." unique_id=268994967]
+anchors_preset = 0
+offset_left = 715.0
+offset_top = 649.0
+offset_right = 805.0
+offset_bottom = 721.0
+
+[node name="Triangle" type="Polygon2D" parent="SpecialRollsChip" unique_id=279755834]
+position = Vector2(45, 36)
+color = Color(0.72, 0.72, 0.72, 1)
+polygon = PackedVector2Array(0, -36, -45, 36, 45, 36)
+
+[node name="Inner" type="Polygon2D" parent="SpecialRollsChip" unique_id=354345654]
+position = Vector2(45, 36)
+color = Color(0.21, 0.21, 0.21, 1)
+polygon = PackedVector2Array(0, -28, -35, 28, 35, 28)
+
+[node name="Sprite" type="TextureRect" parent="SpecialRollsChip" unique_id=2101281713]
+layout_mode = 0
+offset_left = 13.0
+offset_top = 27.0
+offset_right = 75.0
+offset_bottom = 64.0
+texture = ExtResource("9")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="LootboxChip" type="Control" parent="." unique_id=1007484369]
+anchors_preset = 0
+offset_left = 814.0
+offset_top = 650.0
+offset_right = 904.0
+offset_bottom = 722.0
+
+[node name="Triangle" type="Polygon2D" parent="LootboxChip" unique_id=2013937690]
+position = Vector2(45, 36)
+color = Color(0.72, 0.72, 0.72, 1)
+polygon = PackedVector2Array(0, -36, -45, 36, 45, 36)
+
+[node name="Inner" type="Polygon2D" parent="LootboxChip" unique_id=828488040]
+position = Vector2(45, 36)
+color = Color(0.21, 0.21, 0.21, 1)
+polygon = PackedVector2Array(0, -28, -35, 28, 35, 28)
+
+[node name="Label" type="Label" parent="LootboxChip" unique_id=236543467]
+visible = false
+layout_mode = 0
+offset_left = 14.0
+offset_top = 18.0
+offset_right = 76.0
+offset_bottom = 54.0
+theme_override_colors/font_color = Color(0.92, 0.92, 0.96, 1)
+theme_override_font_sizes/font_size = 24
+text = "LB"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="LootboxSprite" type="TextureRect" parent="LootboxChip" unique_id=473899250]
+layout_mode = 0
+offset_left = 28.0
+offset_top = 35.0
+offset_right = 62.0
+offset_bottom = 63.0
+texture = ExtResource("11")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="VersionLabel" type="Label" parent="." unique_id=1555184602]
+layout_mode = 0
+offset_left = 961.0
+offset_top = 199.99998
+offset_right = 1106.0
+offset_bottom = 230.99998
+rotation = 4.71042
+theme_override_colors/font_color = Color(0.72, 0.72, 0.72, 1)
+theme_override_font_sizes/font_size = 22
+text = "rgg.nitrus.top"
+horizontal_alignment = 1
+
+[connection signal="pressed" from="BottomBar/HeroTile/HeroButton" to="." method="_on_guitman_button_pressed"]
+[connection signal="pressed" from="BottomBar/PlatformsTile/PlatformsButton" to="." method="_on_platforms_button_pressed"]
+[connection signal="pressed" from="BottomBar/BagTile/CatBagButton" to="." method="_on_cat_bag_button_pressed"]
+[connection signal="pressed" from="BottomBar/WheelTile/WheelButton" to="." method="_on_wheel_button_pressed"]

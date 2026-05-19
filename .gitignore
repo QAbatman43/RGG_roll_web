@@ -1,0 +1,18 @@
+_recovery_tools/
+_codex_recovered_history/
+_godot_source_from_rggweb_pck/
+_publish_RGG_roll_web_recovery/
+_godot_decompiled_scripts*/
+_godot_recovered_gdre/
+README_RECOVERY.md
+*.log
+*.tmp
+*.bak
+
+# Godot editor-local state. Keep recovered import/export caches.
+godot_source/.godot/editor/
+godot_source/.godot/mono/
+godot_source/.godot/shader_cache/
+
+# Incomplete fresh export from the recovered project.
+godot_source/Web.*
