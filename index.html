@@ -11,68 +11,85 @@ html, body, #canvas {
 	border: 0;
 }
 
-html, body {
-	width: 100%;
-	height: 100%;
-}
-
 body {
 	color: white;
-	background: #242424;
+	background-color: black;
 	overflow: hidden;
 	touch-action: none;
-	font-family: "Noto Sans", Arial, sans-serif;
 }
 
 #canvas {
 	display: block;
-	width: 100%;
-	height: 100%;
 }
 
 #canvas:focus {
 	outline: none;
 }
 
+#status, #status-splash, #status-progress {
+	position: absolute;
+	left: 0;
+	right: 0;
+}
+
+#status, #status-splash {
+	top: 0;
+	bottom: 0;
+}
+
 #status {
-	position: fixed;
-	inset: 0;
+	background-color: #242424;
 	display: flex;
 	flex-direction: column;
-	align-items: center;
 	justify-content: center;
-	gap: 2rem;
-	background: #242424;
+	align-items: center;
+	visibility: hidden;
 }
 
 #status-splash {
-	width: min(58vmin, 440px);
-	max-width: 82vw;
-	max-height: 60vh;
+	max-height: 100%;
+	max-width: 100%;
+	margin: auto;
+}
+
+#status-splash.show-image--false {
+	display: none;
+}
+
+#status-splash.fullsize--true {
+	height: 100%;
+	width: 100%;
 	object-fit: contain;
-	image-rendering: auto;
+}
+
+#status-splash.use-filter--false {
+	image-rendering: pixelated;
+}
+
+#status-progress, #status-notice {
+	display: none;
 }
 
 #status-progress {
-	width: min(82vw, 820px);
-	height: 12px;
-	accent-color: #d6362b;
+	bottom: 10%;
+	width: 50%;
+	margin: 0 auto;
 }
 
 #status-notice {
-	display: none;
-	max-width: min(82vw, 820px);
-	padding: 1rem 1.2rem;
+	background-color: #5b3943;
 	border-radius: 0.5rem;
 	border: 1px solid #9b3943;
-	background: #5b3943;
 	color: #e0e0e0;
+	font-family: 'Noto Sans', 'Droid Sans', Arial, sans-serif;
+	line-height: 1.3;
+	margin: 0 2rem;
+	overflow: hidden;
+	padding: 1rem;
 	text-align: center;
-	line-height: 1.35;
+	z-index: 1;
 }
 		</style>
-		<link rel="icon" type="image/png" href="rggweb.png" />
-		<link rel="apple-touch-icon" href="rggweb.png" />
 		<link id="-gd-engine-icon" rel="icon" type="image/png" href="rggweb.icon.png" />
 <link rel="apple-touch-icon" href="rggweb.apple-touch-icon.png"/>
 
@@ -87,134 +104,115 @@ body {
 		</noscript>
 
 		<div id="status">
-			<img id="status-splash" src="rggweb.png" alt="">
+			<img id="status-splash" class="show-image--true fullsize--true use-filter--true" src="rggweb.png" alt="">
 			<progress id="status-progress"></progress>
 			<div id="status-notice"></div>
 		</div>
 
 		<script src="rggweb.js"></script>
 		<script>
-const GODOT_CONFIG = {"args":[],"canvasResizePolicy":2,"emscriptenPoolSize":8,"ensureCrossOriginIsolationHeaders":true,"executable":"rggweb","experimentalVK":false,"fileSizes":{"rggweb.pck":51929352,"rggweb.wasm":37695054},"focusCanvas":true,"gdextensionLibs":[],"godotPoolSize":4};
+const GODOT_CONFIG = {"args":[],"canvasResizePolicy":2,"emscriptenPoolSize":8,"ensureCrossOriginIsolationHeaders":true,"executable":"rggweb","experimentalVK":false,"fileSizes":{"rggweb.pck":52104016,"rggweb.wasm":35754592},"focusCanvas":true,"gdextensionLibs":[],"godotPoolSize":4};
+const GODOT_THREADS_ENABLED = false;
 const engine = new Engine(GODOT_CONFIG);
 
 (function () {
-	window.rggOpenUserFilePicker = function (kind, accept, callback) {
-		const input = document.createElement("input");
-		input.type = "file";
-		input.accept = accept || "";
-		input.style.display = "none";
+	const statusOverlay = document.getElementById('status');
+	const statusProgress = document.getElementById('status-progress');
+	const statusNotice = document.getElementById('status-notice');
 
-		function cleanup() {
-			if (input.parentNode) {
-				input.parentNode.removeChild(input);
-			}
+	let initializing = true;
+	let statusMode = '';
+
+	function setStatusMode(mode) {
+		if (statusMode === mode || !initializing) {
+			return;
 		}
-
-		function sendPayload(payload) {
-			try {
-				callback(JSON.stringify(payload));
-			} finally {
-				cleanup();
-			}
+		if (mode === 'hidden') {
+			statusOverlay.remove();
+			initializing = false;
+			return;
 		}
+		statusOverlay.style.visibility = 'visible';
+		statusProgress.style.display = mode === 'progress' ? 'block' : 'none';
+		statusNotice.style.display = mode === 'notice' ? 'block' : 'none';
+		statusMode = mode;
+	}
 
-		input.addEventListener("change", function () {
-			const file = input.files && input.files[0];
-			if (!file) {
-				sendPayload({ kind: kind || "", data_url: "" });
-				return;
-			}
-
-			if (kind === "background") {
-				const reader = new FileReader();
-				reader.onload = function (event) {
-					const sourceDataUrl = String((event.target && event.target.result) || "");
-					if (!sourceDataUrl) {
-						sendPayload({ kind: kind || "", data_url: "" });
-						return;
-					}
-
-					const image = new Image();
-					image.onload = function () {
-						const canvas = document.createElement("canvas");
-						canvas.width = image.naturalWidth || image.width || 1;
-						canvas.height = image.naturalHeight || image.height || 1;
-						const context = canvas.getContext("2d");
-						if (!context) {
-							sendPayload({ kind: kind || "", data_url: "" });
-							return;
-						}
-						context.drawImage(image, 0, 0);
-						sendPayload({
-							kind: kind || "",
-							name: file.name || "",
-							data_url: canvas.toDataURL("image/png")
-						});
-					};
-					image.onerror = function () {
-						sendPayload({ kind: kind || "", data_url: "" });
-					};
-					image.src = sourceDataUrl;
-				};
-				reader.onerror = function () {
-					sendPayload({ kind: kind || "", data_url: "" });
-				};
-				reader.readAsDataURL(file);
-				return;
-			}
-
-			const reader = new FileReader();
-			reader.onload = function (event) {
-				sendPayload({
-					kind: kind || "",
-					name: file.name || "",
-					data_url: String((event.target && event.target.result) || "")
-				});
-			};
-			reader.onerror = function () {
-				sendPayload({ kind: kind || "", data_url: "" });
-			};
-			reader.readAsDataURL(file);
+	function setStatusNotice(text) {
+		while (statusNotice.lastChild) {
+			statusNotice.removeChild(statusNotice.lastChild);
+		}
+		const lines = text.split('\n');
+		lines.forEach((line) => {
+			statusNotice.appendChild(document.createTextNode(line));
+			statusNotice.appendChild(document.createElement('br'));
 		});
-
-		document.body.appendChild(input);
-		input.click();
-	};
-
-	const statusOverlay = document.getElementById("status");
-	const statusProgress = document.getElementById("status-progress");
-	const statusNotice = document.getElementById("status-notice");
-
-	function showNotice(text) {
-		statusProgress.style.display = "none";
-		statusNotice.style.display = "block";
-		statusNotice.textContent = text;
 	}
 
 	function displayFailureNotice(err) {
 		console.error(err);
 		if (err instanceof Error) {
-			showNotice(err.message);
-		} else if (typeof err === "string") {
-			showNotice(err);
+			setStatusNotice(err.message);
+		} else if (typeof err === 'string') {
+			setStatusNotice(err);
 		} else {
-			showNotice("An unknown error occurred.");
+			setStatusNotice('An unknown error occurred.');
 		}
+		setStatusMode('notice');
+		initializing = false;
 	}
 
-	engine.startGame({
-		onProgress: function (current, total) {
-			if (current > 0 && total > 0) {
-				statusProgress.value = current;
-				statusProgress.max = total;
-			} else {
-				statusProgress.removeAttribute("value");
-				statusProgress.removeAttribute("max");
+	const missing = Engine.getMissingFeatures({
+		threads: GODOT_THREADS_ENABLED,
+	});
+
+	if (missing.length !== 0) {
+		if (GODOT_CONFIG['serviceWorker'] && GODOT_CONFIG['ensureCrossOriginIsolationHeaders'] && 'serviceWorker' in navigator) {
+			let serviceWorkerRegistrationPromise;
+			try {
+				serviceWorkerRegistrationPromise = navigator.serviceWorker.getRegistration();
+			} catch (err) {
+				serviceWorkerRegistrationPromise = Promise.reject(new Error('Service worker registration failed.'));
 			}
-		},
-	}).then(function () {
-		statusOverlay.remove();
-	}, displayFailureNotice);
+			// There's a chance that installing the service worker would fix the issue
+			Promise.race([
+				serviceWorkerRegistrationPromise.then((registration) => {
+					if (registration != null) {
+						return Promise.reject(new Error('Service worker already exists.'));
+					}
+					return registration;
+				}).then(() => engine.installServiceWorker()),
+				// For some reason, `getRegistration()` can stall
+				new Promise((resolve) => {
+					setTimeout(() => resolve(), 2000);
+				}),
+			]).then(() => {
+				// Reload if there was no error.
+				window.location.reload();
+			}).catch((err) => {
+				console.error('Error while registering service worker:', err);
+			});
+		} else {
+			// Display the message as usual
+			const missingMsg = 'Error\nThe following features required to run Godot projects on the Web are missing:\n';
+			displayFailureNotice(missingMsg + missing.join('\n'));
+		}
+	} else {
+		setStatusMode('progress');
+		engine.startGame({
+			'onProgress': function (current, total) {
+				if (current > 0 && total > 0) {
+					statusProgress.value = current;
+					statusProgress.max = total;
+				} else {
+					statusProgress.removeAttribute('value');
+					statusProgress.removeAttribute('max');
+				}
+			},
+		}).then(() => {
+			setStatusMode('hidden');
+		}, displayFailureNotice);
+	}
 }());
 		</script>
 	</body>

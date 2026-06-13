@@ -13,6 +13,13 @@ README_RECOVERY.md
 godot_source/.godot/editor/
 godot_source/.godot/mono/
 godot_source/.godot/shader_cache/
+godot_source/.godot/.gdignore
+godot_source/.godot/export_credentials.cfg
+godot_source/.godot/exported/*/file_cache
+godot_source/.godot/imported/Web.*
 
 # Incomplete fresh export from the recovered project.
 godot_source/Web.*
+
+# Local Windows export output.
+godot_source/RGG Roll/

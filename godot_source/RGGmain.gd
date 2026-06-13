@@ -85,7 +85,6 @@ const PLATFORM_BROWSER_ITEMS: Array[Dictionary] = [
     {"id": "gb", "title": "GameBoy / Color", "path": "res://lists/list_gb.dat", "icon_path": "res://images/platforms/gameboy_color.png"}, 
     {"id": "gg", "title": "GameGear", "path": "res://lists/list_gg.dat", "icon_path": "res://images/platforms/gamegear.png"}, 
     {"id": "snes", "title": "Super Famicom / SNES", "path": "res://lists/list_snes.dat", "icon_path": "res://images/platforms/superfamicom_snes.png"}, 
-    {"id": "ngo", "title": "NeoGeo", "path": "res://lists/list_ngo.dat", "icon_path": "res://images/platforms/neogeo.png"}, 
     {"id": "3do", "title": "Panasonic 3DO", "path": "res://lists/list_3do.dat", "icon_path": "res://images/platforms/panasonic3do.png"}, 
     {"id": "ss", "title": "Sega Saturn", "path": "res://lists/list_ss.dat", "icon_path": "res://images/platforms/segasaturn.png"}, 
     {"id": "psx", "title": "PS1", "path": "res://lists/list_psx.dat", "icon_path": "res://images/platforms/ps1.png"}, 
@@ -100,15 +99,12 @@ const PLATFORM_BROWSER_ITEMS: Array[Dictionary] = [
     {"id": "gba", "title": "GBA", "path": "res://lists/list_gba.dat", "icon_path": "res://images/platforms/gba.png"}, 
     {"id": "ds", "title": "Nintendo DS", "path": "res://lists/list_ds.dat", "icon_path": "res://images/platforms/nintendods.png"}, 
     {"id": "psp", "title": "PSP", "path": "res://lists/list_psp.dat", "icon_path": "res://images/platforms/psp.png"}, 
-    {"id": "x360", "title": "Xbox 360", "path": "res://lists/list_x360.dat", "icon_path": "res://images/platforms/xbox360.png"}, 
     {"id": "ps3", "title": "PS3", "path": "res://lists/list_ps3.dat", "icon_path": "res://images/platforms/ps3.png"}, 
     {"id": "wii", "title": "Wii", "path": "res://lists/list_wii.dat", "icon_path": "res://images/platforms/wii.png"}, 
-    {"id": "psv", "title": "PSVita", "path": "res://lists/list_psv.dat", "icon_path": "res://images/platforms/psvita.png"}, 
     {"id": "3ds", "title": "Nintendo 3DS", "path": "res://lists/list_3ds.dat", "icon_path": "res://images/platforms/nintendo3ds.png"}, 
     {"id": "wiiu", "title": "Wii U", "path": "res://lists/list_wiiu.dat", "icon_path": "res://images/platforms/wiiU.png"}, 
     {"id": "zx", "title": "ZX Spectrum", "path": "res://lists/list_zx.dat", "icon_path": "res://images/platforms/zxspectrum.png"}, 
     {"id": "c64", "title": "Commodore 64", "path": "res://lists/list_c64.dat", "icon_path": "res://images/platforms/commodore64.png"}, 
-    {"id": "pc98", "title": "NEC PC-98", "path": "res://lists/list_pc98.dat", "icon_path": "res://images/platforms/necpc98.png"}, 
     {"id": "msx", "title": "MSX / MSX 2", "path": "res://lists/list_msx.dat", "icon_path": "res://images/platforms/msx_msx2.png"}, 
     {"id": "acpc", "title": "Amstrad CPC", "path": "res://lists/acpc.dat", "icon_path": "res://images/platforms/amstradcpc.png"}, 
     {"id": "amg", "title": "Commodore Amiga", "path": "res://lists/list_amg.dat", "icon_path": "res://images/platforms/commodoreamiga.png"}, 
@@ -190,7 +186,6 @@ const SPECIAL_ROLL_ITEMS: Array[Dictionary] = [
     {"id": "roguelite", "title": "Roguelite", "path": "res://lists/roguelite.dat"}, 
     {"id": "doom", "title": "Doom", "path": "res://lists/doom.dat"}, 
     {"id": "vk", "title": "VK", "path": "res://lists/vk.dat"}, 
-    {"id": "movies", "title": "Movies", "path": "res://lists/movies.dat"}, 
     {"id": "anime", "title": "Anime", "path": "res://lists/anime.dat"}, 
 ]
 const SPECIAL_ROLL_ICON_PATHS: = {
@@ -378,6 +373,7 @@ const HAKON_ROLL_SOUND_CANDIDATES: Array[String] = [
 const PIZZA_ROLL_SOUND_CANDIDATES: Array[String] = [
     "res://audio/пицца.mp3", 
 ]
+const PIZZA_ROLL_VOLUME_DB: = -10.0
 const HARDCORE_ROLL_SOUND_CANDIDATES: Array[String] = [
     "res://audio/Rabi.wav", 
 ]
@@ -1244,6 +1240,7 @@ func _start_roll() -> void :
     ultra_delay_timer.start(ULTRA_BUTTON_ENABLE_WAIT)
 
     var roll_sound_candidates: Array[String] = ROLL_SOUND_CANDIDATES
+    var roll_sound_volume_db: = 0.0
     var use_custom_default_roll_music: = false
     if _is_hardcore_list_selected():
         roll_sound_candidates = HARDCORE_ROLL_SOUND_CANDIDATES
@@ -1251,6 +1248,7 @@ func _start_roll() -> void :
         roll_sound_candidates = HAKON_ROLL_SOUND_CANDIDATES
     elif selected_list_path == "res://lists/pizza.dat":
         roll_sound_candidates = PIZZA_ROLL_SOUND_CANDIDATES
+        roll_sound_volume_db = PIZZA_ROLL_VOLUME_DB
     elif selected_list_path == "res://lists/disney.dat":
         roll_sound_candidates = DISNEY_ROLL_SOUND_CANDIDATES
     elif selected_list_path == "res://lists/lukas.dat":
@@ -1264,7 +1262,7 @@ func _start_roll() -> void :
     if use_custom_default_roll_music:
         _play_stream(custom_roll_music_stream)
     else:
-        _play_sound(roll_sound_candidates)
+        _play_sound(roll_sound_candidates, roll_sound_volume_db)
 
     roll_timer.wait_time = MAIN_ROLL_WAIT
     roll_timer.start()
@@ -2141,7 +2139,7 @@ func _play_stream(stream: AudioStream, volume_db: float = 0.0) -> void :
 
 
 
-func _play_sound(candidates: Array[String]) -> void :
+func _play_sound(candidates: Array[String], volume_db: float = 0.0) -> void :
     for candidate in candidates:
         if not ResourceLoader.exists(candidate):
             continue
@@ -2150,7 +2148,7 @@ func _play_sound(candidates: Array[String]) -> void :
         if stream == null:
             continue
 
-        _play_stream(stream)
+        _play_stream(stream, volume_db)
         return
 
 
@@ -4629,20 +4627,20 @@ func _create_platform_browser() -> void :
     platform_browser_panel = Panel.new()
     platform_browser_panel.visible = false
     platform_browser_panel.position = Vector2(26, 760)
-    platform_browser_panel.size = Vector2(952, 430)
+    platform_browser_panel.size = Vector2(952, 350)
     platform_browser_panel.add_theme_stylebox_override("panel", _create_platform_browser_style())
     add_child(platform_browser_panel)
 
     platform_browser_grid = GridContainer.new()
     platform_browser_grid.columns = 12
     platform_browser_grid.position = Vector2(6, 12)
-    platform_browser_grid.size = Vector2(940, 302)
+    platform_browser_grid.size = Vector2(940, 253)
     platform_browser_grid.add_theme_constant_override("h_separation", 5)
     platform_browser_grid.add_theme_constant_override("v_separation", 5)
     platform_browser_panel.add_child(platform_browser_grid)
 
     platform_browser_title_label = Label.new()
-    platform_browser_title_label.position = Vector2(220, 354)
+    platform_browser_title_label.position = Vector2(220, 274)
     platform_browser_title_label.size = Vector2(512, 34)
     platform_browser_title_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
     platform_browser_title_label.add_theme_font_size_override("font_size", 18)
@@ -4650,7 +4648,7 @@ func _create_platform_browser() -> void :
     platform_browser_panel.add_child(platform_browser_title_label)
 
     platform_browser_count_label = Label.new()
-    platform_browser_count_label.position = Vector2(220, 388)
+    platform_browser_count_label.position = Vector2(220, 308)
     platform_browser_count_label.size = Vector2(512, 32)
     platform_browser_count_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
     platform_browser_count_label.add_theme_font_size_override("font_size", 17)
@@ -4658,7 +4656,7 @@ func _create_platform_browser() -> void :
     platform_browser_panel.add_child(platform_browser_count_label)
 
     platform_browser_close_chip = Control.new()
-    platform_browser_close_chip.position = Vector2(196, 362)
+    platform_browser_close_chip.position = Vector2(196, 282)
     platform_browser_close_chip.size = Vector2(100, 68)
     platform_browser_panel.add_child(platform_browser_close_chip)
 
@@ -4771,13 +4769,36 @@ func _create_special_roll_browser() -> void :
     close_button.pressed.connect(_on_special_roll_browser_close_pressed)
     special_roll_browser_close_chip.add_child(close_button)
 
-    for item in SPECIAL_ROLL_ITEMS:
-        var item_title: String = item["title"]
-        var tile: = _create_special_roll_tile(item)
-        special_roll_browser_grid.add_child(tile)
-        special_roll_buttons[item_title] = tile
+    _populate_special_roll_browser_grid()
 
     _update_special_roll_selection(selected_list_title)
+
+
+
+func _populate_special_roll_browser_grid() -> void :
+    var columns: int = special_roll_browser_grid.columns
+    var total_items: int = SPECIAL_ROLL_ITEMS.size()
+    var last_row_items: int = total_items % columns
+    var centered_last_row: HBoxContainer = null
+    var centered_last_row_start: int = total_items
+    if last_row_items > 0:
+        centered_last_row_start = total_items - last_row_items
+        centered_last_row = HBoxContainer.new()
+        centered_last_row.alignment = BoxContainer.ALIGNMENT_CENTER
+        centered_last_row.position = Vector2(6, 12 + int(centered_last_row_start / columns) * 86)
+        centered_last_row.size = Vector2(940, 81)
+        centered_last_row.add_theme_constant_override("separation", 5)
+        special_roll_browser_panel.add_child(centered_last_row)
+
+    for item_index in range(total_items):
+        var item: Dictionary = SPECIAL_ROLL_ITEMS[item_index]
+        var item_title: String = item["title"]
+        var tile: = _create_special_roll_tile(item)
+        if centered_last_row != null and item_index >= centered_last_row_start:
+            centered_last_row.add_child(tile)
+        else:
+            special_roll_browser_grid.add_child(tile)
+        special_roll_buttons[item_title] = tile
 
 
 
@@ -5056,14 +5077,13 @@ func _populate_platform_browser_grid() -> void :
         "GameBoy / Color", 
         "GameGear", 
         "Super Famicom / SNES", 
-        "NeoGeo", 
         "Panasonic 3DO", 
         "Sega Saturn", 
         "PS1", 
         "Virtual Boy", 
+        "Nintendo 64",
     ]
     var row2_titles: Array[String] = [
-        "Nintendo 64", 
         "NeoGeo Pocket", 
         "Dreamcast", 
         "Wonder Swan", 
@@ -5073,19 +5093,14 @@ func _populate_platform_browser_grid() -> void :
         "GBA", 
         "Nintendo DS", 
         "PSP", 
-        "Xbox 360", 
         "PS3", 
+        "Wii", 
+        "Nintendo 3DS", 
     ]
     var row3_titles: Array[String] = [
-        "Wii", 
-        "PSVita", 
-        "Nintendo 3DS", 
-        "Wii U", 
-    ]
-    var row4_titles: Array[String] = [
+        "Wii U",
         "ZX Spectrum", 
         "Commodore 64", 
-        "NEC PC-98", 
         "MSX / MSX 2", 
         "Amstrad CPC", 
         "Commodore Amiga", 
@@ -5099,13 +5114,7 @@ func _populate_platform_browser_grid() -> void :
 
     _add_platform_browser_row(item_map, row1_titles)
     _add_platform_browser_row(item_map, row2_titles)
-    for _i in range(4):
-        platform_browser_grid.add_child(_create_platform_browser_spacer())
     _add_platform_browser_row(item_map, row3_titles)
-    for _i in range(4):
-        platform_browser_grid.add_child(_create_platform_browser_spacer())
-    _add_platform_browser_row(item_map, row4_titles)
-    platform_browser_grid.add_child(_create_platform_browser_spacer())
 
 
 
