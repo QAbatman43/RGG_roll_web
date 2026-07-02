@@ -141,7 +141,7 @@ const SPECIAL_ROLL_ITEMS: Array[Dictionary] = [
     {"id": "AVGN", "title": "AVGN", "path": "res://lists/AVGN.dat"}, 
     {"id": "gccx", "title": "Game Center CX", "path": "res://lists/gccx.dat"}, 
     {"id": "sms_gg", "title": "SMS+GG", "path": "res://lists/sms_gg.dat"}, 
-    {"id": "nintendo", "title": "Nintendo", "path": "res://lists/nintendo.dat"}, 
+    {"id": "nintendo", "title": "Nintendo", "path": "res://lists/nintendo.dat", "tooltip": "Знаковые и культовые игры от Nintendo только для их консолей"},
     {"id": "playstation", "title": "Playstation", "path": "res://lists/playstation.dat"}, 
     {"id": "allpc", "title": "All-PC", "path": "res://lists/allpc.dat"}, 
     {"id": "capcom", "title": "CAPCOM", "path": "res://lists/capcom.dat"}, 
@@ -186,6 +186,7 @@ const SPECIAL_ROLL_ITEMS: Array[Dictionary] = [
     {"id": "roguelite", "title": "Roguelite", "path": "res://lists/roguelite.dat"}, 
     {"id": "doom", "title": "Doom", "path": "res://lists/doom.dat"}, 
     {"id": "vk", "title": "VK", "path": "res://lists/vk.dat"}, 
+    {"id": "pixel_games", "title": "Pixel Games", "path": "res://lists/Pixel_games.dat"},
     {"id": "anime", "title": "Anime", "path": "res://lists/anime.dat"}, 
 ]
 const SPECIAL_ROLL_ICON_PATHS: = {
@@ -256,6 +257,7 @@ const SPECIAL_ROLL_ICON_PATHS: = {
     "shmup": "res://images/specrolls/shmup.png", 
     "sega": "res://images/specrolls/sega.png", 
     "pizza": "res://images/specrolls/pizza.png", 
+    "pixel_games": "res://images/specrolls/pixel_games.png",
     "pike": "res://images/specrolls/pike.png", 
     "mini": "res://images/specrolls/mini.png", 
     "tornis": "res://images/specrolls/tornis.png", 
@@ -4974,6 +4976,7 @@ func _create_special_roll_tile(item: Dictionary) -> Panel:
     button.anchor_bottom = 1.0
     button.focus_mode = Control.FOCUS_NONE
     button.flat = true
+    button.tooltip_text = str(item.get("tooltip", ""))
     button.mouse_default_cursor_shape = Control.CURSOR_POINTING_HAND
     button.pressed.connect(_on_special_roll_item_pressed.bind(item_id, item_title, item_path))
     button.gui_input.connect(_on_list_preview_input.bind(item_title, item_path))
