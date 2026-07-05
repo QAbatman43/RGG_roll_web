@@ -116,78 +116,80 @@ const PLATFORM_BROWSER_ITEMS: Array[Dictionary] = [
     {"id": "steam", "title": "Steam", "path": "res://lists/steam.dat", "icon_path": "res://images/platforms/steam.png"}, 
 ]
 const SPECIAL_ROLL_ITEMS: Array[Dictionary] = [
-    {"id": "kernel", "title": "Kernel", "path": "res://lists/kernel.dat"}, 
-    {"id": "female", "title": "Female", "path": "res://lists/female.dat"}, 
-    {"id": "train", "title": "Поезд", "path": "res://lists/train.dat"}, 
-    {"id": "tornis", "title": "TorNis", "path": "res://lists/tornis.dat"}, 
-    {"id": "steam_unf", "title": "Steam UNF", "path": "res://lists/steam_unf.dat"}, 
-    {"id": "souls_unf", "title": "Souls UNF", "path": "res://lists/souls_unf.dat"}, 
-    {"id": "shmup", "title": "Shmup", "path": "res://lists/shmup.dat"}, 
-    {"id": "sega", "title": "Sega", "path": "res://lists/sega.dat"}, 
-    {"id": "pizza", "title": "Pizza", "path": "res://lists/pizza.dat"}, 
-    {"id": "pike", "title": "Пике", "path": "res://lists/pike.dat"}, 
-    {"id": "mini", "title": "Mini", "path": "res://lists/mini.dat"}, 
-    {"id": "kover", "title": "Kover", "path": "res://lists/kover.dat"}, 
-    {"id": "mario", "title": "Mario", "path": "res://lists/mario.dat"}, 
-    {"id": "sonic", "title": "Sonic", "path": "res://lists/sonic.dat"}, 
-    {"id": "megaman", "title": "Megaman", "path": "res://lists/megaman.dat"}, 
-    {"id": "jim", "title": "Earthworm Jim", "path": "res://lists/jim.dat"}, 
-    {"id": "makaimura", "title": "Ghosts'n Goblins", "path": "res://lists/makaimura.dat"}, 
-    {"id": "dizzy", "title": "Dizzy", "path": "res://lists/dizzy.dat"}, 
-    {"id": "mermaid", "title": "Русалочка", "path": "res://lists/mermaid.dat"}, 
-    {"id": "flintstones", "title": "Flintstones", "path": "res://lists/flintstones.dat"}, 
-    {"id": "castlevania", "title": "Castlevania", "path": "res://lists/castlevania.dat"}, 
-    {"id": "metroidvania", "title": "Metroidvania", "path": "res://lists/metroidvania.dat"}, 
-    {"id": "AVGN", "title": "AVGN", "path": "res://lists/AVGN.dat"}, 
-    {"id": "gccx", "title": "Game Center CX", "path": "res://lists/gccx.dat"}, 
-    {"id": "sms_gg", "title": "SMS+GG", "path": "res://lists/sms_gg.dat"}, 
-    {"id": "nintendo", "title": "Nintendo", "path": "res://lists/nintendo.dat", "tooltip": "Знаковые и культовые игры от Nintendo только для их консолей"},
-    {"id": "playstation", "title": "Playstation", "path": "res://lists/playstation.dat"}, 
-    {"id": "allpc", "title": "All-PC", "path": "res://lists/allpc.dat"}, 
-    {"id": "capcom", "title": "CAPCOM", "path": "res://lists/capcom.dat"}, 
-    {"id": "konami", "title": "KONAMI", "path": "res://lists/konami.dat"}, 
-    {"id": "disney", "title": "Disney", "path": "res://lists/disney.dat"}, 
-    {"id": "namco", "title": "namco", "path": "res://lists/namco.dat"}, 
-    {"id": "rare", "title": "RARE", "path": "res://lists/rare.dat"}, 
-    {"id": "lukas", "title": "Lucas Arts", "path": "res://lists/lukas.dat"}, 
-    {"id": "hudson", "title": "Hudson Soft", "path": "res://lists/hudson.dat"}, 
-    {"id": "iwb", "title": "I Wanna be", "path": "res://lists/iwb.dat"}, 
-    {"id": "nancy", "title": "Нэнси Дрю", "path": "res://lists/nancy.dat"}, 
-    {"id": "WAR", "title": "WAR", "path": "res://lists/WAR.dat"}, 
-    {"id": "top100", "title": "TOP100", "path": "res://lists/top100.dat"}, 
-    {"id": "2007", "title": "2007", "path": "res://lists/2007.dat"}, 
-    {"id": "rhythm", "title": "Rhythm", "path": "res://lists/rhythm.dat"}, 
-    {"id": "horror", "title": "Horror", "path": "res://lists/horror.dat"}, 
-    {"id": "racing", "title": "Racing", "path": "res://lists/racing.dat"}, 
-    {"id": "weird", "title": "Weird", "path": "res://lists/weird.dat"}, 
-    {"id": "arcade", "title": "Arcade", "path": "res://lists/arcade.dat"}, 
-    {"id": "past", "title": "Прошлое", "path": "res://lists/past.dat"}, 
-    {"id": "souls", "title": "Souls-like", "path": "res://lists/souls.dat"}, 
-    {"id": "touhou", "title": "Touhou", "path": "res://lists/touhou.dat"}, 
-    {"id": "vhs", "title": "VHS", "path": "res://lists/vhs.dat"}, 
-    {"id": "hakon", "title": "XaKoH", "path": "res://lists/hakon.dat"}, 
-    {"id": "zhem", "title": "Zhem", "path": "res://lists/zhem.dat"}, 
-    {"id": "suponev", "title": "Супонев", "path": "res://lists/suponev.dat"}, 
-    {"id": "kinaman", "title": "Кинаман", "path": "res://lists/kinaman.dat"}, 
-    {"id": "ping", "title": "Ping", "path": "res://lists/ping.dat"}, 
-    {"id": "73", "title": "73", "path": "res://lists/73.dat"}, 
-    {"id": "negativ4ik", "title": "NeGAtiv4k", "path": "res://lists/negativ4ik.dat"}, 
-    {"id": "browjey", "title": "Бровян", "path": "res://lists/browjey.dat"}, 
-    {"id": "rats", "title": "Расти", "path": "res://lists/rusty.dat"}, 
-    {"id": "ruben", "title": "Ruben", "path": "res://lists/ruben.dat"}, 
-    {"id": "tanya", "title": "Таня", "path": "res://lists/tanya.dat"}, 
-    {"id": "rggland", "title": "RGG", "path": "res://lists/rggland.dat"}, 
-    {"id": "items", "title": "Замок", "path": "res://lists/items.dat"}, 
-    {"id": "ducks", "title": "Утки", "path": "res://lists/ducks.dat"}, 
-    {"id": "migorei", "title": "Мастер Игорей", "path": "res://lists/migorei.dat"}, 
-    {"id": "boobs", "title": "Boobs", "path": "res://lists/boobs.dat"}, 
-    {"id": "golden", "title": "Золото", "path": "res://lists/Gold.dat"}, 
-    {"id": "ports", "title": "Порты", "path": "res://lists/ports.dat"}, 
-    {"id": "roguelite", "title": "Roguelite", "path": "res://lists/roguelite.dat"}, 
-    {"id": "doom", "title": "Doom", "path": "res://lists/doom.dat"}, 
-    {"id": "vk", "title": "VK", "path": "res://lists/vk.dat"}, 
-    {"id": "pixel_games", "title": "Pixel Games", "path": "res://lists/Pixel_games.dat"},
-    {"id": "anime", "title": "Anime", "path": "res://lists/anime.dat"}, 
+    {"id": "kernel", "title": "Kernel", "path": "res://lists/kernel.dat", "tooltip": "Недопройденные игры стримеров на конец сезона RGG-LAND"},
+    {"id": "female", "title": "Female", "path": "res://lists/female.dat", "tooltip": "Игры с протагонистом женского пола"},
+    {"id": "train", "title": "Поезд", "path": "res://lists/train.dat", "tooltip": "Всеми любимые замемасившиеся РГГ-игры"},
+    {"id": "tornis", "title": "TorNis", "path": "res://lists/tornis.dat", "tooltip": "Игры от Торниса"},
+    {"id": "steam_unf", "title": "Steam UNF", "path": "res://lists/steam_unf.dat", "tooltip": "Нефильтрованный список почти всех игр, присутствующих в Стиме"},
+    {"id": "souls_unf", "title": "Souls UNF", "path": "res://lists/souls_unf.dat", "tooltip": "Нефильтрованный список игр из Стима с тегом soulslike"},
+    {"id": "shmup", "title": "Shmup", "path": "res://lists/shmup.dat", "tooltip": "Шут-эм-апы"},
+    {"id": "sega", "title": "Sega", "path": "res://lists/sega.dat", "tooltip": "Знаковые и культовые игры, сделанные Сегой"},
+    {"id": "pizza", "title": "Pizza", "path": "res://lists/pizza.dat", "tooltip": "Игры от Нойки"},
+    {"id": "pike", "title": "Пике", "path": "res://lists/pike.dat", "tooltip": "Альтернативные замемасившимся игры с РГГ"},
+    {"id": "mini", "title": "Mini", "path": "res://lists/mini.dat", "tooltip": "Игры с небольших и редких платформ"},
+    {"id": "kover", "title": "Kover", "path": "res://lists/kover.dat", "tooltip": "Игры от Ковра"},
+    {"id": "mario", "title": "Mario", "path": "res://lists/mario.dat", "tooltip": "Официальные игры, неофициальные игры, хаки, моды и фан-геймы по Марио"},
+    {"id": "sonic", "title": "Sonic", "path": "res://lists/sonic.dat", "tooltip": "Официальные игры, неофициальные игры, хаки, моды и фан-геймы по Сонику"},
+    {"id": "megaman", "title": "Megaman", "path": "res://lists/megaman.dat", "tooltip": "Официальные игры, неофициальные игры, хаки, моды и фан-геймы по Мегамену"},
+    {"id": "jim", "title": "Earthworm Jim", "path": "res://lists/jim.dat", "tooltip": "Игры по Червяку Джиму"},
+    {"id": "makaimura", "title": "Ghosts'n Goblins", "path": "res://lists/makaimura.dat", "tooltip": "Игры из серии Ghosts 'n Goblins"},
+    {"id": "dizzy", "title": "Dizzy", "path": "res://lists/dizzy.dat", "tooltip": "Официальные игры, неофициальные игры, хаки, моды и фан-геймы по Диззи"},
+    {"id": "mermaid", "title": "Русалочка", "path": "res://lists/mermaid.dat", "tooltip": "Игры по Русалочке"},
+    {"id": "flintstones", "title": "Flintstones", "path": "res://lists/flintstones.dat", "tooltip": "Игры по Флинтстоунам"},
+    {"id": "castlevania", "title": "Castlevania", "path": "res://lists/castlevania.dat", "tooltip": "Официальные игры, неофициальные игры, хаки, моды и фан-геймы по Кастлвании"},
+    {"id": "metroidvania", "title": "Metroidvania", "path": "res://lists/metroidvania.dat", "tooltip": "Метроидвании"},
+    {"id": "AVGN", "title": "AVGN", "path": "res://lists/AVGN.dat", "tooltip": "Игры, которые обозревал Angry Video Game Nerd"},
+    {"id": "gccx", "title": "Game Center CX", "path": "res://lists/gccx.dat", "tooltip": "Игры из японского летспей-шоу Game Center CX"},
+    {"id": "sms_gg", "title": "SMS+GG", "path": "res://lists/sms_gg.dat", "tooltip": "Игры с платформ Master System и Game Gear"},
+    {"id": "nintendo", "title": "Nintendo", "path": "res://lists/nintendo.dat", "tooltip": "Знаковые и культовые игры, сделанные Нинтендо"},
+    {"id": "playstation", "title": "Playstation", "path": "res://lists/playstation.dat", "tooltip": "Знаковые и культовые игры, сделанные Сони"},
+    {"id": "allpc", "title": "All-PC", "path": "res://lists/allpc.dat", "tooltip": "Игры из всех списков олдовых пек: DOS, ZX Spectrum, Amiga, C64, MSX, Amstrad, Sharp X68000, Windows"},
+    {"id": "capcom", "title": "CAPCOM", "path": "res://lists/capcom.dat", "tooltip": "Игры, сделанные Капкомом"},
+    {"id": "konami", "title": "KONAMI", "path": "res://lists/konami.dat", "tooltip": "Игры, сделанные Конами"},
+    {"id": "disney", "title": "Disney", "path": "res://lists/disney.dat", "tooltip": "Игры по франшизам Диснея"},
+    {"id": "namco", "title": "namco", "path": "res://lists/namco.dat", "tooltip": "Игры, сделанные Намко"},
+    {"id": "rare", "title": "RARE", "path": "res://lists/rare.dat", "tooltip": "Игры, сделанные Реир"},
+    {"id": "lukas", "title": "Lucas Arts", "path": "res://lists/lukas.dat", "tooltip": "Игры, сделанные Лукас Артсом"},
+    {"id": "hudson", "title": "Hudson Soft", "path": "res://lists/hudson.dat", "tooltip": "Игры, сделанные Хадсон Софтом"},
+    {"id": "iwb", "title": "I Wanna be", "path": "res://lists/iwb.dat", "tooltip": "Фан-геймы, основанные на движке I wanna be the guy"},
+    {"id": "nancy", "title": "Нэнси Дрю", "path": "res://lists/nancy.dat", "tooltip": "Игры по Нэнси Дрю"},
+    {"id": "WAR", "title": "WAR", "path": "res://lists/WAR.dat", "tooltip": "Игры на военную тематику"},
+    {"id": "top100", "title": "TOP100", "path": "res://lists/top100.dat", "tooltip": "Игры от разработчиков и помощников в разработке RGG"},
+    {"id": "2007", "title": "2007", "path": "res://lists/2007.dat", "tooltip": "Игры, вышедшие в 2007 году"},
+    {"id": "rhythm", "title": "Rhythm", "path": "res://lists/rhythm.dat", "tooltip": "Ритм-игры"},
+    {"id": "horror", "title": "Horror", "path": "res://lists/horror.dat", "tooltip": "Страшные игры от Кавая"},
+    {"id": "racing", "title": "Racing", "path": "res://lists/racing.dat", "tooltip": "Гоночные игры"},
+    {"id": "weird", "title": "Weird", "path": "res://lists/weird.dat", "tooltip": "Durka - странные игры"},
+    {"id": "arcade", "title": "Arcade", "path": "res://lists/arcade.dat", "tooltip": "Игры с аркадных автоматов"},
+    {"id": "past", "title": "Прошлое", "path": "res://lists/past.dat", "tooltip": "Игры, которые дропали стримеры во всех сезонах RGG-LAND"},
+    {"id": "souls", "title": "Souls-like", "path": "res://lists/souls.dat", "tooltip": "Специально отобранные соулс-лайки"},
+    {"id": "touhou", "title": "Touhou", "path": "res://lists/touhou.dat", "tooltip": "Игры из серии Touhou Project"},
+    {"id": "vhs", "title": "VHS", "path": "res://lists/vhs.dat", "tooltip": "Игры по фильмам от Глеба"},
+    {"id": "hakon", "title": "XaKoH", "path": "res://lists/hakon.dat", "tooltip": "Игры от Хакона"},
+    {"id": "zhem", "title": "Zhem", "path": "res://lists/zhem.dat", "tooltip": "Квесты от Жем"},
+    {"id": "suponev", "title": "Супонев", "path": "res://lists/suponev.dat", "tooltip": "Игры из передачи «Новая реальность»"},
+    {"id": "kinaman", "title": "Кинаман", "path": "res://lists/kinaman.dat", "tooltip": "Игры из Dendy Challenge от Кинамана"},
+    {"id": "ping", "title": "Ping", "path": "res://lists/ping.dat", "tooltip": "Игры про котов от Пинг"},
+    {"id": "73", "title": "73", "path": "res://lists/73.dat", "tooltip": "Игры от Нюка"},
+    {"id": "negativ4ik", "title": "NeGAtiv4k", "path": "res://lists/negativ4ik.dat", "tooltip": "Игры от Негативчика"},
+    {"id": "browjey", "title": "Бровян", "path": "res://lists/browjey.dat", "tooltip": "Игры Бровяна со всех его RGG"},
+    {"id": "rats", "title": "Расти", "path": "res://lists/rusty.dat", "tooltip": "Игры от Расти"},
+    {"id": "ruben", "title": "Ruben", "path": "res://lists/ruben.dat", "tooltip": "Игры от Рубена"},
+    {"id": "tanya", "title": "Таня", "path": "res://lists/tanya.dat", "tooltip": "Игры от Тани"},
+    {"id": "rggland", "title": "RGG", "path": "res://lists/rggland.dat", "tooltip": "Несколько любимых игр от каждого стримера-участника RGG"},
+    {"id": "items", "title": "Замок", "path": "res://lists/items.dat", "tooltip": "Самые сложные и хардкорные игры"},
+    {"id": "ducks", "title": "Утки", "path": "res://lists/ducks.dat", "tooltip": "Игры на утиную тематику"},
+    {"id": "migorei", "title": "Мастер Игорей", "path": "res://lists/migorei.dat", "tooltip": "Игры из ивента Мастер Игорей"},
+    {"id": "boobs", "title": "Boobs", "path": "res://lists/boobs.dat", "tooltip": "Игры про сиськи от Давида"},
+    {"id": "golden", "title": "Золото", "path": "res://lists/Gold.dat", "tooltip": "Лучшие игры со всех платформ"},
+    {"id": "ports", "title": "Порты", "path": "res://lists/ports.dat", "tooltip": "Малоизвестные порты известных игр на разные платформы"},
+    {"id": "roguelite", "title": "Roguelite", "path": "res://lists/roguelite.dat", "tooltip": "Рогалики от Тиана"},
+    {"id": "doom", "title": "Doom", "path": "res://lists/doom.dat", "tooltip": "WAD-моды для всех версий старых Думов"},
+    {"id": "vk", "title": "VK", "path": "res://lists/vk.dat", "tooltip": "Игры из магазина VK Play"},
+    {"id": "pixel_games", "title": "Pixel Games", "path": "res://lists/pixel.dat", "tooltip": "Игры от издателя Pixel Games в Стиме"},
+    {"id": "anime", "title": "Anime", "path": "res://lists/anime.dat", "tooltip": "Игры по аниме"},
+    {"id": "ninja", "title": "Ninja", "path": "res://lists/ninja.dat", "tooltip": "Игры про ниндзей"},
+    {"id": "zombie", "title": "Zombie", "path": "res://lists/zombie.dat", "tooltip": "Игры про зомби"},
 ]
 const SPECIAL_ROLL_ICON_PATHS: = {
     "2007": "res://images/specrolls/2007.png", 
@@ -258,6 +260,8 @@ const SPECIAL_ROLL_ICON_PATHS: = {
     "sega": "res://images/specrolls/sega.png", 
     "pizza": "res://images/specrolls/pizza.png", 
     "pixel_games": "res://images/specrolls/pixel_games.png",
+    "ninja": "res://images/specrolls/ninja.png",
+    "zombie": "res://images/specrolls/zombie.png",
     "pike": "res://images/specrolls/pike.png", 
     "mini": "res://images/specrolls/mini.png", 
     "tornis": "res://images/specrolls/tornis.png", 
@@ -4698,6 +4702,12 @@ func _create_platform_browser() -> void :
 
 
 func _create_special_roll_browser() -> void :
+    var special_roll_columns: = 12
+    var special_roll_rows: = int(ceil(float(SPECIAL_ROLL_ITEMS.size()) / float(special_roll_columns)))
+    var special_roll_grid_height: = special_roll_rows * 81 + maxi(special_roll_rows - 1, 0) * 5
+    var special_roll_footer_y: = 12 + special_roll_grid_height + 5
+    var special_roll_panel_height: = special_roll_footer_y + 76
+
     special_roll_browser_backdrop = ColorRect.new()
     special_roll_browser_backdrop.color = Color(0.12, 0.12, 0.12, 0.0)
     special_roll_browser_backdrop.mouse_filter = Control.MOUSE_FILTER_IGNORE
@@ -4709,20 +4719,20 @@ func _create_special_roll_browser() -> void :
     special_roll_browser_panel = Panel.new()
     special_roll_browser_panel.visible = false
     special_roll_browser_panel.position = Vector2(26, 760)
-    special_roll_browser_panel.size = Vector2(952, 604)
+    special_roll_browser_panel.size = Vector2(952, special_roll_panel_height)
     special_roll_browser_panel.add_theme_stylebox_override("panel", _create_platform_browser_style())
     add_child(special_roll_browser_panel)
 
     special_roll_browser_grid = GridContainer.new()
-    special_roll_browser_grid.columns = 12
+    special_roll_browser_grid.columns = special_roll_columns
     special_roll_browser_grid.position = Vector2(6, 12)
-    special_roll_browser_grid.size = Vector2(940, 512)
+    special_roll_browser_grid.size = Vector2(940, special_roll_grid_height)
     special_roll_browser_grid.add_theme_constant_override("h_separation", 5)
     special_roll_browser_grid.add_theme_constant_override("v_separation", 5)
     special_roll_browser_panel.add_child(special_roll_browser_grid)
 
     special_roll_browser_title_label = Label.new()
-    special_roll_browser_title_label.position = Vector2(250, 528)
+    special_roll_browser_title_label.position = Vector2(250, special_roll_footer_y)
     special_roll_browser_title_label.size = Vector2(452, 32)
     special_roll_browser_title_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
     special_roll_browser_title_label.add_theme_font_size_override("font_size", 18)
@@ -4730,7 +4740,7 @@ func _create_special_roll_browser() -> void :
     special_roll_browser_panel.add_child(special_roll_browser_title_label)
 
     special_roll_browser_count_label = Label.new()
-    special_roll_browser_count_label.position = Vector2(250, 564)
+    special_roll_browser_count_label.position = Vector2(250, special_roll_footer_y + 36)
     special_roll_browser_count_label.size = Vector2(452, 30)
     special_roll_browser_count_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
     special_roll_browser_count_label.add_theme_font_size_override("font_size", 17)
@@ -4738,7 +4748,7 @@ func _create_special_roll_browser() -> void :
     special_roll_browser_panel.add_child(special_roll_browser_count_label)
 
     special_roll_browser_close_chip = Control.new()
-    special_roll_browser_close_chip.position = Vector2(700, 524)
+    special_roll_browser_close_chip.position = Vector2(700, special_roll_footer_y - 4)
     special_roll_browser_close_chip.size = Vector2(100, 68)
     special_roll_browser_panel.add_child(special_roll_browser_close_chip)
 
@@ -5352,10 +5362,11 @@ func _toggle_special_roll_browser(force_state: int = -1) -> void :
         special_roll_browser_backdrop.visible = true
         special_roll_browser_panel.visible = true
         special_roll_browser_panel.position = Vector2(26, 760)
+        var open_y: = maxf(8.0, get_viewport_rect().size.y - special_roll_browser_panel.size.y + 2.0)
         special_roll_browser_tween = create_tween()
         special_roll_browser_tween.set_parallel(true)
         special_roll_browser_tween.tween_property(special_roll_browser_backdrop, "color", Color(0.12, 0.12, 0.12, 0.28), SPECIAL_ROLL_BROWSER_TOGGLE_WAIT)
-        special_roll_browser_tween.tween_property(special_roll_browser_panel, "position", Vector2(26, 126), SPECIAL_ROLL_BROWSER_TOGGLE_WAIT)
+        special_roll_browser_tween.tween_property(special_roll_browser_panel, "position", Vector2(26, open_y), SPECIAL_ROLL_BROWSER_TOGGLE_WAIT)
         return
 
     special_roll_browser_tween = create_tween()
