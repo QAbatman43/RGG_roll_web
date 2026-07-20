@@ -352,6 +352,7 @@ const FINAL_STOP_CENTER: = 1
 const FINAL_STOP_SLOW_NEXT: = 2
 const FINAL_STOP_SLOW_PREVIOUS: = 3
 const DOUBLE_ROLL_DURATION_MULTIPLIER: = 2
+const FAST_ROLL_DURATION_MULTIPLIER: = 2.5
 const DOUBLE_ROLL_DURATION_LISTS: Array[String] = [
     "res://lists/2007.dat", 
     "res://lists/lukas.dat", 
@@ -1509,7 +1510,15 @@ func _generate_stopwheel() -> int:
     if _uses_double_roll_duration():
         min_stop *= DOUBLE_ROLL_DURATION_MULTIPLIER
         max_stop *= DOUBLE_ROLL_DURATION_MULTIPLIER
+    min_stop = _scaled_fast_roll_stop_steps(min_stop)
+    max_stop = _scaled_fast_roll_stop_steps(max_stop)
     return rng.randi_range(min_stop, max_stop)
+
+
+
+func _scaled_fast_roll_stop_steps(base_stop_steps: int) -> int:
+    var fast_steps: = maxi(0, base_stop_steps - FINAL_SLOWDOWN_STEPS)
+    return FINAL_SLOWDOWN_STEPS + int(round(float(fast_steps) * FAST_ROLL_DURATION_MULTIPLIER))
 
 
 
