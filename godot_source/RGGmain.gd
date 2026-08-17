@@ -3406,8 +3406,9 @@ func _get_tts_voice_id() -> String:
     if not cached_tts_voice_id.is_empty():
         return cached_tts_voice_id
 
-    var preferred_language: = _get_tts_preferred_language()
-    if not preferred_language.is_empty():
+    for preferred_language in _get_tts_preferred_language_candidates():
+        if preferred_language.is_empty():
+            continue
         var localized_voices: PackedStringArray = DisplayServer.tts_get_voices_for_language(preferred_language)
         if not localized_voices.is_empty():
             cached_tts_voice_id = localized_voices[0]
@@ -3417,26 +3418,87 @@ func _get_tts_voice_id() -> String:
     if voices_info.is_empty():
         return ""
 
+    var preferred_language_prefix: = _get_tts_preferred_language_prefix()
+    if not preferred_language_prefix.is_empty():
+        var prefixed_voice_id: = _find_tts_voice_id_by_language_prefix(voices_info, preferred_language_prefix)
+        if not prefixed_voice_id.is_empty():
+            cached_tts_voice_id = prefixed_voice_id
+            return cached_tts_voice_id
+
     var first_voice: Dictionary = voices_info[0]
     if first_voice.has("id"):
-        cached_tts_voice_id = str(first_voice["id"])
+        return str(first_voice["id"])
 
     return cached_tts_voice_id
 
 
 
-func _get_tts_preferred_language() -> String :
+func _get_tts_preferred_language_candidates() -> Array[String] :
+    var normalized_mode: = _normalize_tts_language_mode(tts_language_mode)
+    if normalized_mode == TTS_LANGUAGE_EN:
+        var english_candidates: Array[String] = ["en-US", "en_US", "en-GB", "en_GB", TTS_LANGUAGE_EN]
+        return english_candidates
+    if normalized_mode == TTS_LANGUAGE_RU:
+        var russian_candidates: Array[String] = ["ru-RU", "ru_RU", TTS_LANGUAGE_RU]
+        return russian_candidates
+
+    var locale: = TranslationServer.get_locale().replace("_", "-")
+    var candidates: Array[String] = []
+    if not locale.is_empty():
+        candidates.append(locale)
+
+    var parts: = locale.split("-", false)
+    if not parts.is_empty():
+        var base_language: = str(parts[0]).to_lower()
+        if not base_language.is_empty() and not candidates.has(base_language):
+            candidates.append(base_language)
+    return candidates
+
+
+
+func _get_tts_preferred_language_prefix() -> String :
     var normalized_mode: = _normalize_tts_language_mode(tts_language_mode)
     if normalized_mode == TTS_LANGUAGE_EN:
         return TTS_LANGUAGE_EN
     if normalized_mode == TTS_LANGUAGE_RU:
         return TTS_LANGUAGE_RU
 
-    var locale: = TranslationServer.get_locale().replace("-", "_")
-    var parts: = locale.split("_", false)
+    var candidates: = _get_tts_preferred_language_candidates()
+    if candidates.is_empty():
+        return ""
+    var normalized_language: = _normalize_tts_language_tag(candidates[0])
+    var parts: = normalized_language.split("-", false)
     if parts.is_empty():
         return ""
-    return str(parts[0]).to_lower()
+    return str(parts[0])
+
+
+
+func _find_tts_voice_id_by_language_prefix(voices_info: Array[Dictionary], language_prefix: String) -> String :
+    var normalized_prefix: = _normalize_tts_language_tag(language_prefix)
+    if normalized_prefix.is_empty():
+        return ""
+    for voice_info in voices_info:
+        if not voice_info.has("id"):
+            continue
+        var voice_language: = _tts_voice_language_from_info(voice_info)
+        if voice_language == normalized_prefix or voice_language.begins_with("%s-" % normalized_prefix):
+            return str(voice_info["id"])
+    return ""
+
+
+
+func _tts_voice_language_from_info(voice_info: Dictionary) -> String :
+    if voice_info.has("language"):
+        return _normalize_tts_language_tag(str(voice_info["language"]))
+    if voice_info.has("lang"):
+        return _normalize_tts_language_tag(str(voice_info["lang"]))
+    return ""
+
+
+
+func _normalize_tts_language_tag(language: String) -> String :
+    return language.strip_edges().replace("_", "-").to_lower()
 
 
 
