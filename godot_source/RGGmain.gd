@@ -434,8 +434,8 @@ const DEFAULT_TTS_RATE: = 1.0
 const TTS_UTTERANCE_ID: = 1
 const DEFAULT_SOUND_VOLUME_PERCENT: = 100.0
 const MAX_SOUND_VOLUME_PERCENT: = 200.0
-const TTS_RATE_VALUES: Array[float] = [0.75, 1.0, 1.25, 1.5, 2.0]
-const TTS_RATE_LABELS: Array[String] = ["TTS x0.75", "TTS x1", "TTS x1.25", "TTS x1.5", "TTS x2"]
+const TTS_RATE_VALUES: Array[float] = [0.75, 1.0, 1.5, 2.0, 3.0]
+const TTS_RATE_LABELS: Array[String] = ["TTS x0.75", "TTS x1", "TTS x1.5", "TTS x2", "TTS x3"]
 
 var selected_platform: = ""
 var selected_list_path: = ""
