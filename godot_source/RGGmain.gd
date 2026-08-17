@@ -1,6 +1,11 @@
 extends Control
 
-const UI_FONT: = preload("res://fonts/NotoSansCJKjp-Regular.otf")
+const UI_FONT: = preload("res://fonts/NotoSans-Regular.ttf")
+const UI_CJK_FALLBACK_FONT_PATH: = "res://fonts/NotoSansCJKjp-Regular.otf"
+const UI_ARABIC_FALLBACK_FONT_PATH: = "res://fonts/NotoNaskhArabic-Regular.ttf"
+const UI_THAI_FALLBACK_FONT_PATH: = "res://fonts/NotoSansThai-Regular.ttf"
+const UI_MUSIC_FALLBACK_FONT_PATH: = "res://fonts/NotoMusic-Regular.ttf"
+const UI_SYMBOL_FALLBACK_FONT_PATH: = "res://fonts/DejaVuSans.ttf"
 const UI_EMOJI_FALLBACK_FONT_PATH: = "res://fonts/NotoColorEmoji_WindowsCompatible.ttf"
 const CAT_LIST_ID: = "cat"
 const CAT_LIST_PATH: = "res://lists/cat.dat"
@@ -27,6 +32,10 @@ const CUSTOM_ROLL_MUSIC_PATH: = "user://custom_roll_music.mp3"
 const CUSTOM_ROLL_ITEM_COLOR_PATH: = "user://custom_roll_item_color.txt"
 const CUSTOM_BUTTON_COLOR_PATH: = "user://custom_button_color.txt"
 const CUSTOM_BUTTON_FILL_COLOR_PATH: = "user://custom_button_fill_color.txt"
+const SOUND_MUTED_SETTING_PATH: = "user://sound_muted.txt"
+const SOUND_VOLUME_PERCENT_SETTING_PATH: = "user://sound_volume_percent.txt"
+const TTS_ENABLED_SETTING_PATH: = "user://tts_enabled.txt"
+const TTS_RATE_SETTING_PATH: = "user://tts_rate.txt"
 const WHEEL_DESCRIPTION_LIST_PATH: = "res://lists/wheel_list.dat"
 const WHEEL_MODE_TITLE: = "Колесо добра"
 const PLATFORMS_MODE_TITLE: = "Платформы"
@@ -421,8 +430,12 @@ const RGGLAND_URL: = "https://games.rgg.land/search/"
 const TTS_DELAY_AFTER_STOP: = 0.02
 const TTS_VOLUME: = 100
 const TTS_PITCH: = 1.0
-const TTS_RATE: = 1.0
+const DEFAULT_TTS_RATE: = 1.0
 const TTS_UTTERANCE_ID: = 1
+const DEFAULT_SOUND_VOLUME_PERCENT: = 100.0
+const MAX_SOUND_VOLUME_PERCENT: = 200.0
+const TTS_RATE_VALUES: Array[float] = [0.75, 1.0, 1.25, 1.5, 2.0]
+const TTS_RATE_LABELS: Array[String] = ["TTS x0.75", "TTS x1", "TTS x1.25", "TTS x1.5", "TTS x2"]
 
 var selected_platform: = ""
 var selected_list_path: = ""
@@ -502,7 +515,12 @@ var cached_tts_voice_id: String = ""
 var tts_waiting_for_stop_sound: = false
 var suppress_filter_events: = false
 var tts_enabled: = true
+var tts_rate: = DEFAULT_TTS_RATE
 var sound_muted: = false
+var sound_volume_percent: = DEFAULT_SOUND_VOLUME_PERCENT
+var current_audio_base_volume_db: = 0.0
+var suppress_sound_volume_slider_events: = false
+var suppress_tts_rate_option_events: = false
 var settings_menu_open: = false
 var custom_background_mode: = CUSTOM_BACKGROUND_MODE_STRETCH
 var custom_roll_music_stream: AudioStream
@@ -530,6 +548,9 @@ var web_file_picker_callback_ref = null
 var calc_button: TextureButton
 var settings_button: TextureButton
 var settings_panel: Panel
+var sound_volume_slider: HSlider
+var sound_volume_label: Label
+var tts_rate_option_button: OptionButton
 var calc_window: Window
 var calc_sum_input: LineEdit
 var calc_current_price_input: LineEdit
@@ -646,9 +667,27 @@ func _apply_global_ui_font() -> void :
     var ui_font: = base_font.duplicate() as FontFile
     if ui_font == null:
         ui_font = base_font
+    var fallback_fonts: Array[Font] = []
+    var cjk_font: = load(UI_CJK_FALLBACK_FONT_PATH) as FontFile
+    if cjk_font != null:
+        fallback_fonts.append(cjk_font)
+    var arabic_font: = load(UI_ARABIC_FALLBACK_FONT_PATH) as FontFile
+    if arabic_font != null:
+        fallback_fonts.append(arabic_font)
+    var thai_font: = load(UI_THAI_FALLBACK_FONT_PATH) as FontFile
+    if thai_font != null:
+        fallback_fonts.append(thai_font)
+    var music_font: = load(UI_MUSIC_FALLBACK_FONT_PATH) as FontFile
+    if music_font != null:
+        fallback_fonts.append(music_font)
+    var symbol_font: = load(UI_SYMBOL_FALLBACK_FONT_PATH) as FontFile
+    if symbol_font != null:
+        fallback_fonts.append(symbol_font)
     var emoji_font: = load(UI_EMOJI_FALLBACK_FONT_PATH) as FontFile
     if emoji_font != null:
-        ui_font.fallbacks = [emoji_font]
+        fallback_fonts.append(emoji_font)
+    if not fallback_fonts.is_empty():
+        ui_font.fallbacks = fallback_fonts
     var ui_theme: = Theme.new()
     ui_theme.default_font = ui_font
     ui_theme.default_font_size = 16
@@ -696,8 +735,11 @@ func _ready() -> void :
     if letter_input != null:
         letter_input.text_changed.connect(_on_letter_input_text_changed)
     _connect_list_preview_inputs()
+    _load_saved_audio_toggle_settings()
     _refresh_tts_button()
+    _refresh_tts_rate_button()
     _refresh_sound_mute_button()
+    _refresh_sound_volume_controls()
     _refresh_settings_menu_visibility()
     _reset_selected_list_ui()
     _load_saved_custom_roll_item_color()
@@ -728,6 +770,174 @@ func _connect_list_preview_inputs() -> void :
         var extra_button: = extra_tile.get_node_or_null("ExtraTileButton") as Button
         if extra_button != null:
             extra_button.gui_input.connect(_on_extra_tile_input)
+
+
+
+func _input(event: InputEvent) -> void :
+    if _handle_layout_independent_text_shortcut(event):
+        get_viewport().set_input_as_handled()
+
+
+
+func _handle_layout_independent_text_shortcut(event: InputEvent) -> bool :
+    var key_event: = event as InputEventKey
+    if key_event == null or not key_event.pressed or key_event.echo:
+        return false
+    if not key_event.ctrl_pressed and not key_event.meta_pressed:
+        return false
+    if key_event.alt_pressed:
+        return false
+
+    if _matches_shortcut_key(key_event, KEY_C, ["с"]):
+        return _copy_text_shortcut_selection()
+    if _matches_shortcut_key(key_event, KEY_X, ["ч"]):
+        return _cut_text_shortcut_selection()
+    if _matches_shortcut_key(key_event, KEY_V, ["м"]):
+        return _paste_text_shortcut_clipboard()
+    if _matches_shortcut_key(key_event, KEY_A, ["ф"]):
+        return _select_all_text_shortcut_target()
+    if _matches_shortcut_key(key_event, KEY_Z, ["я"]):
+        if key_event.shift_pressed:
+            return _call_text_shortcut_method("redo")
+        return _call_text_shortcut_method("undo")
+    if _matches_shortcut_key(key_event, KEY_Y, ["н"]):
+        return _call_text_shortcut_method("redo")
+    return false
+
+
+
+func _matches_shortcut_key(key_event: InputEventKey, latin_keycode: Key, cyrillic_keys: Array[String]) -> bool :
+    if key_event.physical_keycode == latin_keycode or key_event.keycode == latin_keycode:
+        return true
+    if key_event.unicode <= 0:
+        return false
+    return cyrillic_keys.has(String.chr(key_event.unicode).to_lower())
+
+
+
+func _focused_text_shortcut_target() -> Control :
+    var focus_owner: = get_viewport().gui_get_focus_owner()
+    if focus_owner is LineEdit or focus_owner is TextEdit or focus_owner is RichTextLabel:
+        return focus_owner as Control
+    return null
+
+
+
+func _focused_editable_text_shortcut_target() -> Control :
+    var target: = _focused_text_shortcut_target()
+    if target == null or not _is_editable_text_shortcut_target(target):
+        return null
+    return target
+
+
+
+func _selected_rich_text_shortcut_target() -> RichTextLabel :
+    for label_variant in [wheel_description_body_label, list_preview_body_label]:
+        var label: = label_variant as RichTextLabel
+        if label != null and label.is_visible_in_tree() and not _selected_text_from_shortcut_target(label).is_empty():
+            return label
+    return null
+
+
+
+func _is_editable_text_shortcut_target(target: Control) -> bool :
+    if target is LineEdit:
+        return (target as LineEdit).editable
+    if target is TextEdit:
+        return (target as TextEdit).editable
+    return false
+
+
+
+func _target_has_text_selection(target: Control) -> bool :
+    return target != null and target.has_method("has_selection") and bool(target.call("has_selection"))
+
+
+
+func _selected_text_from_shortcut_target(target: Control) -> String :
+    if target == null or not target.has_method("get_selected_text"):
+        return ""
+    return str(target.call("get_selected_text"))
+
+
+
+func _delete_text_shortcut_selection(target: Control) -> bool :
+    if target == null or not _is_editable_text_shortcut_target(target) or not _target_has_text_selection(target):
+        return false
+    if target is LineEdit and target.has_method("get_selection_from_column") and target.has_method("get_selection_to_column") and target.has_method("delete_text"):
+        var from_column: = int(target.call("get_selection_from_column"))
+        var to_column: = int(target.call("get_selection_to_column"))
+        target.call("delete_text", from_column, to_column)
+        return true
+    if target is TextEdit and target.has_method("delete_selection"):
+        target.call("delete_selection")
+        return true
+    return false
+
+
+
+func _copy_text_shortcut_selection() -> bool :
+    var target: = _focused_text_shortcut_target()
+    if target == null:
+        target = _selected_rich_text_shortcut_target()
+    var selected_text: = _selected_text_from_shortcut_target(target)
+    if selected_text.is_empty():
+        return false
+    if target != null and target.has_method("copy"):
+        target.call("copy")
+        return true
+    DisplayServer.clipboard_set(selected_text)
+    return true
+
+
+
+func _cut_text_shortcut_selection() -> bool :
+    var target: = _focused_editable_text_shortcut_target()
+    if target == null:
+        return false
+    var selected_text: = _selected_text_from_shortcut_target(target)
+    if selected_text.is_empty():
+        return false
+    if target.has_method("cut"):
+        target.call("cut")
+        return true
+    DisplayServer.clipboard_set(selected_text)
+    return _delete_text_shortcut_selection(target)
+
+
+
+func _paste_text_shortcut_clipboard() -> bool :
+    var target: = _focused_editable_text_shortcut_target()
+    if target == null:
+        return false
+    if target.has_method("paste"):
+        target.call("paste")
+        return true
+    var clipboard_text: = DisplayServer.clipboard_get()
+    if clipboard_text.is_empty() or not target.has_method("insert_text_at_caret"):
+        return false
+    if _target_has_text_selection(target):
+        _delete_text_shortcut_selection(target)
+    target.call("insert_text_at_caret", clipboard_text)
+    return true
+
+
+
+func _select_all_text_shortcut_target() -> bool :
+    var target: = _focused_text_shortcut_target()
+    if target == null or not target.has_method("select_all"):
+        return false
+    target.call("select_all")
+    return true
+
+
+
+func _call_text_shortcut_method(method_name: String) -> bool :
+    var target: = _focused_editable_text_shortcut_target()
+    if target == null or not target.has_method(method_name):
+        return false
+    target.call(method_name)
+    return true
 
 
 
@@ -2144,11 +2354,31 @@ func _update_gacha_state_before_roll() -> void :
 
 
 
+func _adjust_audio_volume_db(base_volume_db: float) -> float :
+    var volume_ratio: = clampf(sound_volume_percent / DEFAULT_SOUND_VOLUME_PERCENT, 0.0001, MAX_SOUND_VOLUME_PERCENT / DEFAULT_SOUND_VOLUME_PERCENT)
+    return base_volume_db + linear_to_db(volume_ratio)
+
+
+
+func _stop_audio_for_mute() -> void :
+    if audio_player == null or not audio_player.playing:
+        return
+    audio_player.stop()
+    if tts_waiting_for_stop_sound and not pending_tts_text.is_empty():
+        tts_waiting_for_stop_sound = false
+        tts_timer.start(TTS_DELAY_AFTER_STOP)
+
+
+
 func _play_stream(stream: AudioStream, volume_db: float = 0.0) -> void :
-    if sound_muted or stream == null:
+    if stream == null:
         return
 
-    audio_player.volume_db = volume_db
+    current_audio_base_volume_db = volume_db
+    if sound_muted or sound_volume_percent <= 0.0:
+        return
+
+    audio_player.volume_db = _adjust_audio_volume_db(volume_db)
     audio_player.stream = stream
     audio_player.play()
 
@@ -2211,7 +2441,7 @@ func _on_tts_timer_timeout() -> void :
         return
 
     DisplayServer.tts_stop()
-    DisplayServer.tts_speak(pending_tts_text, voice_id, TTS_VOLUME, TTS_PITCH, TTS_RATE, TTS_UTTERANCE_ID, true)
+    DisplayServer.tts_speak(pending_tts_text, voice_id, TTS_VOLUME, TTS_PITCH, tts_rate, TTS_UTTERANCE_ID, true)
     pending_tts_text = ""
 
 
@@ -2228,20 +2458,55 @@ func _stop_tts_playback() -> void :
 
 func _on_tts_button_pressed() -> void :
     tts_enabled = not tts_enabled
+    _save_bool_setting(TTS_ENABLED_SETTING_PATH, tts_enabled)
     _refresh_tts_button()
+    _refresh_tts_rate_button()
     if not tts_enabled:
         _stop_tts_playback()
 
 
 
+func _on_tts_rate_item_selected(index: int) -> void :
+    if suppress_tts_rate_option_events:
+        return
+    if index < 0 or index >= TTS_RATE_VALUES.size():
+        return
+    tts_rate = TTS_RATE_VALUES[index]
+    _save_float_setting(TTS_RATE_SETTING_PATH, tts_rate)
+    _refresh_tts_rate_button()
+
+
+
 func _on_sound_mute_button_pressed() -> void :
-    sound_muted = not sound_muted
+    if sound_muted:
+        sound_muted = false
+        if sound_volume_percent <= 0.0:
+            sound_volume_percent = DEFAULT_SOUND_VOLUME_PERCENT
+    else:
+        sound_muted = true
+        sound_volume_percent = 0.0
+    _save_sound_audio_settings()
     _refresh_sound_mute_button()
-    if sound_muted and audio_player != null and audio_player.playing:
-        audio_player.stop()
-        if tts_waiting_for_stop_sound and not pending_tts_text.is_empty():
-            tts_waiting_for_stop_sound = false
-            tts_timer.start(TTS_DELAY_AFTER_STOP)
+    _refresh_sound_volume_controls()
+    if sound_muted:
+        _stop_audio_for_mute()
+    elif audio_player != null and audio_player.playing:
+        audio_player.volume_db = _adjust_audio_volume_db(current_audio_base_volume_db)
+
+
+
+func _on_sound_volume_slider_value_changed(value: float) -> void :
+    if suppress_sound_volume_slider_events:
+        return
+    sound_volume_percent = clampf(value, 0.0, MAX_SOUND_VOLUME_PERCENT)
+    sound_muted = sound_volume_percent <= 0.0
+    _save_sound_audio_settings()
+    _refresh_sound_mute_button()
+    _refresh_sound_volume_controls()
+    if sound_muted:
+        _stop_audio_for_mute()
+    elif audio_player != null and audio_player.playing:
+        audio_player.volume_db = _adjust_audio_volume_db(current_audio_base_volume_db)
 
 
 
@@ -2392,13 +2657,25 @@ func _on_settings_reset_button_pressed() -> void :
     _delete_user_settings_file(CUSTOM_ROLL_ITEM_COLOR_PATH)
     _delete_user_settings_file(CUSTOM_BUTTON_COLOR_PATH)
     _delete_user_settings_file(CUSTOM_BUTTON_FILL_COLOR_PATH)
+    _delete_user_settings_file(SOUND_MUTED_SETTING_PATH)
+    _delete_user_settings_file(SOUND_VOLUME_PERCENT_SETTING_PATH)
+    _delete_user_settings_file(TTS_ENABLED_SETTING_PATH)
+    _delete_user_settings_file(TTS_RATE_SETTING_PATH)
 
+    sound_muted = false
+    sound_volume_percent = DEFAULT_SOUND_VOLUME_PERCENT
+    tts_enabled = true
+    tts_rate = DEFAULT_TTS_RATE
     _set_custom_background_mode(CUSTOM_BACKGROUND_MODE_STRETCH, false)
     _load_saved_custom_background()
     _load_saved_custom_roll_music()
     _load_saved_custom_roll_item_color()
     _load_saved_custom_button_color()
     _load_saved_custom_button_fill_color()
+    _refresh_sound_mute_button()
+    _refresh_sound_volume_controls()
+    _refresh_tts_button()
+    _refresh_tts_rate_button()
 
     if item_color_picker != null:
         item_color_picker.color = DEFAULT_ROLL_ITEM_COLOR
@@ -2660,6 +2937,90 @@ func _load_saved_custom_roll_music() -> void :
 
 
 
+func _save_bool_setting(path: String, value: bool) -> void :
+    var file: = FileAccess.open(path, FileAccess.WRITE)
+    if file == null:
+        return
+    file.store_string("1" if value else "0")
+    file.close()
+
+
+
+func _save_float_setting(path: String, value: float) -> void :
+    var file: = FileAccess.open(path, FileAccess.WRITE)
+    if file == null:
+        return
+    file.store_string(str(value))
+    file.close()
+
+
+
+func _save_sound_audio_settings() -> void :
+    _save_bool_setting(SOUND_MUTED_SETTING_PATH, sound_muted)
+    _save_float_setting(SOUND_VOLUME_PERCENT_SETTING_PATH, sound_volume_percent)
+
+
+
+func _load_bool_setting(path: String, default_value: bool) -> bool :
+    if not FileAccess.file_exists(path):
+        return default_value
+    var text: = _read_text_auto(path).strip_edges().to_lower()
+    match text:
+        "1", "true", "yes", "on", "enabled":
+            return true
+        "0", "false", "no", "off", "disabled":
+            return false
+    return default_value
+
+
+
+func _load_float_setting(path: String, default_value: float) -> float :
+    if not FileAccess.file_exists(path):
+        return default_value
+    var text: = _read_text_auto(path).strip_edges()
+    if not text.is_valid_float():
+        return default_value
+    return text.to_float()
+
+
+
+func _nearest_tts_rate_option(rate: float) -> float :
+    var nearest_rate: = DEFAULT_TTS_RATE
+    var nearest_distance: = absf(rate - DEFAULT_TTS_RATE)
+    for option_rate in TTS_RATE_VALUES:
+        var distance: = absf(rate - option_rate)
+        if distance < nearest_distance:
+            nearest_rate = option_rate
+            nearest_distance = distance
+    return nearest_rate
+
+
+
+func _tts_rate_option_index(rate: float) -> int :
+    for i in range(TTS_RATE_VALUES.size()):
+        if absf(TTS_RATE_VALUES[i] - rate) < 0.001:
+            return i
+    for i in range(TTS_RATE_VALUES.size()):
+        if absf(TTS_RATE_VALUES[i] - DEFAULT_TTS_RATE) < 0.001:
+            return i
+    return 0
+
+
+
+func _load_saved_audio_toggle_settings() -> void :
+    sound_volume_percent = clampf(_load_float_setting(SOUND_VOLUME_PERCENT_SETTING_PATH, DEFAULT_SOUND_VOLUME_PERCENT), 0.0, MAX_SOUND_VOLUME_PERCENT)
+    sound_muted = _load_bool_setting(SOUND_MUTED_SETTING_PATH, false)
+    if sound_muted:
+        sound_volume_percent = 0.0
+    elif sound_volume_percent <= 0.0:
+        sound_muted = true
+    tts_enabled = _load_bool_setting(TTS_ENABLED_SETTING_PATH, true)
+    tts_rate = _nearest_tts_rate_option(_load_float_setting(TTS_RATE_SETTING_PATH, DEFAULT_TTS_RATE))
+    if not tts_enabled:
+        _stop_tts_playback()
+
+
+
 func _load_saved_custom_roll_item_color() -> void :
     custom_roll_item_color_enabled = false
     custom_roll_item_color = DEFAULT_ROLL_ITEM_COLOR
@@ -2853,6 +3214,17 @@ func _refresh_sound_mute_button() -> void :
 
 
 
+func _refresh_sound_volume_controls() -> void :
+    if sound_volume_slider != null:
+        suppress_sound_volume_slider_events = true
+        sound_volume_slider.value = sound_volume_percent
+        suppress_sound_volume_slider_events = false
+    if sound_volume_label != null:
+        sound_volume_label.text = "%d%%" % int(round(sound_volume_percent))
+        sound_volume_label.add_theme_color_override("font_color", Color(0.62, 0.62, 0.66, 1.0) if sound_muted else Color(0.92, 0.92, 0.96, 1.0))
+
+
+
 func _refresh_tts_button() -> void :
     if tts_button == null:
         return
@@ -2866,6 +3238,17 @@ func _refresh_tts_button() -> void :
 
 
 
+func _refresh_tts_rate_button() -> void :
+    if tts_rate_option_button == null:
+        return
+    var option_index: = _tts_rate_option_index(tts_rate)
+    suppress_tts_rate_option_events = true
+    tts_rate_option_button.select(option_index)
+    suppress_tts_rate_option_events = false
+    tts_rate_option_button.add_theme_color_override("font_color", Color(0.92, 0.92, 0.96, 1.0) if tts_enabled else Color(0.62, 0.62, 0.66, 1.0))
+
+
+
 func _tts_is_available() -> bool:
     return DisplayServer.has_feature(DisplayServer.FEATURE_TEXT_TO_SPEECH)
 
@@ -2875,9 +3258,7 @@ func _get_tts_voice_id() -> String:
     if not cached_tts_voice_id.is_empty():
         return cached_tts_voice_id
 
-    var locale: String = TranslationServer.get_locale()
-    var language: String = locale.split("_", false)[0]
-    var localized_voices: PackedStringArray = DisplayServer.tts_get_voices_for_language(language)
+    var localized_voices: PackedStringArray = DisplayServer.tts_get_voices_for_language("ru")
     if not localized_voices.is_empty():
         cached_tts_voice_id = localized_voices[0]
         return cached_tts_voice_id
@@ -4075,7 +4456,7 @@ func _create_settings_menu() -> void :
     settings_panel = Panel.new()
     settings_panel.name = "SettingsPanel"
     settings_panel.position = Vector2.ZERO
-    settings_panel.size = Vector2(224, 338)
+    settings_panel.size = Vector2(224, 386)
     settings_panel.visible = false
     settings_panel.z_index = 20
     settings_panel.mouse_filter = Control.MOUSE_FILTER_STOP
@@ -4091,18 +4472,55 @@ func _create_settings_menu() -> void :
         sound_mute_button.add_theme_stylebox_override("normal", settings_item_style)
         sound_mute_button.add_theme_stylebox_override("pressed", settings_item_style)
         sound_mute_button.add_theme_stylebox_override("hover", settings_item_style)
+    sound_volume_slider = HSlider.new()
+    sound_volume_slider.name = "SoundVolumeSlider"
+    sound_volume_slider.position = Vector2(14, 44)
+    sound_volume_slider.size = Vector2(142, 24)
+    sound_volume_slider.min_value = 0.0
+    sound_volume_slider.max_value = MAX_SOUND_VOLUME_PERCENT
+    sound_volume_slider.step = 1.0
+    sound_volume_slider.value = sound_volume_percent
+    sound_volume_slider.focus_mode = Control.FOCUS_NONE
+    sound_volume_slider.mouse_default_cursor_shape = Control.CURSOR_POINTING_HAND
+    sound_volume_slider.value_changed.connect(_on_sound_volume_slider_value_changed)
+    settings_panel.add_child(sound_volume_slider)
+
+    sound_volume_label = Label.new()
+    sound_volume_label.name = "SoundVolumeLabel"
+    sound_volume_label.position = Vector2(162, 44)
+    sound_volume_label.size = Vector2(48, 24)
+    sound_volume_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
+    sound_volume_label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+    sound_volume_label.add_theme_font_size_override("font_size", 12)
+    settings_panel.add_child(sound_volume_label)
+
     if tts_button != null:
         tts_button.reparent(settings_panel)
-        tts_button.position = Vector2(14, 44)
+        tts_button.position = Vector2(14, 76)
         tts_button.size = Vector2(196, 26)
         tts_button.flat = false
         tts_button.add_theme_stylebox_override("normal", settings_item_style)
         tts_button.add_theme_stylebox_override("pressed", settings_item_style)
         tts_button.add_theme_stylebox_override("hover", settings_item_style)
 
+    tts_rate_option_button = OptionButton.new()
+    tts_rate_option_button.name = "TTSRateOptionButton"
+    tts_rate_option_button.position = Vector2(14, 108)
+    tts_rate_option_button.size = Vector2(196, 26)
+    tts_rate_option_button.focus_mode = Control.FOCUS_NONE
+    tts_rate_option_button.mouse_default_cursor_shape = Control.CURSOR_POINTING_HAND
+    tts_rate_option_button.add_theme_stylebox_override("normal", settings_item_style)
+    tts_rate_option_button.add_theme_stylebox_override("pressed", settings_item_style)
+    tts_rate_option_button.add_theme_stylebox_override("hover", settings_item_style)
+    tts_rate_option_button.add_theme_font_size_override("font_size", 14)
+    for i in range(TTS_RATE_LABELS.size()):
+        tts_rate_option_button.add_item(TTS_RATE_LABELS[i], i)
+    tts_rate_option_button.item_selected.connect(_on_tts_rate_item_selected)
+    settings_panel.add_child(tts_rate_option_button)
+
     var background_button: = Button.new()
     background_button.name = "SettingsBackgroundButton"
-    background_button.position = Vector2(14, 82)
+    background_button.position = Vector2(14, 146)
     background_button.size = Vector2(196, 26)
     background_button.text = "Сменить фон"
     background_button.focus_mode = Control.FOCUS_NONE
@@ -4117,7 +4535,7 @@ func _create_settings_menu() -> void :
 
     background_stretch_button = Button.new()
     background_stretch_button.name = "SettingsBackgroundStretchButton"
-    background_stretch_button.position = Vector2(14, 114)
+    background_stretch_button.position = Vector2(14, 178)
     background_stretch_button.size = Vector2(94, 24)
     background_stretch_button.text = "Растянуть"
     background_stretch_button.focus_mode = Control.FOCUS_NONE
@@ -4131,7 +4549,7 @@ func _create_settings_menu() -> void :
 
     background_center_button = Button.new()
     background_center_button.name = "SettingsBackgroundCenterButton"
-    background_center_button.position = Vector2(116, 114)
+    background_center_button.position = Vector2(116, 178)
     background_center_button.size = Vector2(94, 24)
     background_center_button.text = "Как есть"
     background_center_button.focus_mode = Control.FOCUS_NONE
@@ -4145,7 +4563,7 @@ func _create_settings_menu() -> void :
 
     var music_button: = Button.new()
     music_button.name = "SettingsMusicButton"
-    music_button.position = Vector2(14, 146)
+    music_button.position = Vector2(14, 210)
     music_button.size = Vector2(196, 26)
     music_button.text = "Сменить музыку"
     music_button.focus_mode = Control.FOCUS_NONE
@@ -4160,7 +4578,7 @@ func _create_settings_menu() -> void :
 
     var reset_button: = Button.new()
     reset_button.name = "SettingsResetButton"
-    reset_button.position = Vector2(14, 274)
+    reset_button.position = Vector2(14, 346)
     reset_button.size = Vector2(196, 26)
     reset_button.text = "Сбросить всё"
     reset_button.focus_mode = Control.FOCUS_NONE
@@ -4175,7 +4593,7 @@ func _create_settings_menu() -> void :
 
     var item_color_button: = Button.new()
     item_color_button.name = "SettingsItemColorButton"
-    item_color_button.position = Vector2(14, 178)
+    item_color_button.position = Vector2(14, 242)
     item_color_button.size = Vector2(196, 26)
     item_color_button.text = "Цвет пунктов"
     item_color_button.focus_mode = Control.FOCUS_NONE
@@ -4190,7 +4608,7 @@ func _create_settings_menu() -> void :
 
     var button_text_color_button: = Button.new()
     button_text_color_button.name = "SettingsButtonTextColorButton"
-    button_text_color_button.position = Vector2(14, 210)
+    button_text_color_button.position = Vector2(14, 274)
     button_text_color_button.size = Vector2(196, 26)
     button_text_color_button.text = "Цвет текста кнопок"
     button_text_color_button.focus_mode = Control.FOCUS_NONE
@@ -4205,7 +4623,7 @@ func _create_settings_menu() -> void :
 
     var button_color_button: = Button.new()
     button_color_button.name = "SettingsButtonColorButton"
-    button_color_button.position = Vector2(14, 242)
+    button_color_button.position = Vector2(14, 306)
     button_color_button.size = Vector2(196, 26)
     button_color_button.text = "Цвет кнопок"
     button_color_button.focus_mode = Control.FOCUS_NONE
@@ -4357,23 +4775,35 @@ func _create_calculator_window() -> void :
     content_panel.add_child(calculate_button)
 
     calc_result_output = TextEdit.new()
-    calc_result_output.position = Vector2(346, 12)
-    calc_result_output.size = Vector2(188, 270)
+    calc_result_output.position = Vector2(340, 12)
+    calc_result_output.size = Vector2(206, 292)
     calc_result_output.editable = false
-    calc_result_output.wrap_mode = TextEdit.LINE_WRAPPING_NONE
+    calc_result_output.wrap_mode = TextEdit.LINE_WRAPPING_BOUNDARY
     var calc_result_style: = StyleBoxFlat.new()
-    calc_result_style.bg_color = Color(0.0, 0.0, 0.0, 0.0)
+    calc_result_style.bg_color = Color(0.03, 0.035, 0.04, 0.78)
     calc_result_style.border_width_left = 1
     calc_result_style.border_width_top = 1
     calc_result_style.border_width_right = 1
     calc_result_style.border_width_bottom = 1
-    calc_result_style.border_color = Color(0.78, 0.78, 0.78, 0.92)
+    calc_result_style.border_color = Color(0.9, 0.9, 0.92, 0.86)
+    calc_result_style.corner_radius_top_left = 3
+    calc_result_style.corner_radius_top_right = 3
+    calc_result_style.corner_radius_bottom_left = 3
+    calc_result_style.corner_radius_bottom_right = 3
+    calc_result_style.content_margin_left = 8
+    calc_result_style.content_margin_top = 6
+    calc_result_style.content_margin_right = 8
+    calc_result_style.content_margin_bottom = 6
+    calc_result_style.shadow_color = Color(0.0, 0.0, 0.0, 0.35)
+    calc_result_style.shadow_size = 6
     calc_result_output.add_theme_stylebox_override("normal", calc_result_style)
     calc_result_output.add_theme_stylebox_override("read_only", calc_result_style)
     calc_result_output.add_theme_stylebox_override("focus", calc_result_style)
-    calc_result_output.add_theme_color_override("font_color", Color(0.98, 0.98, 1.0, 1.0))
+    calc_result_output.add_theme_color_override("font_color", Color(1.0, 1.0, 1.0, 1.0))
+    calc_result_output.add_theme_color_override("font_readonly_color", Color(1.0, 1.0, 1.0, 1.0))
     calc_result_output.add_theme_color_override("font_outline_color", Color(0.0, 0.0, 0.0, 1.0))
-    calc_result_output.add_theme_constant_override("outline_size", 5)
+    calc_result_output.add_theme_constant_override("outline_size", 2)
+    calc_result_output.add_theme_font_size_override("font_size", 16)
     content_panel.add_child(calc_result_output)
 
     calc_remainder_label = Label.new()
