@@ -36,6 +36,7 @@ const SOUND_MUTED_SETTING_PATH: = "user://sound_muted.txt"
 const SOUND_VOLUME_PERCENT_SETTING_PATH: = "user://sound_volume_percent.txt"
 const TTS_ENABLED_SETTING_PATH: = "user://tts_enabled.txt"
 const TTS_RATE_SETTING_PATH: = "user://tts_rate.txt"
+const TTS_LANGUAGE_SETTING_PATH: = "user://tts_language.txt"
 const WHEEL_DESCRIPTION_LIST_PATH: = "res://lists/wheel_list.dat"
 const WHEEL_MODE_TITLE: = "Колесо добра"
 const PLATFORMS_MODE_TITLE: = "Платформы"
@@ -435,7 +436,13 @@ const TTS_UTTERANCE_ID: = 1
 const DEFAULT_SOUND_VOLUME_PERCENT: = 100.0
 const MAX_SOUND_VOLUME_PERCENT: = 200.0
 const TTS_RATE_VALUES: Array[float] = [0.75, 1.0, 1.5, 2.0, 3.0]
-const TTS_RATE_LABELS: Array[String] = ["TTS x0.75", "TTS x1", "TTS x1.5", "TTS x2", "TTS x3"]
+const TTS_RATE_LABELS: Array[String] = ["x0.75", "x1", "x1.5", "x2", "x3"]
+const TTS_LANGUAGE_AUTO: = "auto"
+const TTS_LANGUAGE_EN: = "en"
+const TTS_LANGUAGE_RU: = "ru"
+const DEFAULT_TTS_LANGUAGE_MODE: = TTS_LANGUAGE_AUTO
+const TTS_LANGUAGE_VALUES: Array[String] = [TTS_LANGUAGE_AUTO, TTS_LANGUAGE_EN, TTS_LANGUAGE_RU]
+const TTS_LANGUAGE_LABELS: Array[String] = ["Auto", "EN", "RU"]
 
 var selected_platform: = ""
 var selected_list_path: = ""
@@ -516,11 +523,14 @@ var tts_waiting_for_stop_sound: = false
 var suppress_filter_events: = false
 var tts_enabled: = true
 var tts_rate: = DEFAULT_TTS_RATE
+var tts_language_mode: = DEFAULT_TTS_LANGUAGE_MODE
 var sound_muted: = false
 var sound_volume_percent: = DEFAULT_SOUND_VOLUME_PERCENT
 var current_audio_base_volume_db: = 0.0
 var suppress_sound_volume_slider_events: = false
 var suppress_tts_rate_option_events: = false
+var suppress_tts_language_option_events: = false
+var last_tts_toggle_msec: = -1000000
 var settings_menu_open: = false
 var custom_background_mode: = CUSTOM_BACKGROUND_MODE_STRETCH
 var custom_roll_music_stream: AudioStream
@@ -543,14 +553,15 @@ var web_file_picker_callback_ref = null
 @onready var list_count_label: Label = $ListCountLabel
 @onready var roll_button: Button = $RollButton
 @onready var ultra_button: Button = $UltraButton
-@onready var tts_button: Button = $TTSButton
-@onready var sound_mute_button: Button = $SoundMuteButton
+@onready var settings_panel: Panel = $SettingsPanel
+@onready var sound_mute_button: Button = $SettingsPanel / SoundMuteButton
+@onready var sound_volume_slider: HSlider = $SettingsPanel / SoundVolumeSlider
+@onready var sound_volume_label: Label = $SettingsPanel / SoundVolumeLabel
+@onready var tts_button: Button = $SettingsPanel / TTSButton
+@onready var tts_rate_option_button: OptionButton = $SettingsPanel / TTSRateOptionButton
+@onready var tts_language_option_button: OptionButton = $SettingsPanel / TTSLanguageOptionButton
 var calc_button: TextureButton
 var settings_button: TextureButton
-var settings_panel: Panel
-var sound_volume_slider: HSlider
-var sound_volume_label: Label
-var tts_rate_option_button: OptionButton
 var calc_window: Window
 var calc_sum_input: LineEdit
 var calc_current_price_input: LineEdit
@@ -725,8 +736,9 @@ func _ready() -> void :
     _create_calculator_window()
     roll_button.pressed.connect(_on_roll_button_pressed)
     ultra_button.pressed.connect(_on_ultra_button_pressed)
-    tts_button.pressed.connect(_on_tts_button_pressed)
-    sound_mute_button.pressed.connect(_on_sound_mute_button_pressed)
+    _connect_button_pressed_once(tts_button, _on_tts_button_pressed)
+    _connect_button_pressed_once(sound_mute_button, _on_sound_mute_button_pressed)
+    _connect_control_gui_input_once(tts_button, _on_tts_button_gui_input)
     digits_checkbox.toggled.connect(_on_digits_checkbox_toggled)
     if logo43 != null:
         logo43.mouse_filter = Control.MOUSE_FILTER_STOP
@@ -738,6 +750,7 @@ func _ready() -> void :
     _load_saved_audio_toggle_settings()
     _refresh_tts_button()
     _refresh_tts_rate_button()
+    _refresh_tts_language_button()
     _refresh_sound_mute_button()
     _refresh_sound_volume_controls()
     _refresh_settings_menu_visibility()
@@ -754,6 +767,22 @@ func _resolve_letter_input() -> LineEdit:
     if node == null:
         node = get_node_or_null("LetterInput")
     return node as LineEdit
+
+
+
+func _connect_button_pressed_once(button: Button, callback: Callable) -> void :
+    if button == null:
+        return
+    if not button.pressed.is_connected(callback):
+        button.pressed.connect(callback)
+
+
+
+func _connect_control_gui_input_once(control: Control, callback: Callable) -> void :
+    if control == null:
+        return
+    if not control.gui_input.is_connected(callback):
+        control.gui_input.connect(callback)
 
 
 
@@ -1161,6 +1190,8 @@ func _on_lootbox_chip_pressed() -> void :
 
 
 func _on_slot_result_pressed(slot_index: int) -> void :
+    if settings_menu_open:
+        return
     if rolling:
         return
     if _is_wheel_list_selected():
@@ -1193,6 +1224,8 @@ func _on_slot_result_pressed(slot_index: int) -> void :
 
 
 func _on_slot_result_input(event: InputEvent, slot_index: int) -> void :
+    if settings_menu_open:
+        return
     if rolling:
         return
     var mouse_event: = event as InputEventMouseButton
@@ -2456,13 +2489,50 @@ func _stop_tts_playback() -> void :
 
 
 
-func _on_tts_button_pressed() -> void :
+func _toggle_tts_enabled_from_user() -> void :
+    var now_msec: = Time.get_ticks_msec()
+    if now_msec - last_tts_toggle_msec < 250:
+        return
+    last_tts_toggle_msec = now_msec
     tts_enabled = not tts_enabled
     _save_bool_setting(TTS_ENABLED_SETTING_PATH, tts_enabled)
     _refresh_tts_button()
     _refresh_tts_rate_button()
+    _refresh_tts_language_button()
     if not tts_enabled:
         _stop_tts_playback()
+
+
+
+func _on_tts_button_pressed() -> void :
+    _toggle_tts_enabled_from_user()
+
+
+
+func _on_tts_button_gui_input(event: InputEvent) -> void :
+    var mouse_event: = event as InputEventMouseButton
+    if mouse_event == null:
+        return
+    if mouse_event.button_index != MOUSE_BUTTON_LEFT or mouse_event.pressed:
+        return
+    _toggle_tts_enabled_from_user()
+    if tts_button != null:
+        tts_button.accept_event()
+
+
+
+func _on_settings_panel_gui_input(event: InputEvent) -> void :
+    if not settings_menu_open:
+        return
+    var mouse_event: = event as InputEventMouseButton
+    if mouse_event == null:
+        return
+    if mouse_event.button_index != MOUSE_BUTTON_LEFT or mouse_event.pressed:
+        return
+    if tts_button != null and tts_button.visible and tts_button.get_rect().has_point(mouse_event.position):
+        _toggle_tts_enabled_from_user()
+        if settings_panel != null:
+            settings_panel.accept_event()
 
 
 
@@ -2474,6 +2544,18 @@ func _on_tts_rate_item_selected(index: int) -> void :
     tts_rate = TTS_RATE_VALUES[index]
     _save_float_setting(TTS_RATE_SETTING_PATH, tts_rate)
     _refresh_tts_rate_button()
+
+
+
+func _on_tts_language_item_selected(index: int) -> void :
+    if suppress_tts_language_option_events:
+        return
+    if index < 0 or index >= TTS_LANGUAGE_VALUES.size():
+        return
+    tts_language_mode = TTS_LANGUAGE_VALUES[index]
+    cached_tts_voice_id = ""
+    _save_string_setting(TTS_LANGUAGE_SETTING_PATH, tts_language_mode)
+    _refresh_tts_language_button()
 
 
 
@@ -2661,11 +2743,14 @@ func _on_settings_reset_button_pressed() -> void :
     _delete_user_settings_file(SOUND_VOLUME_PERCENT_SETTING_PATH)
     _delete_user_settings_file(TTS_ENABLED_SETTING_PATH)
     _delete_user_settings_file(TTS_RATE_SETTING_PATH)
+    _delete_user_settings_file(TTS_LANGUAGE_SETTING_PATH)
 
     sound_muted = false
     sound_volume_percent = DEFAULT_SOUND_VOLUME_PERCENT
     tts_enabled = true
     tts_rate = DEFAULT_TTS_RATE
+    tts_language_mode = DEFAULT_TTS_LANGUAGE_MODE
+    cached_tts_voice_id = ""
     _set_custom_background_mode(CUSTOM_BACKGROUND_MODE_STRETCH, false)
     _load_saved_custom_background()
     _load_saved_custom_roll_music()
@@ -2676,6 +2761,7 @@ func _on_settings_reset_button_pressed() -> void :
     _refresh_sound_volume_controls()
     _refresh_tts_button()
     _refresh_tts_rate_button()
+    _refresh_tts_language_button()
 
     if item_color_picker != null:
         item_color_picker.color = DEFAULT_ROLL_ITEM_COLOR
@@ -2955,6 +3041,15 @@ func _save_float_setting(path: String, value: float) -> void :
 
 
 
+func _save_string_setting(path: String, value: String) -> void :
+    var file: = FileAccess.open(path, FileAccess.WRITE)
+    if file == null:
+        return
+    file.store_string(value)
+    file.close()
+
+
+
 func _save_sound_audio_settings() -> void :
     _save_bool_setting(SOUND_MUTED_SETTING_PATH, sound_muted)
     _save_float_setting(SOUND_VOLUME_PERCENT_SETTING_PATH, sound_volume_percent)
@@ -2984,6 +3079,14 @@ func _load_float_setting(path: String, default_value: float) -> float :
 
 
 
+func _load_string_setting(path: String, default_value: String) -> String :
+    if not FileAccess.file_exists(path):
+        return default_value
+    var text: = _read_text_auto(path).strip_edges().to_lower()
+    return text if not text.is_empty() else default_value
+
+
+
 func _nearest_tts_rate_option(rate: float) -> float :
     var nearest_rate: = DEFAULT_TTS_RATE
     var nearest_distance: = absf(rate - DEFAULT_TTS_RATE)
@@ -3007,6 +3110,27 @@ func _tts_rate_option_index(rate: float) -> int :
 
 
 
+func _normalize_tts_language_mode(mode: String) -> String :
+    var normalized: = mode.strip_edges().to_lower()
+    if normalized == TTS_LANGUAGE_AUTO or normalized == "browser" or normalized == "default" or normalized == "system":
+        return TTS_LANGUAGE_AUTO
+    if normalized == TTS_LANGUAGE_EN or normalized == "eng" or normalized == "english":
+        return TTS_LANGUAGE_EN
+    if normalized == TTS_LANGUAGE_RU or normalized == "rus" or normalized == "russian":
+        return TTS_LANGUAGE_RU
+    return DEFAULT_TTS_LANGUAGE_MODE
+
+
+
+func _tts_language_option_index(mode: String) -> int :
+    var normalized: = _normalize_tts_language_mode(mode)
+    for i in range(TTS_LANGUAGE_VALUES.size()):
+        if TTS_LANGUAGE_VALUES[i] == normalized:
+            return i
+    return 0
+
+
+
 func _load_saved_audio_toggle_settings() -> void :
     sound_volume_percent = clampf(_load_float_setting(SOUND_VOLUME_PERCENT_SETTING_PATH, DEFAULT_SOUND_VOLUME_PERCENT), 0.0, MAX_SOUND_VOLUME_PERCENT)
     sound_muted = _load_bool_setting(SOUND_MUTED_SETTING_PATH, false)
@@ -3016,6 +3140,8 @@ func _load_saved_audio_toggle_settings() -> void :
         sound_muted = true
     tts_enabled = _load_bool_setting(TTS_ENABLED_SETTING_PATH, true)
     tts_rate = _nearest_tts_rate_option(_load_float_setting(TTS_RATE_SETTING_PATH, DEFAULT_TTS_RATE))
+    tts_language_mode = _normalize_tts_language_mode(_load_string_setting(TTS_LANGUAGE_SETTING_PATH, DEFAULT_TTS_LANGUAGE_MODE))
+    cached_tts_voice_id = ""
     if not tts_enabled:
         _stop_tts_playback()
 
@@ -3198,13 +3324,25 @@ func _refresh_settings_menu_visibility() -> void :
         settings_button.visible = controls_available
     if settings_panel != null:
         settings_panel.visible = controls_available and settings_menu_open
+        if settings_panel.visible:
+            move_child(settings_panel, get_child_count() - 1)
+            _raise_settings_scene_controls()
+    _refresh_slot_click_buttons_input_state()
+
+
+
+func _refresh_slot_click_buttons_input_state() -> void :
+    var should_ignore: = settings_menu_open
+    for button in slot_click_buttons:
+        if button == null:
+            continue
+        button.mouse_filter = Control.MOUSE_FILTER_IGNORE if should_ignore else Control.MOUSE_FILTER_STOP
 
 
 
 func _refresh_sound_mute_button() -> void :
     if sound_mute_button == null:
         return
-    sound_mute_button.add_theme_font_size_override("font_size", 12)
     if sound_muted:
         sound_mute_button.text = "UNMUTE"
         sound_mute_button.add_theme_color_override("font_color", Color(0.62, 0.62, 0.66, 1.0))
@@ -3228,7 +3366,6 @@ func _refresh_sound_volume_controls() -> void :
 func _refresh_tts_button() -> void :
     if tts_button == null:
         return
-    tts_button.add_theme_font_size_override("font_size", 16)
     if tts_enabled:
         tts_button.text = "TTS ON"
         tts_button.add_theme_color_override("font_color", Color(0.92, 0.92, 0.96, 1.0))
@@ -3249,6 +3386,17 @@ func _refresh_tts_rate_button() -> void :
 
 
 
+func _refresh_tts_language_button() -> void :
+    if tts_language_option_button == null:
+        return
+    var option_index: = _tts_language_option_index(tts_language_mode)
+    suppress_tts_language_option_events = true
+    tts_language_option_button.select(option_index)
+    suppress_tts_language_option_events = false
+    tts_language_option_button.add_theme_color_override("font_color", Color(0.92, 0.92, 0.96, 1.0) if tts_enabled else Color(0.62, 0.62, 0.66, 1.0))
+
+
+
 func _tts_is_available() -> bool:
     return DisplayServer.has_feature(DisplayServer.FEATURE_TEXT_TO_SPEECH)
 
@@ -3258,10 +3406,12 @@ func _get_tts_voice_id() -> String:
     if not cached_tts_voice_id.is_empty():
         return cached_tts_voice_id
 
-    var localized_voices: PackedStringArray = DisplayServer.tts_get_voices_for_language("ru")
-    if not localized_voices.is_empty():
-        cached_tts_voice_id = localized_voices[0]
-        return cached_tts_voice_id
+    var preferred_language: = _get_tts_preferred_language()
+    if not preferred_language.is_empty():
+        var localized_voices: PackedStringArray = DisplayServer.tts_get_voices_for_language(preferred_language)
+        if not localized_voices.is_empty():
+            cached_tts_voice_id = localized_voices[0]
+            return cached_tts_voice_id
 
     var voices_info: Array[Dictionary] = DisplayServer.tts_get_voices()
     if voices_info.is_empty():
@@ -3272,6 +3422,21 @@ func _get_tts_voice_id() -> String:
         cached_tts_voice_id = str(first_voice["id"])
 
     return cached_tts_voice_id
+
+
+
+func _get_tts_preferred_language() -> String :
+    var normalized_mode: = _normalize_tts_language_mode(tts_language_mode)
+    if normalized_mode == TTS_LANGUAGE_EN:
+        return TTS_LANGUAGE_EN
+    if normalized_mode == TTS_LANGUAGE_RU:
+        return TTS_LANGUAGE_RU
+
+    var locale: = TranslationServer.get_locale().replace("-", "_")
+    var parts: = locale.split("_", false)
+    if parts.is_empty():
+        return ""
+    return str(parts[0]).to_lower()
 
 
 
@@ -4453,70 +4618,64 @@ func _create_runtime_nodes() -> void :
 
 
 func _create_settings_menu() -> void :
-    settings_panel = Panel.new()
-    settings_panel.name = "SettingsPanel"
-    settings_panel.position = Vector2.ZERO
-    settings_panel.size = Vector2(224, 386)
+    if settings_panel == null:
+        return
     settings_panel.visible = false
     settings_panel.z_index = 20
     settings_panel.mouse_filter = Control.MOUSE_FILTER_STOP
+    _connect_control_gui_input_once(settings_panel, _on_settings_panel_gui_input)
     settings_panel.add_theme_stylebox_override("panel", _create_wheel_description_panel_style())
-    add_child(settings_panel)
 
     var settings_item_style: = _create_wheel_description_button_style()
     if sound_mute_button != null:
-        sound_mute_button.reparent(settings_panel)
-        sound_mute_button.position = Vector2(14, 12)
-        sound_mute_button.size = Vector2(196, 26)
-        sound_mute_button.flat = false
-        sound_mute_button.add_theme_stylebox_override("normal", settings_item_style)
-        sound_mute_button.add_theme_stylebox_override("pressed", settings_item_style)
-        sound_mute_button.add_theme_stylebox_override("hover", settings_item_style)
-    sound_volume_slider = HSlider.new()
-    sound_volume_slider.name = "SoundVolumeSlider"
-    sound_volume_slider.position = Vector2(14, 44)
-    sound_volume_slider.size = Vector2(142, 24)
-    sound_volume_slider.min_value = 0.0
-    sound_volume_slider.max_value = MAX_SOUND_VOLUME_PERCENT
-    sound_volume_slider.step = 1.0
-    sound_volume_slider.value = sound_volume_percent
-    sound_volume_slider.focus_mode = Control.FOCUS_NONE
-    sound_volume_slider.mouse_default_cursor_shape = Control.CURSOR_POINTING_HAND
-    sound_volume_slider.value_changed.connect(_on_sound_volume_slider_value_changed)
-    settings_panel.add_child(sound_volume_slider)
+        sound_mute_button.z_index = 2
+        sound_mute_button.disabled = false
+        sound_mute_button.mouse_filter = Control.MOUSE_FILTER_STOP
+        sound_mute_button.mouse_default_cursor_shape = Control.CURSOR_POINTING_HAND
 
-    sound_volume_label = Label.new()
-    sound_volume_label.name = "SoundVolumeLabel"
-    sound_volume_label.position = Vector2(162, 44)
-    sound_volume_label.size = Vector2(48, 24)
-    sound_volume_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
-    sound_volume_label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
-    sound_volume_label.add_theme_font_size_override("font_size", 12)
-    settings_panel.add_child(sound_volume_label)
+    if sound_volume_slider != null:
+        sound_volume_slider.z_index = 2
+        sound_volume_slider.min_value = 0.0
+        sound_volume_slider.max_value = MAX_SOUND_VOLUME_PERCENT
+        sound_volume_slider.step = 1.0
+        sound_volume_slider.value = sound_volume_percent
+        sound_volume_slider.focus_mode = Control.FOCUS_NONE
+        sound_volume_slider.mouse_default_cursor_shape = Control.CURSOR_POINTING_HAND
+        sound_volume_slider.value_changed.connect(_on_sound_volume_slider_value_changed)
+
+    if sound_volume_label != null:
+        sound_volume_label.z_index = 2
+        sound_volume_label.mouse_filter = Control.MOUSE_FILTER_IGNORE
+        sound_volume_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
+        sound_volume_label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
 
     if tts_button != null:
-        tts_button.reparent(settings_panel)
-        tts_button.position = Vector2(14, 76)
-        tts_button.size = Vector2(196, 26)
-        tts_button.flat = false
-        tts_button.add_theme_stylebox_override("normal", settings_item_style)
-        tts_button.add_theme_stylebox_override("pressed", settings_item_style)
-        tts_button.add_theme_stylebox_override("hover", settings_item_style)
+        tts_button.z_index = 2
+        tts_button.disabled = false
+        tts_button.mouse_filter = Control.MOUSE_FILTER_STOP
+        tts_button.mouse_default_cursor_shape = Control.CURSOR_POINTING_HAND
 
-    tts_rate_option_button = OptionButton.new()
-    tts_rate_option_button.name = "TTSRateOptionButton"
-    tts_rate_option_button.position = Vector2(14, 108)
-    tts_rate_option_button.size = Vector2(196, 26)
-    tts_rate_option_button.focus_mode = Control.FOCUS_NONE
-    tts_rate_option_button.mouse_default_cursor_shape = Control.CURSOR_POINTING_HAND
-    tts_rate_option_button.add_theme_stylebox_override("normal", settings_item_style)
-    tts_rate_option_button.add_theme_stylebox_override("pressed", settings_item_style)
-    tts_rate_option_button.add_theme_stylebox_override("hover", settings_item_style)
-    tts_rate_option_button.add_theme_font_size_override("font_size", 14)
-    for i in range(TTS_RATE_LABELS.size()):
-        tts_rate_option_button.add_item(TTS_RATE_LABELS[i], i)
-    tts_rate_option_button.item_selected.connect(_on_tts_rate_item_selected)
-    settings_panel.add_child(tts_rate_option_button)
+    if tts_rate_option_button != null:
+        tts_rate_option_button.z_index = 2
+        tts_rate_option_button.focus_mode = Control.FOCUS_NONE
+        tts_rate_option_button.disabled = false
+        tts_rate_option_button.mouse_filter = Control.MOUSE_FILTER_STOP
+        tts_rate_option_button.mouse_default_cursor_shape = Control.CURSOR_POINTING_HAND
+        tts_rate_option_button.clear()
+        for i in range(TTS_RATE_LABELS.size()):
+            tts_rate_option_button.add_item(TTS_RATE_LABELS[i], i)
+        tts_rate_option_button.item_selected.connect(_on_tts_rate_item_selected)
+
+    if tts_language_option_button != null:
+        tts_language_option_button.z_index = 2
+        tts_language_option_button.focus_mode = Control.FOCUS_NONE
+        tts_language_option_button.disabled = false
+        tts_language_option_button.mouse_filter = Control.MOUSE_FILTER_STOP
+        tts_language_option_button.mouse_default_cursor_shape = Control.CURSOR_POINTING_HAND
+        tts_language_option_button.clear()
+        for i in range(TTS_LANGUAGE_LABELS.size()):
+            tts_language_option_button.add_item(TTS_LANGUAGE_LABELS[i], i)
+        tts_language_option_button.item_selected.connect(_on_tts_language_item_selected)
 
     var background_button: = Button.new()
     background_button.name = "SettingsBackgroundButton"
@@ -4636,6 +4795,8 @@ func _create_settings_menu() -> void :
     button_color_button.pressed.connect(_on_settings_button_fill_color_button_pressed)
     settings_panel.add_child(button_color_button)
 
+    _raise_settings_scene_controls()
+
     calc_button = TextureButton.new()
     calc_button.name = "CalcMenuButton"
     calc_button.position = Vector2(914, 680)
@@ -4666,9 +4827,23 @@ func _create_settings_menu() -> void :
     settings_button.pressed.connect(_on_settings_button_pressed)
     add_child(settings_button)
 
-    var panel_x: = settings_button.position.x + settings_button.size.x - settings_panel.size.x
-    var panel_y: = settings_button.position.y - settings_panel.size.y - 8.0
-    settings_panel.position = Vector2(max(8.0, panel_x), max(8.0, panel_y))
+
+
+func _raise_settings_scene_controls() -> void :
+    if settings_panel == null:
+        return
+    for control_variant in [
+        sound_mute_button,
+        sound_volume_slider,
+        sound_volume_label,
+        tts_button,
+        tts_rate_option_button,
+        tts_language_option_button,
+    ]:
+        var control: = control_variant as Control
+        if control == null or control.get_parent() != settings_panel:
+            continue
+        settings_panel.move_child(control, settings_panel.get_child_count() - 1)
 
 
 

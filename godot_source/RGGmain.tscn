@@ -575,12 +575,20 @@ theme_override_styles/pressed = SubResource("StyleBoxFlat_small")
 theme_override_styles/hover = SubResource("StyleBoxFlat_small")
 text = "Update lists"
 
-[node name="SoundMuteButton" type="Button" parent="." unique_id=358096286]
+[node name="SettingsPanel" type="Panel" parent="." unique_id=608629014]
+z_index = 20
 layout_mode = 0
-offset_left = 922.0
-offset_top = 656.0
-offset_right = 990.0
-offset_bottom = 684.0
+offset_left = 770.0
+offset_top = 282.0
+offset_right = 994.0
+offset_bottom = 668.0
+
+[node name="SoundMuteButton" type="Button" parent="SettingsPanel" unique_id=358096286]
+layout_mode = 0
+offset_left = 14.0
+offset_top = 12.0
+offset_right = 210.0
+offset_bottom = 38.0
 focus_mode = 0
 theme_override_colors/font_color = Color(0.92, 0.92, 0.96, 1)
 theme_override_font_sizes/font_size = 12
@@ -588,19 +596,60 @@ theme_override_styles/normal = SubResource("StyleBoxFlat_small")
 theme_override_styles/pressed = SubResource("StyleBoxFlat_small")
 theme_override_styles/hover = SubResource("StyleBoxFlat_small")
 text = "MUTE"
-flat = true
 
-[node name="TTSButton" type="Button" parent="." unique_id=1891754222]
+[node name="SoundVolumeSlider" type="HSlider" parent="SettingsPanel" unique_id=409919585]
 layout_mode = 0
-offset_left = 938.0
-offset_top = 686.0
-offset_right = 982.0
-offset_bottom = 730.0
+offset_left = 14.0
+offset_top = 44.0
+offset_right = 156.0
+offset_bottom = 68.0
+focus_mode = 0
+max_value = 200.0
+value = 100.0
+
+[node name="SoundVolumeLabel" type="Label" parent="SettingsPanel" unique_id=326017009]
+layout_mode = 0
+offset_left = 162.0
+offset_top = 44.0
+offset_right = 210.0
+offset_bottom = 68.0
+theme_override_colors/font_color = Color(0.92, 0.92, 0.96, 1)
+theme_override_font_sizes/font_size = 12
+text = "100%"
+horizontal_alignment = 2
+vertical_alignment = 1
+
+[node name="TTSButton" type="Button" parent="SettingsPanel" unique_id=1891754222]
+layout_mode = 0
+offset_left = 14.0
+offset_top = 76.0
+offset_right = 210.0
+offset_bottom = 102.0
 focus_mode = 0
 theme_override_colors/font_color = Color(0.92, 0.92, 0.96, 1)
 theme_override_font_sizes/font_size = 16
-text = "TTS"
-flat = true
+theme_override_styles/normal = SubResource("StyleBoxFlat_small")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_small")
+theme_override_styles/hover = SubResource("StyleBoxFlat_small")
+text = "TTS ON"
+
+[node name="TTSRateOptionButton" type="OptionButton" parent="SettingsPanel" unique_id=1215912045]
+layout_mode = 0
+offset_left = 14.0
+offset_top = 108.0
+offset_right = 110.0
+offset_bottom = 134.0
+focus_mode = 0
+theme_override_font_sizes/font_size = 14
+
+[node name="TTSLanguageOptionButton" type="OptionButton" parent="SettingsPanel" unique_id=1498740158]
+layout_mode = 0
+offset_left = 111.0
+offset_top = 108.0
+offset_right = 210.0
+offset_bottom = 134.0
+focus_mode = 0
+theme_override_font_sizes/font_size = 14
 
 [node name="SettingsIcon" type="Label" parent="." unique_id=962673910]
 visible = false
@@ -744,3 +793,5 @@ horizontal_alignment = 1
 [connection signal="pressed" from="BottomBar/PlatformsTile/PlatformsButton" to="." method="_on_platforms_button_pressed"]
 [connection signal="pressed" from="BottomBar/BagTile/CatBagButton" to="." method="_on_cat_bag_button_pressed"]
 [connection signal="pressed" from="BottomBar/WheelTile/WheelButton" to="." method="_on_wheel_button_pressed"]
+[connection signal="pressed" from="SettingsPanel/SoundMuteButton" to="." method="_on_sound_mute_button_pressed"]
+[connection signal="pressed" from="SettingsPanel/TTSButton" to="." method="_on_tts_button_pressed"]
