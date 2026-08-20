@@ -5,7 +5,7 @@
 [ext_resource type="Texture2D" uid="uid://dh3pkwa80i4av" path="res://sprites/links/MobyGames.png" id="3"]
 [ext_resource type="Texture2D" uid="uid://0m55d6n6y44p" path="res://sprites/links/gamefaqs.png" id="4"]
 [ext_resource type="Texture2D" uid="uid://dwqx6xkjghg0d" path="res://sprites/links/rgg.png" id="5"]
-[ext_resource type="Texture2D" uid="uid://ddu1gxyhqm3jl" path="res://sprites/main/guitman.png" id="6"]
+[ext_resource type="Texture2D" path="res://sprites/main/global.png" id="6"]
 [ext_resource type="Texture2D" uid="uid://dab5nvkc11j01" path="res://sprites/main/platforms.png" id="7"]
 [ext_resource type="Texture2D" uid="uid://bi0aa0tn6om7f" path="res://sprites/main/cat.png" id="8"]
 [ext_resource type="Texture2D" uid="uid://bstpjnfvh8hho" path="res://sprites/main/wheel.png" id="9"]
@@ -314,7 +314,7 @@ offset_right = 66.0
 offset_bottom = 75.0
 theme_override_colors/font_color = Color(0.92, 0.92, 0.96, 1)
 theme_override_font_sizes/font_size = 10
-text = "Гитман"
+text = "Глобалы"
 horizontal_alignment = 1
 
 [node name="HeroButton" type="Button" parent="BottomBar/HeroTile" unique_id=86046312]
@@ -736,6 +736,7 @@ offset_bottom = 64.0
 texture = ExtResource("9")
 expand_mode = 1
 stretch_mode = 5
+flip_h = true
 
 [node name="LootboxChip" type="Control" parent="." unique_id=1007484369]
 anchors_preset = 0
@@ -789,7 +790,7 @@ theme_override_font_sizes/font_size = 22
 text = "rgg.nitrus.top"
 horizontal_alignment = 1
 
-[connection signal="pressed" from="BottomBar/HeroTile/HeroButton" to="." method="_on_guitman_button_pressed"]
+[connection signal="pressed" from="BottomBar/HeroTile/HeroButton" to="." method="_on_global_events_button_pressed"]
 [connection signal="pressed" from="BottomBar/PlatformsTile/PlatformsButton" to="." method="_on_platforms_button_pressed"]
 [connection signal="pressed" from="BottomBar/BagTile/CatBagButton" to="." method="_on_cat_bag_button_pressed"]
 [connection signal="pressed" from="BottomBar/WheelTile/WheelButton" to="." method="_on_wheel_button_pressed"]

@@ -12,6 +12,11 @@ const CAT_LIST_PATH: = "res://lists/cat.dat"
 const GUITMAN_LIST_ID: = "guitman"
 const GUITMAN_LIST_PATH: = "res://lists/guitman.dat"
 const GUITMAN_MODE_TITLE: = "Гитман"
+const GLOBAL_EVENTS_LIST_ID: = "global_events"
+const GLOBAL_EVENTS_LIST_PATH: = "res://lists/global_events.dat"
+const GLOBAL_EVENTS_DESCRIPTION_LIST_PATH: = "res://lists/global_events_list.dat"
+const GLOBAL_EVENTS_REMOVED_ENTRIES_PATH: = "user://global_events_removed_entries.dat"
+const GLOBAL_EVENTS_MODE_TITLE: = "Глобалы"
 const BATMAN43_LIST_ID: = "batman43"
 const BATMAN43_LIST_PATH: = "res://lists/batman43.dat"
 const BATMAN43_MODE_TITLE: = "Говно от Бэтмена"
@@ -126,6 +131,7 @@ const PLATFORM_BROWSER_ITEMS: Array[Dictionary] = [
     {"id": "steam", "title": "Steam", "path": "res://lists/steam.dat", "icon_path": "res://images/platforms/steam.png"}, 
 ]
 const SPECIAL_ROLL_ITEMS: Array[Dictionary] = [
+    {"id": "guitman", "title": "Гитман", "path": "res://lists/guitman.dat", "tooltip": "Список игр с платформ, вышедших в ХХ веке, плюс GBA как каноничная платформа оригинального Retro Game Gauntlet"},
     {"id": "kernel", "title": "Kernel", "path": "res://lists/kernel.dat", "tooltip": "Недопройденные игры стримеров на конец сезона RGG-LAND"},
     {"id": "female", "title": "Female", "path": "res://lists/female.dat", "tooltip": "Игры с протагонистом женского пола"},
     {"id": "train", "title": "Поезд", "path": "res://lists/train.dat", "tooltip": "Всеми любимые замемасившиеся РГГ-игры"},
@@ -200,6 +206,7 @@ const SPECIAL_ROLL_ITEMS: Array[Dictionary] = [
     {"id": "anime", "title": "Anime", "path": "res://lists/anime.dat", "tooltip": "Игры по аниме"},
     {"id": "ninja", "title": "Ninja", "path": "res://lists/ninja.dat", "tooltip": "Игры про ниндзей"},
     {"id": "zombie", "title": "Zombie", "path": "res://lists/zombie.dat", "tooltip": "Игры про зомби"},
+    {"id": "checkers", "title": "Шашки", "path": "res://lists/checkers.dat", "tooltip": "Игры, в которые играли в RGG-Шашках"},
 ]
 const SPECIAL_ROLL_ICON_PATHS: = {
     "2007": "res://images/specrolls/2007.png", 
@@ -211,6 +218,7 @@ const SPECIAL_ROLL_ICON_PATHS: = {
     "browjey": "res://images/specrolls/бровян.png", 
     "capcom": "res://images/specrolls/capcom.png", 
     "castlevania": "res://images/specrolls/castelvania.png", 
+    "checkers": "res://images/specrolls/checkers.png",
     "disney": "res://images/specrolls/disney.png", 
     "dizzy": "res://images/specrolls/dizzy.png", 
     "doom": "res://images/specrolls/doom.png", 
@@ -218,6 +226,7 @@ const SPECIAL_ROLL_ICON_PATHS: = {
     "flintstones": "res://images/specrolls/flintstones.png", 
     "gccx": "res://images/specrolls/gamecentrCX.png", 
     "golden": "res://images/specrolls/золото.png", 
+    "guitman": "res://sprites/main/guitman.png",
     "hakon": "res://images/specrolls/xakoh.png", 
     "horror": "res://images/specrolls/horror.png", 
     "hudson": "res://images/specrolls/hudsonsoft.png", 
@@ -293,7 +302,7 @@ const LOOTBOX_ITEMS: Array[Dictionary] = [
     {"id": "potions", "title": "Зелья", "path": "res://lists/potions.dat"}, 
     {"id": "coins", "title": "Монетки", "path": "res://lists/coins.dat"}, 
     {"id": "gold", "title": "Золото", "path": "res://lists/golden.dat"}, 
-    {"id": "wheels", "title": "Колеса", "path": "res://lists/wheels.dat"}, 
+    {"id": "wheels", "title": "Фри-спины", "path": "res://lists/wheels.dat"},
     {"id": "mods", "title": "Моды", "path": "res://lists/mods.dat"}, 
     {"id": "roulette", "title": "Рулетка", "path": "res://lists/roulette.dat"}, 
     {"id": "effects", "title": "Эффекты", "path": "res://lists/effects.dat"}, 
@@ -630,6 +639,8 @@ var lootbox_browser_close_chip: Control
 var wheel_descriptions: Dictionary = {}
 var wheel_description_links: Dictionary = {}
 var hardcore_descriptions: Dictionary = {}
+var global_event_descriptions: Dictionary = {}
+var global_event_deleted_visible_slots: Dictionary = {}
 var lootbox_descriptions: Dictionary = {}
 var lootbox_description_links: Dictionary = {}
 var wheel_description_overlay: Control
@@ -740,12 +751,14 @@ func _ready() -> void :
     _connect_button_pressed_once(sound_mute_button, _on_sound_mute_button_pressed)
     _connect_control_gui_input_once(tts_button, _on_tts_button_gui_input)
     digits_checkbox.toggled.connect(_on_digits_checkbox_toggled)
+    _connect_control_gui_input_once(digits_checkbox, _on_settings_closing_control_input.bind(digits_checkbox))
     if logo43 != null:
         logo43.mouse_filter = Control.MOUSE_FILTER_STOP
         logo43.mouse_default_cursor_shape = Control.CURSOR_POINTING_HAND
         logo43.gui_input.connect(_on_logo43_input)
     if letter_input != null:
         letter_input.text_changed.connect(_on_letter_input_text_changed)
+        _connect_control_gui_input_once(letter_input, _on_settings_closing_control_input.bind(letter_input))
     _connect_list_preview_inputs()
     _load_saved_audio_toggle_settings()
     _refresh_tts_button()
@@ -786,9 +799,30 @@ func _connect_control_gui_input_once(control: Control, callback: Callable) -> vo
 
 
 
+func _close_settings_menu_from_main_control() -> bool :
+    if not settings_menu_open:
+        return false
+    _set_settings_menu_open(false)
+    return true
+
+
+
+func _on_settings_closing_control_input(event: InputEvent, control: Control) -> void :
+    if not settings_menu_open:
+        return
+    var mouse_event: = event as InputEventMouseButton
+    if mouse_event == null or not mouse_event.pressed:
+        return
+    _set_settings_menu_open(false)
+    if control != null:
+        control.accept_event()
+    get_viewport().set_input_as_handled()
+
+
+
 func _connect_list_preview_inputs() -> void :
     if hero_button != null:
-        hero_button.gui_input.connect(_on_list_preview_input.bind(GUITMAN_MODE_TITLE, GUITMAN_LIST_PATH))
+        hero_button.gui_input.connect(_on_list_preview_input.bind(GLOBAL_EVENTS_MODE_TITLE, GLOBAL_EVENTS_LIST_PATH))
     if platforms_button != null:
         platforms_button.gui_input.connect(_on_list_preview_input.bind(PLATFORMS_MODE_TITLE, PLATFORMS_LIST_PATH))
     if bag_button != null:
@@ -971,10 +1005,14 @@ func _call_text_shortcut_method(method_name: String) -> bool :
 
 
 func _on_list_preview_input(event: InputEvent, list_title: String, list_path: String) -> void :
-    if rolling:
-        return
     var mouse_event: = event as InputEventMouseButton
     if mouse_event == null:
+        return
+    if settings_menu_open and mouse_event.pressed:
+        _set_settings_menu_open(false)
+        get_viewport().set_input_as_handled()
+        return
+    if rolling:
         return
     if mouse_event.button_index != MOUSE_BUTTON_RIGHT or not mouse_event.pressed:
         return
@@ -984,10 +1022,14 @@ func _on_list_preview_input(event: InputEvent, list_title: String, list_path: St
 
 
 func _on_extra_tile_input(event: InputEvent) -> void :
-    if rolling:
-        return
     var mouse_event: = event as InputEventMouseButton
     if mouse_event == null or not mouse_event.pressed:
+        return
+    if settings_menu_open:
+        _set_settings_menu_open(false)
+        get_viewport().set_input_as_handled()
+        return
+    if rolling:
         return
     if mouse_event.button_index == MOUSE_BUTTON_LEFT:
         _select_list(EXTRA_LIST_ID, EXTRA_MODE_TITLE, EXTRA_LIST_PATH, extra_tile)
@@ -1128,6 +1170,8 @@ func _read_web_text(path: String) -> String:
 
 
 func _on_cat_bag_button_pressed() -> void :
+    if _close_settings_menu_from_main_control():
+        return
     if rolling:
         return
     _select_list(CAT_LIST_ID, CAT_MODE_TITLE, CAT_LIST_PATH, bag_tile)
@@ -1135,9 +1179,20 @@ func _on_cat_bag_button_pressed() -> void :
 
 
 func _on_guitman_button_pressed() -> void :
+    if _close_settings_menu_from_main_control():
+        return
     if rolling:
         return
     _select_list(GUITMAN_LIST_ID, GUITMAN_MODE_TITLE, GUITMAN_LIST_PATH, hero_tile)
+
+
+
+func _on_global_events_button_pressed() -> void :
+    if _close_settings_menu_from_main_control():
+        return
+    if rolling:
+        return
+    _select_list(GLOBAL_EVENTS_LIST_ID, GLOBAL_EVENTS_MODE_TITLE, GLOBAL_EVENTS_LIST_PATH, hero_tile)
 
 
 
@@ -1155,6 +1210,8 @@ func _on_logo43_input(event: InputEvent) -> void :
 
 
 func _on_platforms_button_pressed() -> void :
+    if _close_settings_menu_from_main_control():
+        return
     if rolling:
         return
     _select_list(PLATFORMS_LIST_ID, PLATFORMS_MODE_TITLE, PLATFORMS_LIST_PATH, platforms_tile)
@@ -1162,6 +1219,8 @@ func _on_platforms_button_pressed() -> void :
 
 
 func _on_wheel_button_pressed() -> void :
+    if _close_settings_menu_from_main_control():
+        return
     if rolling:
         return
     _select_list(WHEEL_LIST_ID, WHEEL_MODE_TITLE, WHEEL_LIST_PATH, wheel_tile)
@@ -1169,6 +1228,8 @@ func _on_wheel_button_pressed() -> void :
 
 
 func _on_loose_chip_button_pressed() -> void :
+    if _close_settings_menu_from_main_control():
+        return
     if rolling:
         return
     _toggle_platform_browser()
@@ -1176,6 +1237,8 @@ func _on_loose_chip_button_pressed() -> void :
 
 
 func _on_special_rolls_chip_pressed() -> void :
+    if _close_settings_menu_from_main_control():
+        return
     if rolling:
         return
     _toggle_special_roll_browser()
@@ -1183,6 +1246,8 @@ func _on_special_rolls_chip_pressed() -> void :
 
 
 func _on_lootbox_chip_pressed() -> void :
+    if _close_settings_menu_from_main_control():
+        return
     if rolling:
         return
     _toggle_lootbox_browser()
@@ -1203,6 +1268,11 @@ func _on_slot_result_pressed(slot_index: int) -> void :
         if slot_index < 0 or slot_index >= slot_entries.size():
             return
         _show_hardcore_description_for_entry(slot_entries[slot_index], true, false)
+        return
+    if _is_global_events_list_selected():
+        if slot_index < 0 or slot_index >= slot_entries.size():
+            return
+        _show_global_event_description_for_entry(slot_entries[slot_index], slot_index, true, false)
         return
     if _is_lootbox_description_list_selected():
         if slot_index < 0 or slot_index >= slot_entries.size():
@@ -1274,6 +1344,8 @@ func _on_rggland_button_pressed() -> void :
 
 
 func _on_roll_button_pressed() -> void :
+    if _close_settings_menu_from_main_control():
+        return
     if rolling:
         _request_stop()
         return
@@ -1282,6 +1354,8 @@ func _on_roll_button_pressed() -> void :
 
 
 func _on_ultra_button_pressed() -> void :
+    if _close_settings_menu_from_main_control():
+        return
     _button_megastop_click()
 
 
@@ -1410,6 +1484,8 @@ func _select_list(list_id: String, title: String, path: String, tile = null) -> 
         _load_wheel_descriptions()
     elif path == HARDCORE_LIST_PATH:
         _load_hardcore_descriptions()
+    elif path == GLOBAL_EVENTS_LIST_PATH:
+        _load_global_event_descriptions()
     elif _is_lootbox_description_path(path):
         _load_lootbox_descriptions()
     base_games = _load_list(path)
@@ -1460,6 +1536,7 @@ func _start_roll() -> void :
 
 
     wheel_deleted_visible_slots.clear()
+    global_event_deleted_visible_slots.clear()
     extra_deleted_visible_slots.clear()
 
     selected_result_entry = ""
@@ -1716,7 +1793,7 @@ func _roll_stopped() -> void :
         stop_sound_candidates = ULTRA_STOP_SOUND_CANDIDATES
     _play_sound(stop_sound_candidates)
     stop_via_ultra = false
-    if not _is_wheel_list_selected() and not _is_hardcore_list_selected():
+    if not _is_wheel_list_selected() and not _is_hardcore_list_selected() and not _is_global_events_list_selected():
         _queue_center_label_tts_after_stop_sound()
 
 
@@ -1884,14 +1961,25 @@ func _wheel_has_user_removals() -> bool:
 
 
 
+func _global_events_has_user_removals() -> bool:
+    return not _load_global_event_removed_entries().is_empty()
+
+
+
 func _refresh_wheel_restore_button() -> void :
     if wheel_restore_button == null:
         return
-    if selected_list_path != WHEEL_LIST_PATH:
-        wheel_restore_button.visible = false
+    if selected_list_path == WHEEL_LIST_PATH:
+        wheel_restore_button.text = "Вернуть Колесо"
+        wheel_restore_button.visible = true
+        wheel_restore_button.disabled = rolling or not _wheel_has_user_removals()
         return
-    wheel_restore_button.visible = true
-    wheel_restore_button.disabled = rolling or not _wheel_has_user_removals()
+    if selected_list_path == GLOBAL_EVENTS_LIST_PATH:
+        wheel_restore_button.text = "Вернуть Глобалы"
+        wheel_restore_button.visible = true
+        wheel_restore_button.disabled = rolling or not _global_events_has_user_removals()
+        return
+    wheel_restore_button.visible = false
 
 
 
@@ -1901,6 +1989,7 @@ func _reset_selected_list_ui() -> void :
     base_games = PackedStringArray()
     games = PackedStringArray()
     wheel_deleted_visible_slots.clear()
+    global_event_deleted_visible_slots.clear()
     extra_deleted_visible_slots.clear()
     _set_result_links_active(false)
     roll_button.disabled = true
@@ -2053,6 +2142,7 @@ func _reset_roll_slots() -> void :
     slot_entries.clear()
     slot_entries.append_array(DEFAULT_SLOT_TEXTS)
     wheel_deleted_visible_slots.clear()
+    global_event_deleted_visible_slots.clear()
     extra_deleted_visible_slots.clear()
     _render_slots()
     _apply_final_roll_colors()
@@ -2289,6 +2379,11 @@ func _is_hardcore_list_selected() -> bool:
 
 
 
+func _is_global_events_list_selected() -> bool:
+    return selected_platform == GLOBAL_EVENTS_LIST_ID
+
+
+
 func _is_lootbox_description_list_selected() -> bool:
     return _is_lootbox_description_path(selected_list_path)
 
@@ -2300,7 +2395,7 @@ func _is_lootbox_description_path(path: String) -> bool:
 
 
 func _result_links_enabled_for_selected_list() -> bool:
-    if _is_hardcore_list_selected():
+    if _is_hardcore_list_selected() or _is_global_events_list_selected():
         return false
     return selected_platform == CAT_LIST_ID or selected_platform == GUITMAN_LIST_ID or selected_platform == BATMAN43_LIST_ID or _is_platform_list_id(selected_platform) or _is_special_roll_list_id(selected_platform)
 
@@ -3293,7 +3388,7 @@ func _apply_custom_button_fill_theme() -> void :
 
 
 func _restore_bottom_bar_tile_selection() -> void :
-    if selected_platform == GUITMAN_LIST_ID and hero_tile != null:
+    if selected_platform == GLOBAL_EVENTS_LIST_ID and hero_tile != null:
         hero_tile.add_theme_stylebox_override("panel", bag_tile_active_style)
     elif selected_platform == CAT_LIST_ID and bag_tile != null:
         bag_tile.add_theme_stylebox_override("panel", bag_tile_active_style)
@@ -4008,6 +4103,26 @@ func _load_hardcore_descriptions() -> void :
 
 
 
+func _load_global_event_descriptions() -> void :
+    global_event_descriptions.clear()
+    var text: = _read_text_auto(GLOBAL_EVENTS_DESCRIPTION_LIST_PATH)
+    if text.is_empty():
+        return
+
+    for raw_line in text.split("\n", false):
+        var line: = raw_line.strip_edges()
+        if line.is_empty():
+            continue
+        var separator_index: = line.find("|")
+        if separator_index < 0:
+            continue
+        var title: = line.substr(0, separator_index).strip_edges()
+        var description: = line.substr(separator_index + 1).strip_edges()
+        if not title.is_empty():
+            global_event_descriptions[title] = description
+
+
+
 func _load_lootbox_descriptions() -> void :
     lootbox_descriptions.clear()
     lootbox_description_links.clear()
@@ -4069,6 +4184,21 @@ func _load_extra_removed_entries() -> PackedStringArray:
 
 
 
+func _load_global_event_removed_entries() -> PackedStringArray:
+    if not FileAccess.file_exists(GLOBAL_EVENTS_REMOVED_ENTRIES_PATH):
+        return PackedStringArray()
+    var text: = _read_text_auto(GLOBAL_EVENTS_REMOVED_ENTRIES_PATH)
+    if text.is_empty():
+        return PackedStringArray()
+    var result: = PackedStringArray()
+    for raw_line in text.split("\n", false):
+        var line: = raw_line.strip_edges()
+        if not line.is_empty():
+            result.append(line)
+    return result
+
+
+
 func _save_wheel_removed_entries(entries: PackedStringArray) -> void :
     var file: = FileAccess.open(WHEEL_REMOVED_ENTRIES_PATH, FileAccess.WRITE)
     if file == null:
@@ -4087,8 +4217,35 @@ func _save_extra_removed_entries(entries: PackedStringArray) -> void :
 
 
 
+func _save_global_event_removed_entries(entries: PackedStringArray) -> void :
+    var file: = FileAccess.open(GLOBAL_EVENTS_REMOVED_ENTRIES_PATH, FileAccess.WRITE)
+    if file == null:
+        return
+    file.store_string("\n".join(entries))
+    file.close()
+
+
+
 func _apply_wheel_user_removals(entries: PackedStringArray) -> PackedStringArray:
     var removed_entries: = _load_wheel_removed_entries()
+    if removed_entries.is_empty():
+        return entries
+    var removed_counts: Dictionary = {}
+    for removed_entry in removed_entries:
+        removed_counts[removed_entry] = int(removed_counts.get(removed_entry, 0)) + 1
+    var filtered: = PackedStringArray()
+    for entry in entries:
+        var remaining: = int(removed_counts.get(entry, 0))
+        if remaining > 0:
+            removed_counts[entry] = remaining - 1
+            continue
+        filtered.append(entry)
+    return filtered
+
+
+
+func _apply_global_event_user_removals(entries: PackedStringArray) -> PackedStringArray:
+    var removed_entries: = _load_global_event_removed_entries()
     if removed_entries.is_empty():
         return entries
     var removed_counts: Dictionary = {}
@@ -4133,6 +4290,15 @@ func _get_hardcore_description(title: String) -> String:
         _load_hardcore_descriptions()
     if hardcore_descriptions.has(title):
         return str(hardcore_descriptions[title])
+    return ""
+
+
+
+func _get_global_event_description(title: String) -> String:
+    if global_event_descriptions.is_empty():
+        _load_global_event_descriptions()
+    if global_event_descriptions.has(title):
+        return str(global_event_descriptions[title])
     return ""
 
 
@@ -4187,6 +4353,26 @@ func _show_hardcore_description_for_entry(entry: String, speak: bool = false, in
     wheel_description_delete_entry = ""
     wheel_description_delete_slot_index = -1
     _show_wheel_description_popup(title, description)
+
+    if speak:
+        var speech_text: = description
+        if include_title_in_speech:
+            speech_text = "%s. %s" % [title, description]
+        _queue_tts_text_after_stop_sound(speech_text)
+
+
+
+func _show_global_event_description_for_entry(entry: String, slot_index: int = -1, speak: bool = false, include_title_in_speech: bool = false) -> void :
+    var title: = _entry_to_display_text(entry)
+    if title.is_empty() or title.begins_with("---"):
+        return
+
+    var description: = _get_global_event_description(title)
+    if description.is_empty():
+        description = "Описание не найдено."
+    wheel_description_delete_entry = entry
+    wheel_description_delete_slot_index = slot_index
+    _show_wheel_description_popup(title, description, "", true)
 
     if speak:
         var speech_text: = description
@@ -4291,6 +4477,12 @@ func _on_wheel_info_ok_pressed() -> void :
 func _show_wheel_restore_popup() -> void :
     if wheel_restore_overlay == null:
         return
+    if _is_global_events_list_selected():
+        wheel_restore_message_label.text = "ВСЕ ИЗНАЧАЛЬНЫЕ ГЛОБАЛЫ ВЕРНУТСЯ. И ЭТО ИЗМЕНЕНИЕ НЕЛЬЗЯ БУДЕТ ОТКАТИТЬ"
+        wheel_restore_ok_button.text = "ВЕРНУТЬ ВСЕ ГЛОБАЛЫ"
+    else:
+        wheel_restore_message_label.text = "ВСЕ ИЗНАЧАЛЬНЫЕ ПУНКТЫ КОЛЕСА ДОБРА ВЕРНУТСЯ. И ЭТО ИЗМЕНЕНИЕ НЕЛЬЗЯ БУДЕТ ОТКАТИТЬ"
+        wheel_restore_ok_button.text = "ВЕРНУТЬ ВСЕ ПУНКТЫ КОЛЕСА"
     wheel_restore_overlay.visible = true
     wheel_restore_overlay.move_to_front()
 
@@ -4308,12 +4500,18 @@ func _on_wheel_restore_cancel_pressed() -> void :
 
 
 func _on_wheel_restore_ok_pressed() -> void :
-    var absolute_removed_path: = ProjectSettings.globalize_path(WHEEL_REMOVED_ENTRIES_PATH)
-    if FileAccess.file_exists(WHEEL_REMOVED_ENTRIES_PATH):
-        DirAccess.remove_absolute(absolute_removed_path)
-    wheel_deleted_visible_slots.clear()
+    if _is_global_events_list_selected():
+        var absolute_global_removed_path: = ProjectSettings.globalize_path(GLOBAL_EVENTS_REMOVED_ENTRIES_PATH)
+        if FileAccess.file_exists(GLOBAL_EVENTS_REMOVED_ENTRIES_PATH):
+            DirAccess.remove_absolute(absolute_global_removed_path)
+        global_event_deleted_visible_slots.clear()
+    else:
+        var absolute_removed_path: = ProjectSettings.globalize_path(WHEEL_REMOVED_ENTRIES_PATH)
+        if FileAccess.file_exists(WHEEL_REMOVED_ENTRIES_PATH):
+            DirAccess.remove_absolute(absolute_removed_path)
+        wheel_deleted_visible_slots.clear()
     _hide_wheel_restore_popup()
-    if selected_list_path == WHEEL_LIST_PATH:
+    if selected_list_path == WHEEL_LIST_PATH or selected_list_path == GLOBAL_EVENTS_LIST_PATH:
         _reload_selected_list()
     _refresh_wheel_delete_button()
 
@@ -4321,6 +4519,9 @@ func _on_wheel_restore_ok_pressed() -> void :
 
 func _on_wheel_description_delete_pressed() -> void :
     if wheel_description_delete_entry.is_empty():
+        return
+    if _is_global_events_list_selected():
+        _delete_global_event_entry(wheel_description_delete_entry, wheel_description_delete_slot_index)
         return
     if wheel_description_delete_slot_index >= 0 and wheel_deleted_visible_slots.get(wheel_description_delete_slot_index, false):
         _show_wheel_info_popup("Пункт уже удалён")
@@ -4332,6 +4533,24 @@ func _on_wheel_description_delete_pressed() -> void :
         wheel_deleted_visible_slots[wheel_description_delete_slot_index] = true
     _hide_wheel_description_popup()
     if selected_list_path == WHEEL_LIST_PATH:
+        _reload_selected_list()
+    _refresh_wheel_delete_button()
+
+
+
+func _delete_global_event_entry(entry: String, slot_index: int) -> void :
+    if entry.is_empty():
+        return
+    if slot_index >= 0 and global_event_deleted_visible_slots.get(slot_index, false):
+        _show_wheel_info_popup("Пункт уже удалён")
+        return
+    var removed_entries: = _load_global_event_removed_entries()
+    removed_entries.append(entry)
+    _save_global_event_removed_entries(removed_entries)
+    if slot_index >= 0:
+        global_event_deleted_visible_slots[slot_index] = true
+    _hide_wheel_description_popup()
+    if selected_list_path == GLOBAL_EVENTS_LIST_PATH:
         _reload_selected_list()
     _refresh_wheel_delete_button()
 
@@ -5851,7 +6070,7 @@ func _populate_lootbox_browser_grid() -> void :
         "Зелья", 
         "Монетки", 
         "Золото", 
-        "Колеса", 
+        "Фри-спины",
     ]
     var row3_titles: Array[String] = [
         "Моды", 
@@ -6297,6 +6516,8 @@ func _load_list(path: String) -> PackedStringArray:
 
     if path == WHEEL_LIST_PATH:
         return _apply_wheel_user_removals(result)
+    if path == GLOBAL_EVENTS_LIST_PATH:
+        return _apply_global_event_user_removals(result)
     if path == EXTRA_LIST_PATH:
         return _apply_extra_user_removals(result)
     return result
