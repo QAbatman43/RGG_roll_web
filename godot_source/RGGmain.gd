@@ -37,6 +37,7 @@ const CUSTOM_ROLL_MUSIC_PATH: = "user://custom_roll_music.mp3"
 const CUSTOM_ROLL_ITEM_COLOR_PATH: = "user://custom_roll_item_color.txt"
 const CUSTOM_BUTTON_COLOR_PATH: = "user://custom_button_color.txt"
 const CUSTOM_BUTTON_FILL_COLOR_PATH: = "user://custom_button_fill_color.txt"
+const COLOR_DIALOG_SIZE: = Vector2i(340, 330)
 const SOUND_MUTED_SETTING_PATH: = "user://sound_muted.txt"
 const SOUND_VOLUME_PERCENT_SETTING_PATH: = "user://sound_volume_percent.txt"
 const TTS_ENABLED_SETTING_PATH: = "user://tts_enabled.txt"
@@ -2798,12 +2799,30 @@ func _on_settings_music_button_pressed() -> void :
 
 
 
+func _configure_compact_color_picker(picker: ColorPicker) -> void :
+    picker.color_modes_visible = false
+    picker.sliders_visible = false
+    picker.hex_visible = true
+    picker.presets_visible = false
+    picker.can_add_swatches = false
+    picker.sampler_visible = false
+    picker.edit_intensity = false
+    picker.custom_minimum_size = Vector2(0.0, 0.0)
+
+
+
+func _popup_color_dialog(dialog: ConfirmationDialog) -> void :
+    dialog.popup_centered(COLOR_DIALOG_SIZE)
+    dialog.size = COLOR_DIALOG_SIZE
+
+
+
 func _on_settings_item_color_button_pressed() -> void :
     _set_settings_menu_open(false)
     if item_color_dialog == null or item_color_picker == null:
         return
     item_color_picker.color = _resolve_roll_main_color()
-    item_color_dialog.popup_centered(Vector2i(360, 420))
+    _popup_color_dialog(item_color_dialog)
 
 
 
@@ -2812,7 +2831,7 @@ func _on_settings_button_color_button_pressed() -> void :
     if button_color_dialog == null or button_color_picker == null:
         return
     button_color_picker.color = custom_button_color if custom_button_color_enabled else DEFAULT_UI_BUTTON_TEXT_COLOR
-    button_color_dialog.popup_centered(Vector2i(360, 420))
+    _popup_color_dialog(button_color_dialog)
 
 
 
@@ -2822,7 +2841,7 @@ func _on_settings_button_fill_color_button_pressed() -> void :
         return
     var fallback_color: = _resolve_default_button_fill_color()
     button_fill_color_picker.color = custom_button_fill_color if custom_button_fill_color_enabled else fallback_color
-    button_fill_color_dialog.popup_centered(Vector2i(360, 420))
+    _popup_color_dialog(button_fill_color_dialog)
 
 
 
@@ -5332,11 +5351,12 @@ func _create_custom_background_controls() -> void :
     item_color_dialog.title = "Цвет пунктов"
     item_color_dialog.ok_button_text = "OK"
     item_color_dialog.confirmed.connect(_on_item_color_dialog_confirmed)
-    item_color_dialog.min_size = Vector2i(360, 420)
+    item_color_dialog.min_size = COLOR_DIALOG_SIZE
     add_child(item_color_dialog)
 
     item_color_picker = ColorPicker.new()
     item_color_picker.name = "ItemColorPicker"
+    _configure_compact_color_picker(item_color_picker)
     item_color_picker.anchor_right = 1.0
     item_color_picker.anchor_bottom = 1.0
     item_color_picker.offset_left = 12.0
@@ -5351,11 +5371,12 @@ func _create_custom_background_controls() -> void :
     button_color_dialog.title = "Цвет текста кнопок"
     button_color_dialog.ok_button_text = "OK"
     button_color_dialog.confirmed.connect(_on_button_color_dialog_confirmed)
-    button_color_dialog.min_size = Vector2i(360, 420)
+    button_color_dialog.min_size = COLOR_DIALOG_SIZE
     add_child(button_color_dialog)
 
     button_color_picker = ColorPicker.new()
     button_color_picker.name = "ButtonColorPicker"
+    _configure_compact_color_picker(button_color_picker)
     button_color_picker.anchor_right = 1.0
     button_color_picker.anchor_bottom = 1.0
     button_color_picker.offset_left = 12.0
@@ -5370,11 +5391,12 @@ func _create_custom_background_controls() -> void :
     button_fill_color_dialog.title = "Цвет кнопок"
     button_fill_color_dialog.ok_button_text = "OK"
     button_fill_color_dialog.confirmed.connect(_on_button_fill_color_dialog_confirmed)
-    button_fill_color_dialog.min_size = Vector2i(360, 420)
+    button_fill_color_dialog.min_size = COLOR_DIALOG_SIZE
     add_child(button_fill_color_dialog)
 
     button_fill_color_picker = ColorPicker.new()
     button_fill_color_picker.name = "ButtonFillColorPicker"
+    _configure_compact_color_picker(button_fill_color_picker)
     button_fill_color_picker.anchor_right = 1.0
     button_fill_color_picker.anchor_bottom = 1.0
     button_fill_color_picker.offset_left = 12.0

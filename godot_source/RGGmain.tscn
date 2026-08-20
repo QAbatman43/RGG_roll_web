@@ -5,7 +5,7 @@
 [ext_resource type="Texture2D" uid="uid://dh3pkwa80i4av" path="res://sprites/links/MobyGames.png" id="3"]
 [ext_resource type="Texture2D" uid="uid://0m55d6n6y44p" path="res://sprites/links/gamefaqs.png" id="4"]
 [ext_resource type="Texture2D" uid="uid://dwqx6xkjghg0d" path="res://sprites/links/rgg.png" id="5"]
-[ext_resource type="Texture2D" path="res://sprites/main/global.png" id="6"]
+[ext_resource type="Texture2D" uid="uid://bhr7mdwg53c26" path="res://sprites/main/global.png" id="6"]
 [ext_resource type="Texture2D" uid="uid://dab5nvkc11j01" path="res://sprites/main/platforms.png" id="7"]
 [ext_resource type="Texture2D" uid="uid://bi0aa0tn6om7f" path="res://sprites/main/cat.png" id="8"]
 [ext_resource type="Texture2D" uid="uid://bstpjnfvh8hho" path="res://sprites/main/wheel.png" id="9"]
@@ -326,7 +326,7 @@ flat = true
 
 [node name="PlatformsTile" type="Panel" parent="BottomBar" unique_id=1422247270]
 layout_mode = 0
-offset_left = 79.0
+offset_left = 77.0
 offset_right = 157.0
 offset_bottom = 80.0
 theme_override_styles/panel = SubResource("StyleBoxFlat_tile")
