@@ -111,11 +111,58 @@ body {
 
 		<script src="rggweb.js"></script>
 		<script>
-const GODOT_CONFIG = {"args":[],"canvasResizePolicy":2,"emscriptenPoolSize":8,"ensureCrossOriginIsolationHeaders":true,"executable":"rggweb","experimentalVK":false,"fileSizes":{"rggweb.pck":53141992,"rggweb.wasm":39514754},"focusCanvas":true,"gdextensionLibs":[],"godotPoolSize":4};
+const GODOT_CONFIG = {"args":[],"canvasResizePolicy":2,"emscriptenPoolSize":8,"ensureCrossOriginIsolationHeaders":true,"executable":"rggweb","experimentalVK":false,"fileSizes":{"rggweb.pck":53143576,"rggweb.wasm":39514754},"focusCanvas":true,"gdextensionLibs":[],"godotPoolSize":4};
 const GODOT_THREADS_ENABLED = false;
 const engine = new Engine(GODOT_CONFIG);
 
 (function () {
+	// RGG custom web bridge start
+	window.rggRequestFullscreen = function () {
+		const target = document.documentElement;
+		const requestFullscreen = target.requestFullscreen || target.webkitRequestFullscreen || target.msRequestFullscreen;
+		if (requestFullscreen) {
+			try {
+				const result = requestFullscreen.call(target);
+				if (result && typeof result.catch === "function") {
+					result.catch(function () {});
+				}
+			} catch (error) {
+			}
+		}
+	};
+
+	window.rggExitFullscreen = function () {
+		const exitFullscreen = document.exitFullscreen || document.webkitExitFullscreen || document.msExitFullscreen;
+		if (exitFullscreen) {
+			try {
+				const result = exitFullscreen.call(document);
+				if (result && typeof result.catch === "function") {
+					result.catch(function () {});
+				}
+			} catch (error) {
+			}
+		}
+	};
+
+	window.rggToggleFullscreen = function () {
+		if (document.fullscreenElement || document.webkitFullscreenElement || document.msFullscreenElement) {
+			window.rggExitFullscreen();
+			return;
+		}
+		window.rggRequestFullscreen();
+	};
+
+	window.addEventListener("keydown", function (event) {
+		if (event.key !== "F11") {
+			return;
+		}
+		event.preventDefault();
+		if (event.repeat) {
+			return;
+		}
+		window.rggToggleFullscreen();
+	}, true);
+
 	window.rggOpenUserFilePicker = function (kind, accept, callback) {
 		const input = document.createElement("input");
 		input.type = "file";
@@ -198,6 +245,7 @@ const engine = new Engine(GODOT_CONFIG);
 		document.body.appendChild(input);
 		input.click();
 	};
+	// RGG custom web bridge end
 
 	const statusOverlay = document.getElementById('status');
 	const statusProgress = document.getElementById('status-progress');

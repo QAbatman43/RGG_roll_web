@@ -41,6 +41,7 @@ const COLOR_DIALOG_SIZE: = Vector2i(340, 330)
 const SOUND_MUTED_SETTING_PATH: = "user://sound_muted.txt"
 const SOUND_VOLUME_PERCENT_SETTING_PATH: = "user://sound_volume_percent.txt"
 const TTS_ENABLED_SETTING_PATH: = "user://tts_enabled.txt"
+const TTS_VOLUME_PERCENT_SETTING_PATH: = "user://tts_volume_percent.txt"
 const TTS_RATE_SETTING_PATH: = "user://tts_rate.txt"
 const TTS_LANGUAGE_SETTING_PATH: = "user://tts_language.txt"
 const WHEEL_DESCRIPTION_LIST_PATH: = "res://lists/wheel_list.dat"
@@ -303,7 +304,7 @@ const LOOTBOX_ITEMS: Array[Dictionary] = [
     {"id": "potions", "title": "Зелья", "path": "res://lists/potions.dat"}, 
     {"id": "coins", "title": "Монетки", "path": "res://lists/coins.dat"}, 
     {"id": "gold", "title": "Золото", "path": "res://lists/golden.dat"}, 
-    {"id": "wheels", "title": "Фри-спины", "path": "res://lists/wheels.dat"},
+    {"id": "spins", "title": "Фри-спины", "path": "res://lists/spins.dat"},
     {"id": "mods", "title": "Моды", "path": "res://lists/mods.dat"}, 
     {"id": "roulette", "title": "Рулетка", "path": "res://lists/roulette.dat"}, 
     {"id": "effects", "title": "Эффекты", "path": "res://lists/effects.dat"}, 
@@ -325,7 +326,7 @@ const LOOTBOX_ICON_PATHS: = {
     "potions": "res://images/lootboxes/зелья.png", 
     "coins": "res://images/lootboxes/монетки.png", 
     "gold": "res://images/lootboxes/золото.png", 
-    "wheels": "res://images/lootboxes/колеса.png", 
+    "spins": "res://images/lootboxes/колеса.png",
     "mods": "res://images/lootboxes/моды.png", 
     "roulette": "res://images/lootboxes/рулетка.png", 
     "specrolls": "res://images/lootboxes/спецролы.png", 
@@ -439,12 +440,13 @@ const GAMEFAQS_ICON_PATH: = "res://sprites/links/gamefaqs.png"
 const RGGLAND_ICON_PATH: = "res://sprites/links/rgg.png"
 const RGGLAND_URL: = "https://games.rgg.land/search/"
 const TTS_DELAY_AFTER_STOP: = 0.02
-const TTS_VOLUME: = 100
 const TTS_PITCH: = 1.0
 const DEFAULT_TTS_RATE: = 1.0
 const TTS_UTTERANCE_ID: = 1
 const DEFAULT_SOUND_VOLUME_PERCENT: = 100.0
 const MAX_SOUND_VOLUME_PERCENT: = 200.0
+const DEFAULT_TTS_VOLUME_PERCENT: = 100.0
+const MAX_TTS_VOLUME_PERCENT: = 100.0
 const TTS_RATE_VALUES: Array[float] = [0.75, 1.0, 1.5, 2.0, 3.0]
 const TTS_RATE_LABELS: Array[String] = ["x0.75", "x1", "x1.5", "x2", "x3"]
 const TTS_LANGUAGE_AUTO: = "auto"
@@ -532,12 +534,14 @@ var cached_tts_voice_id: String = ""
 var tts_waiting_for_stop_sound: = false
 var suppress_filter_events: = false
 var tts_enabled: = true
+var tts_volume_percent: = DEFAULT_TTS_VOLUME_PERCENT
 var tts_rate: = DEFAULT_TTS_RATE
 var tts_language_mode: = DEFAULT_TTS_LANGUAGE_MODE
 var sound_muted: = false
 var sound_volume_percent: = DEFAULT_SOUND_VOLUME_PERCENT
 var current_audio_base_volume_db: = 0.0
 var suppress_sound_volume_slider_events: = false
+var suppress_tts_volume_slider_events: = false
 var suppress_tts_rate_option_events: = false
 var suppress_tts_language_option_events: = false
 var last_tts_toggle_msec: = -1000000
@@ -568,6 +572,8 @@ var web_file_picker_callback_ref = null
 @onready var sound_volume_slider: HSlider = $SettingsPanel / SoundVolumeSlider
 @onready var sound_volume_label: Label = $SettingsPanel / SoundVolumeLabel
 @onready var tts_button: Button = $SettingsPanel / TTSButton
+@onready var tts_volume_slider: HSlider = $SettingsPanel / TTSVolumeSlider
+@onready var tts_volume_label: Label = $SettingsPanel / TTSVolumeLabel
 @onready var tts_rate_option_button: OptionButton = $SettingsPanel / TTSRateOptionButton
 @onready var tts_language_option_button: OptionButton = $SettingsPanel / TTSLanguageOptionButton
 var calc_button: TextureButton
@@ -763,6 +769,7 @@ func _ready() -> void :
     _connect_list_preview_inputs()
     _load_saved_audio_toggle_settings()
     _refresh_tts_button()
+    _refresh_tts_volume_controls()
     _refresh_tts_rate_button()
     _refresh_tts_language_button()
     _refresh_sound_mute_button()
@@ -2570,7 +2577,9 @@ func _on_tts_timer_timeout() -> void :
         return
 
     DisplayServer.tts_stop()
-    DisplayServer.tts_speak(pending_tts_text, voice_id, TTS_VOLUME, TTS_PITCH, tts_rate, TTS_UTTERANCE_ID, true)
+    var tts_volume: = _tts_volume_to_engine_volume()
+    if tts_volume > 0:
+        DisplayServer.tts_speak(pending_tts_text, voice_id, tts_volume, TTS_PITCH, tts_rate, TTS_UTTERANCE_ID, true)
     pending_tts_text = ""
 
 
@@ -2593,6 +2602,7 @@ func _toggle_tts_enabled_from_user() -> void :
     tts_enabled = not tts_enabled
     _save_bool_setting(TTS_ENABLED_SETTING_PATH, tts_enabled)
     _refresh_tts_button()
+    _refresh_tts_volume_controls()
     _refresh_tts_rate_button()
     _refresh_tts_language_button()
     if not tts_enabled:
@@ -2652,6 +2662,20 @@ func _on_tts_language_item_selected(index: int) -> void :
     cached_tts_voice_id = ""
     _save_string_setting(TTS_LANGUAGE_SETTING_PATH, tts_language_mode)
     _refresh_tts_language_button()
+
+
+
+func _tts_volume_to_engine_volume() -> int :
+    return int(round(clampf(tts_volume_percent, 0.0, MAX_TTS_VOLUME_PERCENT)))
+
+
+
+func _on_tts_volume_slider_value_changed(value: float) -> void :
+    if suppress_tts_volume_slider_events:
+        return
+    tts_volume_percent = clampf(value, 0.0, MAX_TTS_VOLUME_PERCENT)
+    _save_float_setting(TTS_VOLUME_PERCENT_SETTING_PATH, tts_volume_percent)
+    _refresh_tts_volume_controls()
 
 
 
@@ -2856,12 +2880,14 @@ func _on_settings_reset_button_pressed() -> void :
     _delete_user_settings_file(SOUND_MUTED_SETTING_PATH)
     _delete_user_settings_file(SOUND_VOLUME_PERCENT_SETTING_PATH)
     _delete_user_settings_file(TTS_ENABLED_SETTING_PATH)
+    _delete_user_settings_file(TTS_VOLUME_PERCENT_SETTING_PATH)
     _delete_user_settings_file(TTS_RATE_SETTING_PATH)
     _delete_user_settings_file(TTS_LANGUAGE_SETTING_PATH)
 
     sound_muted = false
     sound_volume_percent = DEFAULT_SOUND_VOLUME_PERCENT
     tts_enabled = true
+    tts_volume_percent = DEFAULT_TTS_VOLUME_PERCENT
     tts_rate = DEFAULT_TTS_RATE
     tts_language_mode = DEFAULT_TTS_LANGUAGE_MODE
     cached_tts_voice_id = ""
@@ -2874,6 +2900,7 @@ func _on_settings_reset_button_pressed() -> void :
     _refresh_sound_mute_button()
     _refresh_sound_volume_controls()
     _refresh_tts_button()
+    _refresh_tts_volume_controls()
     _refresh_tts_rate_button()
     _refresh_tts_language_button()
 
@@ -3253,6 +3280,7 @@ func _load_saved_audio_toggle_settings() -> void :
     elif sound_volume_percent <= 0.0:
         sound_muted = true
     tts_enabled = _load_bool_setting(TTS_ENABLED_SETTING_PATH, true)
+    tts_volume_percent = clampf(_load_float_setting(TTS_VOLUME_PERCENT_SETTING_PATH, DEFAULT_TTS_VOLUME_PERCENT), 0.0, MAX_TTS_VOLUME_PERCENT)
     tts_rate = _nearest_tts_rate_option(_load_float_setting(TTS_RATE_SETTING_PATH, DEFAULT_TTS_RATE))
     tts_language_mode = _normalize_tts_language_mode(_load_string_setting(TTS_LANGUAGE_SETTING_PATH, DEFAULT_TTS_LANGUAGE_MODE))
     cached_tts_voice_id = ""
@@ -3486,6 +3514,17 @@ func _refresh_tts_button() -> void :
     else:
         tts_button.text = "TTS OFF"
         tts_button.add_theme_color_override("font_color", Color(0.62, 0.62, 0.66, 1.0))
+
+
+
+func _refresh_tts_volume_controls() -> void :
+    if tts_volume_slider != null:
+        suppress_tts_volume_slider_events = true
+        tts_volume_slider.value = tts_volume_percent
+        suppress_tts_volume_slider_events = false
+    if tts_volume_label != null:
+        tts_volume_label.text = "%d%%" % int(round(tts_volume_percent))
+        tts_volume_label.add_theme_color_override("font_color", Color(0.92, 0.92, 0.96, 1.0) if tts_enabled and tts_volume_percent > 0.0 else Color(0.62, 0.62, 0.66, 1.0))
 
 
 
@@ -4955,6 +4994,22 @@ func _create_settings_menu() -> void :
         tts_button.mouse_filter = Control.MOUSE_FILTER_STOP
         tts_button.mouse_default_cursor_shape = Control.CURSOR_POINTING_HAND
 
+    if tts_volume_slider != null:
+        tts_volume_slider.z_index = 2
+        tts_volume_slider.min_value = 0.0
+        tts_volume_slider.max_value = MAX_TTS_VOLUME_PERCENT
+        tts_volume_slider.step = 1.0
+        tts_volume_slider.value = tts_volume_percent
+        tts_volume_slider.focus_mode = Control.FOCUS_NONE
+        tts_volume_slider.mouse_default_cursor_shape = Control.CURSOR_POINTING_HAND
+        tts_volume_slider.value_changed.connect(_on_tts_volume_slider_value_changed)
+
+    if tts_volume_label != null:
+        tts_volume_label.z_index = 2
+        tts_volume_label.mouse_filter = Control.MOUSE_FILTER_IGNORE
+        tts_volume_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
+        tts_volume_label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+
     if tts_rate_option_button != null:
         tts_rate_option_button.z_index = 2
         tts_rate_option_button.focus_mode = Control.FOCUS_NONE
@@ -4979,7 +5034,7 @@ func _create_settings_menu() -> void :
 
     var background_button: = Button.new()
     background_button.name = "SettingsBackgroundButton"
-    background_button.position = Vector2(14, 146)
+    background_button.position = Vector2(14, 174)
     background_button.size = Vector2(196, 26)
     background_button.text = "Сменить фон"
     background_button.focus_mode = Control.FOCUS_NONE
@@ -4994,7 +5049,7 @@ func _create_settings_menu() -> void :
 
     background_stretch_button = Button.new()
     background_stretch_button.name = "SettingsBackgroundStretchButton"
-    background_stretch_button.position = Vector2(14, 178)
+    background_stretch_button.position = Vector2(14, 206)
     background_stretch_button.size = Vector2(94, 24)
     background_stretch_button.text = "Растянуть"
     background_stretch_button.focus_mode = Control.FOCUS_NONE
@@ -5008,7 +5063,7 @@ func _create_settings_menu() -> void :
 
     background_center_button = Button.new()
     background_center_button.name = "SettingsBackgroundCenterButton"
-    background_center_button.position = Vector2(116, 178)
+    background_center_button.position = Vector2(116, 206)
     background_center_button.size = Vector2(94, 24)
     background_center_button.text = "Как есть"
     background_center_button.focus_mode = Control.FOCUS_NONE
@@ -5022,7 +5077,7 @@ func _create_settings_menu() -> void :
 
     var music_button: = Button.new()
     music_button.name = "SettingsMusicButton"
-    music_button.position = Vector2(14, 210)
+    music_button.position = Vector2(14, 238)
     music_button.size = Vector2(196, 26)
     music_button.text = "Сменить музыку"
     music_button.focus_mode = Control.FOCUS_NONE
@@ -5037,7 +5092,7 @@ func _create_settings_menu() -> void :
 
     var reset_button: = Button.new()
     reset_button.name = "SettingsResetButton"
-    reset_button.position = Vector2(14, 346)
+    reset_button.position = Vector2(14, 366)
     reset_button.size = Vector2(196, 26)
     reset_button.text = "Сбросить всё"
     reset_button.focus_mode = Control.FOCUS_NONE
@@ -5052,7 +5107,7 @@ func _create_settings_menu() -> void :
 
     var item_color_button: = Button.new()
     item_color_button.name = "SettingsItemColorButton"
-    item_color_button.position = Vector2(14, 242)
+    item_color_button.position = Vector2(14, 270)
     item_color_button.size = Vector2(196, 26)
     item_color_button.text = "Цвет пунктов"
     item_color_button.focus_mode = Control.FOCUS_NONE
@@ -5067,7 +5122,7 @@ func _create_settings_menu() -> void :
 
     var button_text_color_button: = Button.new()
     button_text_color_button.name = "SettingsButtonTextColorButton"
-    button_text_color_button.position = Vector2(14, 274)
+    button_text_color_button.position = Vector2(14, 302)
     button_text_color_button.size = Vector2(196, 26)
     button_text_color_button.text = "Цвет текста кнопок"
     button_text_color_button.focus_mode = Control.FOCUS_NONE
@@ -5082,7 +5137,7 @@ func _create_settings_menu() -> void :
 
     var button_color_button: = Button.new()
     button_color_button.name = "SettingsButtonColorButton"
-    button_color_button.position = Vector2(14, 306)
+    button_color_button.position = Vector2(14, 334)
     button_color_button.size = Vector2(196, 26)
     button_color_button.text = "Цвет кнопок"
     button_color_button.focus_mode = Control.FOCUS_NONE
@@ -5137,6 +5192,8 @@ func _raise_settings_scene_controls() -> void :
         sound_volume_slider,
         sound_volume_label,
         tts_button,
+        tts_volume_slider,
+        tts_volume_label,
         tts_rate_option_button,
         tts_language_option_button,
     ]:

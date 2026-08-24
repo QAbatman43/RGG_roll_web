@@ -10,10 +10,16 @@ $indexPath = Join-Path $repoRoot "index.html"
 $bridgeSource = [System.IO.File]::ReadAllText($indexPath)
 $bridgeMatch = [regex]::Match(
     $bridgeSource,
-    '(?ms)^\twindow\.rggOpenUserFilePicker.*?^\t};\r?$'
+    '(?ms)^\t// RGG custom web bridge start.*?^\t// RGG custom web bridge end\r?$'
 )
 if (-not $bridgeMatch.Success) {
-    throw "File picker bridge was not found in index.html"
+    $bridgeMatch = [regex]::Match(
+        $bridgeSource,
+        '(?ms)^\twindow\.rggOpenUserFilePicker.*?^\t};\r?$'
+    )
+}
+if (-not $bridgeMatch.Success) {
+    throw "RGG custom web bridge was not found in index.html"
 }
 
 $copies = [ordered]@{
