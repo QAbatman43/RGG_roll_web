@@ -209,6 +209,8 @@ const SPECIAL_ROLL_ITEMS: Array[Dictionary] = [
     {"id": "ninja", "title": "Ninja", "path": "res://lists/ninja.dat", "tooltip": "Игры про ниндзей"},
     {"id": "zombie", "title": "Zombie", "path": "res://lists/zombie.dat", "tooltip": "Игры про зомби"},
     {"id": "checkers", "title": "Шашки", "path": "res://lists/checkers.dat", "tooltip": "Игры, в которые играли в RGG-Шашках"},
+    {"id": "irvin", "title": "Ирвин", "path": "res://lists/irvin.dat", "tooltip": "Платформеры от Ирвина"},
+    {"id": "shnumi", "title": "Коротыши", "path": "res://lists/shnumi.dat", "tooltip": "Короткие игры от Шнума"},
 ]
 const SPECIAL_ROLL_ICON_PATHS: = {
     "2007": "res://images/specrolls/2007.png", 
@@ -233,6 +235,7 @@ const SPECIAL_ROLL_ICON_PATHS: = {
     "horror": "res://images/specrolls/horror.png", 
     "hudson": "res://images/specrolls/hudsonsoft.png", 
     "items": "res://images/specrolls/замок.png", 
+    "irvin": "res://images/specrolls/irvin.jpg",
     "iwb": "res://images/specrolls/iwannabe.png", 
     "jim": "res://images/specrolls/earthwormjim.png", 
     "kinaman": "res://images/specrolls/кинаман.png", 
@@ -278,6 +281,7 @@ const SPECIAL_ROLL_ICON_PATHS: = {
     "steam_unf": "res://images/specrolls/steam_unf.png", 
     "souls_unf": "res://images/specrolls/souls_unf.png", 
     "shmup": "res://images/specrolls/shmup.png", 
+    "shnumi": "res://images/specrolls/shnumi.png",
     "sega": "res://images/specrolls/sega.png", 
     "pizza": "res://images/specrolls/pizza.png", 
     "pixel_games": "res://images/specrolls/pixel_games.png",
