@@ -575,13 +575,27 @@ theme_override_styles/pressed = SubResource("StyleBoxFlat_small")
 theme_override_styles/hover = SubResource("StyleBoxFlat_small")
 text = "Update lists"
 
+[node name="WheelUndoDeleteButton" type="Button" parent="." unique_id=1245440299]
+layout_mode = 0
+offset_left = 9.0
+offset_top = 668.0
+offset_right = 209.0
+offset_bottom = 702.0
+focus_mode = 0
+theme_override_colors/font_color = Color(0.96, 0.96, 0.98, 1)
+theme_override_font_sizes/font_size = 12
+theme_override_styles/normal = SubResource("StyleBoxFlat_small")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_small")
+theme_override_styles/hover = SubResource("StyleBoxFlat_small")
+text = "Отменить последнее удаление"
+
 [node name="SettingsPanel" type="Panel" parent="." unique_id=608629014]
 z_index = 20
 layout_mode = 0
 offset_left = 770.0
-offset_top = 250.0
+offset_top = 212.0
 offset_right = 994.0
-offset_bottom = 668.0
+offset_bottom = 666.0
 
 [node name="SoundMuteButton" type="Button" parent="SettingsPanel" unique_id=358096286]
 layout_mode = 0
@@ -651,17 +665,16 @@ offset_bottom = 134.0
 focus_mode = 0
 theme_override_font_sizes/font_size = 14
 
-[node name="TTSVolumeSlider" type="HSlider" parent="SettingsPanel"]
+[node name="TTSVolumeSlider" type="HSlider" parent="SettingsPanel" unique_id=1448796333]
 layout_mode = 0
 offset_left = 14.0
 offset_top = 140.0
 offset_right = 156.0
 offset_bottom = 164.0
 focus_mode = 0
-max_value = 100.0
 value = 100.0
 
-[node name="TTSVolumeLabel" type="Label" parent="SettingsPanel"]
+[node name="TTSVolumeLabel" type="Label" parent="SettingsPanel" unique_id=138241736]
 layout_mode = 0
 offset_left = 162.0
 offset_top = 140.0

@@ -571,6 +571,7 @@ var web_file_picker_callback_ref = null
 @onready var list_count_label: Label = $ListCountLabel
 @onready var roll_button: Button = $RollButton
 @onready var ultra_button: Button = $UltraButton
+@onready var wheel_undo_delete_button: Button = $WheelUndoDeleteButton
 @onready var settings_panel: Panel = $SettingsPanel
 @onready var sound_mute_button: Button = $SettingsPanel / SoundMuteButton
 @onready var sound_volume_slider: HSlider = $SettingsPanel / SoundVolumeSlider
@@ -668,6 +669,8 @@ var wheel_deleted_visible_slots: Dictionary = {}
 var extra_deleted_visible_slots: Dictionary = {}
 var wheel_center_delete_button: TextureButton
 var wheel_restore_button: Button
+var wheel_restore_all_button: Button
+var wheel_restore_target_list_id: = ""
 var wheel_restore_overlay: Control
 var wheel_restore_message_label: Label
 var wheel_restore_cancel_button: Button
@@ -1979,19 +1982,32 @@ func _global_events_has_user_removals() -> bool:
 
 
 func _refresh_wheel_restore_button() -> void :
-    if wheel_restore_button == null:
-        return
-    if selected_list_path == WHEEL_LIST_PATH:
-        wheel_restore_button.text = "Вернуть Колесо"
-        wheel_restore_button.visible = true
-        wheel_restore_button.disabled = rolling or not _wheel_has_user_removals()
-        return
-    if selected_list_path == GLOBAL_EVENTS_LIST_PATH:
+    if wheel_restore_button != null and selected_list_path == GLOBAL_EVENTS_LIST_PATH:
         wheel_restore_button.text = "Вернуть Глобалы"
         wheel_restore_button.visible = true
         wheel_restore_button.disabled = rolling or not _global_events_has_user_removals()
+    elif wheel_restore_button != null:
+        wheel_restore_button.visible = false
+    _refresh_wheel_undo_delete_button()
+    _refresh_wheel_restore_all_button()
+
+
+
+func _refresh_wheel_undo_delete_button() -> void :
+    if wheel_undo_delete_button == null:
         return
-    wheel_restore_button.visible = false
+    if selected_list_path != WHEEL_LIST_PATH:
+        wheel_undo_delete_button.visible = false
+        return
+    wheel_undo_delete_button.visible = true
+    wheel_undo_delete_button.disabled = rolling or not _wheel_has_user_removals()
+
+
+
+func _refresh_wheel_restore_all_button() -> void :
+    if wheel_restore_all_button == null:
+        return
+    wheel_restore_all_button.disabled = rolling or not _wheel_has_user_removals()
 
 
 
@@ -4536,10 +4552,13 @@ func _on_wheel_info_ok_pressed() -> void :
 
 
 
-func _show_wheel_restore_popup() -> void :
+func _show_wheel_restore_popup(target_list_id: String = "") -> void :
     if wheel_restore_overlay == null:
         return
-    if _is_global_events_list_selected():
+    if target_list_id.is_empty():
+        target_list_id = GLOBAL_EVENTS_LIST_ID if _is_global_events_list_selected() else WHEEL_LIST_ID
+    wheel_restore_target_list_id = target_list_id
+    if target_list_id == GLOBAL_EVENTS_LIST_ID:
         wheel_restore_message_label.text = "ВСЕ ИЗНАЧАЛЬНЫЕ ГЛОБАЛЫ ВЕРНУТСЯ. И ЭТО ИЗМЕНЕНИЕ НЕЛЬЗЯ БУДЕТ ОТКАТИТЬ"
         wheel_restore_ok_button.text = "ВЕРНУТЬ ВСЕ ГЛОБАЛЫ"
     else:
@@ -4553,6 +4572,7 @@ func _show_wheel_restore_popup() -> void :
 func _hide_wheel_restore_popup() -> void :
     if wheel_restore_overlay != null:
         wheel_restore_overlay.visible = false
+    wheel_restore_target_list_id = ""
 
 
 
@@ -4562,7 +4582,8 @@ func _on_wheel_restore_cancel_pressed() -> void :
 
 
 func _on_wheel_restore_ok_pressed() -> void :
-    if _is_global_events_list_selected():
+    var restore_global_events: = wheel_restore_target_list_id == GLOBAL_EVENTS_LIST_ID
+    if restore_global_events:
         var absolute_global_removed_path: = ProjectSettings.globalize_path(GLOBAL_EVENTS_REMOVED_ENTRIES_PATH)
         if FileAccess.file_exists(GLOBAL_EVENTS_REMOVED_ENTRIES_PATH):
             DirAccess.remove_absolute(absolute_global_removed_path)
@@ -4576,6 +4597,28 @@ func _on_wheel_restore_ok_pressed() -> void :
     if selected_list_path == WHEEL_LIST_PATH or selected_list_path == GLOBAL_EVENTS_LIST_PATH:
         _reload_selected_list()
     _refresh_wheel_delete_button()
+
+
+
+func _on_wheel_undo_delete_button_pressed() -> void :
+    if rolling or not _is_wheel_list_selected():
+        return
+    var removed_entries: = _load_wheel_removed_entries()
+    if removed_entries.is_empty():
+        _refresh_wheel_delete_button()
+        return
+    removed_entries.remove_at(removed_entries.size() - 1)
+    _save_wheel_removed_entries(removed_entries)
+    wheel_deleted_visible_slots.clear()
+    if selected_list_path == WHEEL_LIST_PATH:
+        _reload_selected_list()
+    _refresh_wheel_delete_button()
+
+
+
+func _on_settings_wheel_restore_all_button_pressed() -> void :
+    _set_settings_menu_open(false)
+    _show_wheel_restore_popup(WHEEL_LIST_ID)
 
 
 
@@ -4945,7 +4988,7 @@ func _create_runtime_nodes() -> void :
     wheel_restore_button.name = "WheelRestoreButton"
     wheel_restore_button.position = Vector2(18, 650)
     wheel_restore_button.size = Vector2(170, 32)
-    wheel_restore_button.text = "Вернуть Колесо"
+    wheel_restore_button.text = "Вернуть Глобалы"
     wheel_restore_button.focus_mode = Control.FOCUS_NONE
     wheel_restore_button.mouse_default_cursor_shape = Control.CURSOR_POINTING_HAND
     var wheel_restore_style: = _create_wheel_description_button_style()
@@ -4957,6 +5000,18 @@ func _create_runtime_nodes() -> void :
     wheel_restore_button.visible = false
     wheel_restore_button.pressed.connect(_show_wheel_restore_popup)
     add_child(wheel_restore_button)
+
+    if wheel_undo_delete_button != null:
+        wheel_undo_delete_button.focus_mode = Control.FOCUS_NONE
+        wheel_undo_delete_button.mouse_default_cursor_shape = Control.CURSOR_POINTING_HAND
+        wheel_undo_delete_button.add_theme_stylebox_override("normal", wheel_restore_style)
+        wheel_undo_delete_button.add_theme_stylebox_override("pressed", wheel_restore_style)
+        wheel_undo_delete_button.add_theme_stylebox_override("hover", wheel_restore_style)
+        wheel_undo_delete_button.add_theme_color_override("font_color", Color(0.96, 0.96, 0.98, 1.0))
+        wheel_undo_delete_button.add_theme_font_size_override("font_size", 12)
+        wheel_undo_delete_button.visible = false
+        if not wheel_undo_delete_button.pressed.is_connected(_on_wheel_undo_delete_button_pressed):
+            wheel_undo_delete_button.pressed.connect(_on_wheel_undo_delete_button_pressed)
 
 
 
@@ -5038,7 +5093,7 @@ func _create_settings_menu() -> void :
 
     var background_button: = Button.new()
     background_button.name = "SettingsBackgroundButton"
-    background_button.position = Vector2(14, 174)
+    background_button.position = Vector2(14, 206)
     background_button.size = Vector2(196, 26)
     background_button.text = "Сменить фон"
     background_button.focus_mode = Control.FOCUS_NONE
@@ -5053,7 +5108,7 @@ func _create_settings_menu() -> void :
 
     background_stretch_button = Button.new()
     background_stretch_button.name = "SettingsBackgroundStretchButton"
-    background_stretch_button.position = Vector2(14, 206)
+    background_stretch_button.position = Vector2(14, 238)
     background_stretch_button.size = Vector2(94, 24)
     background_stretch_button.text = "Растянуть"
     background_stretch_button.focus_mode = Control.FOCUS_NONE
@@ -5067,7 +5122,7 @@ func _create_settings_menu() -> void :
 
     background_center_button = Button.new()
     background_center_button.name = "SettingsBackgroundCenterButton"
-    background_center_button.position = Vector2(116, 206)
+    background_center_button.position = Vector2(116, 238)
     background_center_button.size = Vector2(94, 24)
     background_center_button.text = "Как есть"
     background_center_button.focus_mode = Control.FOCUS_NONE
@@ -5081,7 +5136,7 @@ func _create_settings_menu() -> void :
 
     var music_button: = Button.new()
     music_button.name = "SettingsMusicButton"
-    music_button.position = Vector2(14, 238)
+    music_button.position = Vector2(14, 270)
     music_button.size = Vector2(196, 26)
     music_button.text = "Сменить музыку"
     music_button.focus_mode = Control.FOCUS_NONE
@@ -5096,7 +5151,7 @@ func _create_settings_menu() -> void :
 
     var reset_button: = Button.new()
     reset_button.name = "SettingsResetButton"
-    reset_button.position = Vector2(14, 366)
+    reset_button.position = Vector2(14, 398)
     reset_button.size = Vector2(196, 26)
     reset_button.text = "Сбросить всё"
     reset_button.focus_mode = Control.FOCUS_NONE
@@ -5109,9 +5164,25 @@ func _create_settings_menu() -> void :
     reset_button.pressed.connect(_on_settings_reset_button_pressed)
     settings_panel.add_child(reset_button)
 
+    wheel_restore_all_button = Button.new()
+    wheel_restore_all_button.name = "SettingsWheelRestoreAllButton"
+    wheel_restore_all_button.position = Vector2(14, 174)
+    wheel_restore_all_button.size = Vector2(196, 26)
+    wheel_restore_all_button.text = "Вернуть ВСЕ пункты колеса"
+    wheel_restore_all_button.focus_mode = Control.FOCUS_NONE
+    wheel_restore_all_button.mouse_default_cursor_shape = Control.CURSOR_POINTING_HAND
+    wheel_restore_all_button.add_theme_stylebox_override("normal", settings_item_style)
+    wheel_restore_all_button.add_theme_stylebox_override("pressed", settings_item_style)
+    wheel_restore_all_button.add_theme_stylebox_override("hover", settings_item_style)
+    wheel_restore_all_button.add_theme_color_override("font_color", Color(0.96, 0.96, 0.98, 1.0))
+    wheel_restore_all_button.add_theme_font_size_override("font_size", 11)
+    wheel_restore_all_button.disabled = not _wheel_has_user_removals()
+    wheel_restore_all_button.pressed.connect(_on_settings_wheel_restore_all_button_pressed)
+    settings_panel.add_child(wheel_restore_all_button)
+
     var item_color_button: = Button.new()
     item_color_button.name = "SettingsItemColorButton"
-    item_color_button.position = Vector2(14, 270)
+    item_color_button.position = Vector2(14, 302)
     item_color_button.size = Vector2(196, 26)
     item_color_button.text = "Цвет пунктов"
     item_color_button.focus_mode = Control.FOCUS_NONE
@@ -5126,7 +5197,7 @@ func _create_settings_menu() -> void :
 
     var button_text_color_button: = Button.new()
     button_text_color_button.name = "SettingsButtonTextColorButton"
-    button_text_color_button.position = Vector2(14, 302)
+    button_text_color_button.position = Vector2(14, 334)
     button_text_color_button.size = Vector2(196, 26)
     button_text_color_button.text = "Цвет текста кнопок"
     button_text_color_button.focus_mode = Control.FOCUS_NONE
@@ -5141,7 +5212,7 @@ func _create_settings_menu() -> void :
 
     var button_color_button: = Button.new()
     button_color_button.name = "SettingsButtonColorButton"
-    button_color_button.position = Vector2(14, 334)
+    button_color_button.position = Vector2(14, 366)
     button_color_button.size = Vector2(196, 26)
     button_color_button.text = "Цвет кнопок"
     button_color_button.focus_mode = Control.FOCUS_NONE
