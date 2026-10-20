@@ -28,7 +28,30 @@ const EXTRA_USER_LIST_PATH: = "user://extra_user.dat"
 const EXTRA_REMOVED_ENTRIES_PATH: = "user://extra_removed_entries.dat"
 const WHEEL_LIST_ID: = "wheel"
 const WHEEL_LIST_PATH: = "res://lists/wheel.dat"
+const WHEEL_LEGENDARY_LIST_PATH: = "res://lists/legendary.dat"
 const WHEEL_REMOVED_ENTRIES_PATH: = "user://wheel_removed_entries.dat"
+const WHEEL_PITY_COUNT_PATH: = "user://wheel_pity_count.txt"
+const WEAPON_WHEEL_LIST_PATH: = "res://lists/weapon_wheel.dat"
+const WEAPON_WHEEL_LEGENDARY_LIST_PATH: = "res://lists/weapon_legendary.dat"
+const WEAPON_WHEEL_REMOVED_ENTRIES_PATH: = "user://weapon_wheel_removed_entries.dat"
+const WEAPON_WHEEL_PITY_COUNT_PATH: = "user://weapon_wheel_pity_count.txt"
+const START_WHEEL_LIST_PATH: = "res://lists/start_wheel.dat"
+const START_WHEEL_REMOVED_ENTRIES_PATH: = "user://start_wheel_removed_entries.dat"
+const START_WHEEL_PITY_COUNT_PATH: = "user://start_wheel_pity_count.txt"
+const WHEEL_MODE_STANDARD_ID: = "standard"
+const WHEEL_MODE_WEAPON_ID: = "weapon"
+const WHEEL_MODE_START_ID: = "start"
+const LEGENDARY_CARP_TITLE: = "Легендарный Карп"
+const GARANT_FEATURE_ENABLED: = false
+const GARANT_LIST_ID: = "garant"
+const GARANT_LIST_PATH: = "res://lists/garant.dat"
+const GARANT_REMOVED_ENTRIES_PATH: = "user://garant_removed_entries.dat"
+const GARANT_DELETE_COUNT_PATH: = "user://garant_delete_count.txt"
+const GARANT_TRIGGER_DELETE_COUNT: = 3
+const GARANT_TELEPORT_TITLE: = "Телепорт"
+const GARANT_TELEPORT_CARD_PATH: = "res://images/cards/teleport.png"
+const GARANT_GOLDEN_TELEPORT_TITLE: = "Золотой телепорт"
+const GARANT_GOLDEN_TELEPORT_CARD_PATH: = "res://images/cards/golden_teleport.png"
 const CUSTOM_BACKGROUND_IMAGE_PATH: = "user://custom_background.png"
 const CUSTOM_BACKGROUND_MODE_PATH: = "user://custom_background_mode.txt"
 const CUSTOM_BACKGROUND_MODE_STRETCH: = "stretch"
@@ -46,6 +69,8 @@ const TTS_RATE_SETTING_PATH: = "user://tts_rate.txt"
 const TTS_LANGUAGE_SETTING_PATH: = "user://tts_language.txt"
 const WHEEL_DESCRIPTION_LIST_PATH: = "res://lists/wheel_list.dat"
 const WHEEL_MODE_TITLE: = "Колесо добра"
+const WHEEL_LEGENDARY_MAIN_COLOR: = Color(1.0, 0.82, 0.22, 1.0)
+const WHEEL_LEGENDARY_SECONDARY_COLOR: = Color(0.86, 0.58, 0.12, 1.0)
 const PLATFORMS_MODE_TITLE: = "Платформы"
 const CAT_MODE_TITLE: = "Кот в мешке"
 
@@ -211,6 +236,7 @@ const SPECIAL_ROLL_ITEMS: Array[Dictionary] = [
     {"id": "checkers", "title": "Шашки", "path": "res://lists/checkers.dat", "tooltip": "Игры, в которые играли в RGG-Шашках"},
     {"id": "irvin", "title": "Ирвин", "path": "res://lists/irvin.dat", "tooltip": "Платформеры от Ирвина"},
     {"id": "shnumi", "title": "Коротыши", "path": "res://lists/shnumi.dat", "tooltip": "Короткие игры от Шнума"},
+    {"id": "higan", "title": "Higan", "path": "res://lists/higan.dat", "tooltip": "Игры от Higan"},
 ]
 const SPECIAL_ROLL_ICON_PATHS: = {
     "2007": "res://images/specrolls/2007.png", 
@@ -232,6 +258,7 @@ const SPECIAL_ROLL_ICON_PATHS: = {
     "golden": "res://images/specrolls/золото.png", 
     "guitman": "res://sprites/main/guitman.png",
     "hakon": "res://images/specrolls/xakoh.png", 
+    "higan": "res://images/specrolls/higan.png",
     "horror": "res://images/specrolls/horror.png", 
     "hudson": "res://images/specrolls/hudsonsoft.png", 
     "items": "res://images/specrolls/замок.png", 
@@ -459,10 +486,53 @@ const TTS_LANGUAGE_RU: = "ru"
 const DEFAULT_TTS_LANGUAGE_MODE: = TTS_LANGUAGE_AUTO
 const TTS_LANGUAGE_VALUES: Array[String] = [TTS_LANGUAGE_AUTO, TTS_LANGUAGE_EN, TTS_LANGUAGE_RU]
 const TTS_LANGUAGE_LABELS: Array[String] = ["Auto", "EN", "RU"]
+const WHEEL_MODE_CONFIGS: Array[Dictionary] = [
+    {
+        "id": WHEEL_MODE_STANDARD_ID,
+        "title": "Стандартное Колесо",
+        "normal_path": WHEEL_LIST_PATH,
+        "legendary_path": WHEEL_LEGENDARY_LIST_PATH,
+        "removed_path": WHEEL_REMOVED_ENTRIES_PATH,
+        "pity_path": WHEEL_PITY_COUNT_PATH,
+        "base_chance": 0.6,
+        "soft_pity_start": 75,
+        "soft_pity_step": 5.0,
+        "hard_pity": 90,
+        "hard_title": "",
+    },
+    {
+        "id": WHEEL_MODE_WEAPON_ID,
+        "title": "Оружейное Колесо",
+        "normal_path": WEAPON_WHEEL_LIST_PATH,
+        "legendary_path": WEAPON_WHEEL_LEGENDARY_LIST_PATH,
+        "removed_path": WEAPON_WHEEL_REMOVED_ENTRIES_PATH,
+        "pity_path": WEAPON_WHEEL_PITY_COUNT_PATH,
+        "base_chance": 0.8,
+        "soft_pity_start": 65,
+        "soft_pity_step": 5.0,
+        "hard_pity": 80,
+        "hard_title": "",
+    },
+    {
+        "id": WHEEL_MODE_START_ID,
+        "title": "Стартовое Колесо",
+        "normal_path": START_WHEEL_LIST_PATH,
+        "legendary_path": WHEEL_LEGENDARY_LIST_PATH,
+        "removed_path": START_WHEEL_REMOVED_ENTRIES_PATH,
+        "pity_path": START_WHEEL_PITY_COUNT_PATH,
+        "base_chance": 0.6,
+        "soft_pity_start": 0,
+        "soft_pity_step": 0.0,
+        "hard_pity": 30,
+        "hard_title": LEGENDARY_CARP_TITLE,
+    },
+]
 
 var selected_platform: = ""
 var selected_list_path: = ""
 var selected_list_title: = ""
+var selected_wheel_mode_id: = WHEEL_MODE_STANDARD_ID
+var wheel_mode_menu_open: = false
 
 var base_games: PackedStringArray = PackedStringArray()
 var games: PackedStringArray = PackedStringArray()
@@ -470,6 +540,12 @@ var shuffled_games: PackedStringArray = PackedStringArray()
 var slot_entries: Array[String] = []
 
 var selected_result_entry: = ""
+var wheel_roll_mode_id: = ""
+var wheel_roll_legendary_active: = false
+var wheel_roll_forced_title: = ""
+var wheel_roll_source_path: = ""
+var wheel_result_mode_id: = ""
+var wheel_result_source_path: = ""
 var rolling: = false
 var stop_requested: = false
 var ultra_stop_pending: = false
@@ -493,6 +569,9 @@ var is_main_platform: = false
 var gacha: = false
 var gacha_count: = 0
 var gacha_garant_enabled: = false
+var garant_delete_count: = 0
+var garant_roll_active: = false
+var garant_result_active: = false
 var logs_enabled: = false
 
 var howlongtobeat_url: = ""
@@ -622,6 +701,7 @@ var background_center_button: Button
 @onready var loose_chip_left: Control = $LooseChipLeft
 @onready var special_rolls_chip: Control = $SpecialRollsChip
 @onready var lootbox_chip: Control = $LootboxChip
+@onready var version_label: Label = $VersionLabel
 
 var bag_tile_default_style: StyleBox
 var bag_tile_active_style: StyleBoxFlat
@@ -648,6 +728,8 @@ var lootbox_browser_title_label: Label
 var lootbox_browser_count_label: Label
 var lootbox_browser_backdrop: ColorRect
 var lootbox_browser_close_chip: Control
+var wheel_mode_menu_panel: Panel
+var wheel_mode_buttons: Dictionary = {}
 var wheel_descriptions: Dictionary = {}
 var wheel_description_links: Dictionary = {}
 var hardcore_descriptions: Dictionary = {}
@@ -665,7 +747,9 @@ var wheel_description_close_button: Button
 var wheel_description_link_url: = ""
 var wheel_description_delete_entry: = ""
 var wheel_description_delete_slot_index: = -1
+var wheel_description_delete_source: = ""
 var wheel_deleted_visible_slots: Dictionary = {}
+var garant_deleted_visible_slots: Dictionary = {}
 var extra_deleted_visible_slots: Dictionary = {}
 var wheel_center_delete_button: TextureButton
 var wheel_restore_button: Button
@@ -675,6 +759,15 @@ var wheel_restore_overlay: Control
 var wheel_restore_message_label: Label
 var wheel_restore_cancel_button: Button
 var wheel_restore_ok_button: Button
+var garant_card_overlay: Control
+var garant_card_halo_panel: Panel
+var garant_card_texture_rect: TextureRect
+var garant_card_glow_rect: ColorRect
+var garant_card_spark_layer: Control
+var garant_card_glow_tween: Tween
+var garant_card_spark_tween: Tween
+var garant_card_delete_button: Button
+var garant_card_close_button: Button
 var wheel_info_overlay: Control
 var wheel_info_label: Label
 var wheel_info_ok_button: Button
@@ -734,6 +827,8 @@ func _apply_global_ui_font() -> void :
 func _ready() -> void :
     _apply_global_ui_font()
     rng.randomize()
+    if GARANT_FEATURE_ENABLED:
+        garant_delete_count = _load_garant_delete_count()
     bag_tile_default_style = bag_tile.get_theme_stylebox("panel")
     bag_tile_active_style = _create_active_tile_style()
     _capture_button_fill_style_templates()
@@ -750,8 +845,11 @@ func _ready() -> void :
     _create_platform_browser()
     _create_special_roll_browser()
     _create_lootbox_browser()
+    _create_wheel_mode_menu()
     _create_result_link_buttons()
     _create_wheel_description_popup()
+    if GARANT_FEATURE_ENABLED:
+        _create_garant_card_popup()
     _create_wheel_info_popup()
     _create_wheel_restore_popup()
     _create_list_preview_popup()
@@ -770,6 +868,9 @@ func _ready() -> void :
         logo43.mouse_filter = Control.MOUSE_FILTER_STOP
         logo43.mouse_default_cursor_shape = Control.CURSOR_POINTING_HAND
         logo43.gui_input.connect(_on_logo43_input)
+    if version_label != null:
+        version_label.mouse_filter = Control.MOUSE_FILTER_STOP
+        version_label.gui_input.connect(_on_version_label_input)
     if letter_input != null:
         letter_input.text_changed.connect(_on_letter_input_text_changed)
         _connect_control_gui_input_once(letter_input, _on_settings_closing_control_input.bind(letter_input))
@@ -843,11 +944,22 @@ func _connect_list_preview_inputs() -> void :
     if bag_button != null:
         bag_button.gui_input.connect(_on_list_preview_input.bind(CAT_MODE_TITLE, CAT_LIST_PATH))
     if wheel_button != null:
-        wheel_button.gui_input.connect(_on_list_preview_input.bind(WHEEL_MODE_TITLE, WHEEL_LIST_PATH))
+        wheel_button.gui_input.connect(_on_wheel_button_preview_input)
     if extra_tile != null:
         var extra_button: = extra_tile.get_node_or_null("ExtraTileButton") as Button
         if extra_button != null:
             extra_button.gui_input.connect(_on_extra_tile_input)
+
+
+
+func _on_wheel_button_preview_input(event: InputEvent) -> void :
+    var mouse_event: = event as InputEventMouseButton
+    if mouse_event == null or not mouse_event.pressed:
+        return
+    if mouse_event.button_index != MOUSE_BUTTON_RIGHT:
+        return
+    var config: = _current_wheel_mode_config()
+    _on_list_preview_input(event, str(config.get("title", WHEEL_MODE_TITLE)), str(config.get("normal_path", WHEEL_LIST_PATH)))
 
 
 
@@ -1232,13 +1344,172 @@ func _on_platforms_button_pressed() -> void :
     _select_list(PLATFORMS_LIST_ID, PLATFORMS_MODE_TITLE, PLATFORMS_LIST_PATH, platforms_tile)
 
 
+func _get_wheel_mode_config(mode_id: String) -> Dictionary:
+    for config in WHEEL_MODE_CONFIGS:
+        if str(config.get("id", "")) == mode_id:
+            return config
+    return WHEEL_MODE_CONFIGS[0]
+
+
+
+func _current_wheel_mode_config() -> Dictionary:
+    return _get_wheel_mode_config(selected_wheel_mode_id)
+
+
+
+func _wheel_mode_id_for_path(path: String) -> String:
+    for config in WHEEL_MODE_CONFIGS:
+        if str(config.get("normal_path", "")) == path or str(config.get("legendary_path", "")) == path:
+            return str(config.get("id", WHEEL_MODE_STANDARD_ID))
+    return ""
+
+
+
+func _is_wheel_mode_path(path: String) -> bool:
+    return not _wheel_mode_id_for_path(path).is_empty()
+
+
+
+func _select_wheel_mode(mode_id: String) -> void :
+    var config: = _get_wheel_mode_config(mode_id)
+    selected_wheel_mode_id = str(config.get("id", WHEEL_MODE_STANDARD_ID))
+    _select_list(WHEEL_LIST_ID, str(config.get("title", WHEEL_MODE_TITLE)), str(config.get("normal_path", WHEEL_LIST_PATH)), wheel_tile)
+    _update_wheel_mode_menu_selection()
+
+
+
+func _wheel_removed_entries_path(mode_id: String = "") -> String:
+    var config: = _get_wheel_mode_config(selected_wheel_mode_id if mode_id.is_empty() else mode_id)
+    return str(config.get("removed_path", WHEEL_REMOVED_ENTRIES_PATH))
+
+
+
+func _wheel_pity_count_path(mode_id: String = "") -> String:
+    var config: = _get_wheel_mode_config(selected_wheel_mode_id if mode_id.is_empty() else mode_id)
+    return str(config.get("pity_path", WHEEL_PITY_COUNT_PATH))
+
+
+
+func _load_wheel_pity_count(mode_id: String = "") -> int:
+    var path: = _wheel_pity_count_path(mode_id)
+    if not FileAccess.file_exists(path):
+        return 0
+    var text: = _read_text_auto(path).strip_edges()
+    if not text.is_valid_int():
+        return 0
+    return maxi(0, text.to_int())
+
+
+
+func _save_wheel_pity_count(mode_id: String, count: int) -> void:
+    var path: = _wheel_pity_count_path(mode_id)
+    var file: = FileAccess.open(path, FileAccess.WRITE)
+    if file == null:
+        return
+    file.store_string(str(maxi(0, count)))
+    file.close()
+
+
+
+func _wheel_legendary_chance_percent(config: Dictionary, pity_count: int) -> float:
+    var attempt_number: = pity_count + 1
+    var hard_pity: = int(config.get("hard_pity", 0))
+    if hard_pity > 0 and attempt_number >= hard_pity:
+        return 100.0
+
+    var chance: = float(config.get("base_chance", 0.0))
+    var soft_start: = int(config.get("soft_pity_start", 0))
+    var soft_step: = float(config.get("soft_pity_step", 0.0))
+    if soft_start > 0 and soft_step > 0.0 and attempt_number > soft_start:
+        chance += float(attempt_number - soft_start) * soft_step
+    return clampf(chance, 0.0, 100.0)
+
+
+
+func _load_wheel_mode_entries(config: Dictionary, legendary: bool) -> PackedStringArray:
+    var path: = str(config.get("legendary_path", WHEEL_LEGENDARY_LIST_PATH)) if legendary else str(config.get("normal_path", WHEEL_LIST_PATH))
+    var entries: = _load_original_list_entries(path)
+    return _apply_wheel_user_removals(entries, str(config.get("id", WHEEL_MODE_STANDARD_ID)))
+
+
+
+func _prepare_wheel_roll_pool() -> void:
+    wheel_roll_mode_id = ""
+    wheel_roll_legendary_active = false
+    wheel_roll_forced_title = ""
+    wheel_roll_source_path = selected_list_path
+    if not _is_wheel_list_selected():
+        return
+
+    var config: = _current_wheel_mode_config()
+    var mode_id: = str(config.get("id", WHEEL_MODE_STANDARD_ID))
+    var pity_count: = _load_wheel_pity_count(mode_id)
+    var attempt_number: = pity_count + 1
+    var hard_pity: = int(config.get("hard_pity", 0))
+    var hard_title: = str(config.get("hard_title", ""))
+    var legendary_roll: = false
+
+    if hard_pity > 0 and attempt_number >= hard_pity:
+        legendary_roll = true
+        wheel_roll_forced_title = hard_title
+    else:
+        var chance: = _wheel_legendary_chance_percent(config, pity_count)
+        legendary_roll = rng.randf_range(0.0, 100.0) < chance
+
+    if legendary_roll:
+        var legendary_entries: = _load_wheel_mode_entries(config, true)
+        if not legendary_entries.is_empty():
+            base_games = legendary_entries
+            games = legendary_entries.duplicate()
+            list_count_label.text = str(games.size())
+            wheel_roll_mode_id = mode_id
+            wheel_roll_legendary_active = true
+            wheel_roll_source_path = str(config.get("legendary_path", WHEEL_LEGENDARY_LIST_PATH))
+            return
+
+    wheel_roll_mode_id = mode_id
+    wheel_roll_source_path = str(config.get("normal_path", WHEEL_LIST_PATH))
+
+
+
+func _complete_wheel_roll_pity() -> void:
+    if not _is_wheel_list_selected() or wheel_roll_mode_id.is_empty():
+        return
+    if wheel_roll_legendary_active:
+        _save_wheel_pity_count(wheel_roll_mode_id, 0)
+    else:
+        _save_wheel_pity_count(wheel_roll_mode_id, _load_wheel_pity_count(wheel_roll_mode_id) + 1)
+
+
+
+func _force_shuffled_center_title_for_future_steps(future_steps: int, title: String) -> void:
+    if title.is_empty():
+        return
+    if shuffled_games.is_empty():
+        return
+    var found_index: = -1
+    for index in range(shuffled_games.size()):
+        if _entry_to_display_text(shuffled_games[index]) == title:
+            found_index = index
+            break
+    if found_index < 0:
+        shuffled_games.append(title)
+        found_index = shuffled_games.size() - 1
+
+    var target_step: = mas_j + maxi(1, future_steps)
+    var target_index: = _shuffled_index_for_center_step(target_step)
+    var tmp: = shuffled_games[target_index]
+    shuffled_games[target_index] = shuffled_games[found_index]
+    shuffled_games[found_index] = tmp
+
+
 
 func _on_wheel_button_pressed() -> void :
     if _close_settings_menu_from_main_control():
         return
     if rolling:
         return
-    _select_list(WHEEL_LIST_ID, WHEEL_MODE_TITLE, WHEEL_LIST_PATH, wheel_tile)
+    _toggle_wheel_mode_menu()
 
 
 
@@ -1493,6 +1764,10 @@ func _select_list(list_id: String, title: String, path: String, tile = null) -> 
     selected_platform = list_id
     selected_list_title = title
     selected_list_path = path
+    if list_id != WHEEL_LIST_ID:
+        selected_wheel_mode_id = WHEEL_MODE_STANDARD_ID
+    garant_roll_active = false
+    garant_result_active = false
     platform = 0
     is_main_platform = false
     if list_id == WHEEL_LIST_ID:
@@ -1508,10 +1783,12 @@ func _select_list(list_id: String, title: String, path: String, tile = null) -> 
     selected_list_label.text = title
     _set_result_links_active(false)
     _hide_wheel_description_popup()
+    _hide_garant_card_popup()
     _hide_wheel_info_popup()
     _hide_wheel_restore_popup()
     _hide_list_preview_popup()
     _hide_extra_list_editor_popup()
+    _hide_wheel_mode_menu()
     _apply_letter_digit_filter()
     _build_search_urls("")
     _reset_roll_slots()
@@ -1537,9 +1814,25 @@ func _start_roll() -> void :
     finalize_timer.stop()
     _hide_wheel_restore_popup()
     _hide_wheel_info_popup()
+    _hide_wheel_mode_menu()
     _stop_tts_playback()
     _reload_selected_list()
-    if games.size() <= 1:
+
+    garant_roll_active = false
+    garant_result_active = false
+    garant_deleted_visible_slots.clear()
+    if GARANT_FEATURE_ENABLED and selected_list_path == WHEEL_LIST_PATH and _load_garant_delete_count() >= GARANT_TRIGGER_DELETE_COUNT:
+        var garant_entries: = _load_garant_entries()
+        if not garant_entries.is_empty():
+            garant_roll_active = true
+            base_games = garant_entries
+            games = garant_entries.duplicate()
+            list_count_label.text = str(games.size())
+    if not garant_roll_active:
+        _prepare_wheel_roll_pool()
+
+    var minimum_roll_size: = 1 if GARANT_FEATURE_ENABLED and garant_roll_active else 2
+    if games.size() < minimum_roll_size:
         return
 
     _reset_slot_images()
@@ -1553,6 +1846,8 @@ func _start_roll() -> void :
     wheel_deleted_visible_slots.clear()
     global_event_deleted_visible_slots.clear()
     extra_deleted_visible_slots.clear()
+    if not garant_roll_active:
+        garant_deleted_visible_slots.clear()
 
     selected_result_entry = ""
     rolling = true
@@ -1571,7 +1866,9 @@ func _start_roll() -> void :
 
     stop_length = clampi(shuffled_games.size(), MIN_STOP_LENGTH, MAX_STOP_LENGTH)
     _rnd_stopwheel()
-    _plan_roll_target(_generate_stopwheel())
+    var generated_stopwheel: = _generate_stopwheel()
+    _force_shuffled_center_title_for_future_steps(generated_stopwheel, wheel_roll_forced_title)
+    _plan_roll_target(generated_stopwheel)
 
     roll_button.text = "STOP"
     roll_button.disabled = true
@@ -1663,6 +1960,8 @@ func _final_wait_after_optional_shift() -> float:
 
 
 func _choose_final_stop_mode() -> int:
+    if _is_wheel_list_selected() and not wheel_roll_forced_title.is_empty():
+        return FINAL_STOP_CENTER
     var roll: = rng.randi_range(0, 99)
     if roll < 50:
         return FINAL_STOP_CENTER
@@ -1729,8 +2028,18 @@ func _button_megastop_click() -> void :
 
 
 
+func _wrap_list_index(index: int, list_size: int) -> int:
+    if list_size <= 0:
+        return 0
+    var wrapped: = index % list_size
+    if wrapped < 0:
+        wrapped += list_size
+    return wrapped
+
+
+
 func _advance_from_list(animate_scroll: bool = true) -> void :
-    if shuffled_games.is_empty():
+    if shuffled_games.is_empty() or slot_entries.size() != 5:
         return
 
     if mas_i >= shuffled_games.size():
@@ -1750,31 +2059,34 @@ func _advance_from_list(animate_scroll: bool = true) -> void :
 
 
 
-func _rotate_visible_entries() -> void :
-    if slot_entries.size() != 5:
+func _advance_from_list_back(animate_scroll: bool = true) -> void :
+    if shuffled_games.is_empty() or slot_entries.size() != 5:
         return
 
-    var previous_bottom: = slot_entries[4]
-    slot_entries[4] = slot_entries[3]
-    slot_entries[3] = slot_entries[2]
-    slot_entries[2] = slot_entries[1]
-    slot_entries[1] = slot_entries[0]
-    slot_entries[0] = previous_bottom
-    _render_slots(SLOT_SCROLL_DOWN)
+    var list_size: = shuffled_games.size()
+    var normalized_cursor: = _wrap_list_index(mas_i, list_size)
+    var bottom_sequence_offset: = _wrap_list_index(normalized_cursor - 6, list_size)
+    var bottom_entry_index: = _wrap_list_index(list_size - bottom_sequence_offset - 1, list_size)
+    var next_bottom_entry: = shuffled_games[bottom_entry_index]
 
-
-
-func _rotate_visible_entries_back() -> void :
-    if slot_entries.size() != 5:
-        return
-
-    var previous_top: = slot_entries[0]
     slot_entries[0] = slot_entries[1]
     slot_entries[1] = slot_entries[2]
     slot_entries[2] = slot_entries[3]
     slot_entries[3] = slot_entries[4]
-    slot_entries[4] = previous_top
-    _render_slots(SLOT_SCROLL_UP)
+    slot_entries[4] = next_bottom_entry
+
+    mas_i = _wrap_list_index(normalized_cursor - 1, list_size)
+    _render_slots(SLOT_SCROLL_UP if animate_scroll else 0)
+
+
+
+func _rotate_visible_entries() -> void :
+    _advance_from_list()
+
+
+
+func _rotate_visible_entries_back() -> void :
+    _advance_from_list_back()
 
 
 
@@ -1792,9 +2104,18 @@ func _roll_stopped() -> void :
 
     selected_result_entry = slot_entries[2]
     var result_text: = _entry_to_display_text(selected_result_entry)
+    var completed_garant_roll: = garant_roll_active
+    wheel_result_mode_id = wheel_roll_mode_id
+    wheel_result_source_path = wheel_roll_source_path
+    _complete_wheel_roll_pity()
+    garant_result_active = completed_garant_roll
+    garant_roll_active = false
 
     roll_button.text = "Roll"
     ultra_button.disabled = true
+    if GARANT_FEATURE_ENABLED and completed_garant_roll and selected_list_path == WHEEL_LIST_PATH:
+        _consume_garant_roll_charge()
+        base_games = _load_list(WHEEL_LIST_PATH)
     _apply_letter_digit_filter()
     _apply_final_roll_colors()
     _refresh_wheel_delete_button()
@@ -1810,6 +2131,10 @@ func _roll_stopped() -> void :
     stop_via_ultra = false
     if not _is_wheel_list_selected() and not _is_hardcore_list_selected() and not _is_global_events_list_selected():
         _queue_center_label_tts_after_stop_sound()
+    wheel_roll_mode_id = ""
+    wheel_roll_legendary_active = false
+    wheel_roll_forced_title = ""
+    wheel_roll_source_path = ""
 
 
 
@@ -1858,8 +2183,12 @@ func _scaled_fast_roll_stop_steps(base_stop_steps: int) -> int:
 
 
 func _choose_roll_colors() -> void :
-    main_color = _resolve_roll_main_color()
-    secondary_color = _generate_secondary_text_color(main_color)
+    if _is_wheel_list_selected() and wheel_roll_legendary_active:
+        main_color = WHEEL_LEGENDARY_MAIN_COLOR
+        secondary_color = WHEEL_LEGENDARY_SECONDARY_COLOR
+    else:
+        main_color = _resolve_roll_main_color()
+        secondary_color = _generate_secondary_text_color(main_color)
     text_color_stat = 0
     _apply_final_roll_colors()
 
@@ -1922,7 +2251,7 @@ func _set_slot_label_color(slot_index: int, color: Color) -> void :
 func _refresh_wheel_delete_button() -> void :
     if wheel_center_delete_button == null:
         return
-    var supports_center_delete: = selected_list_path == WHEEL_LIST_PATH or selected_list_path == EXTRA_LIST_PATH
+    var supports_center_delete: = _is_wheel_list_selected() or selected_list_path == EXTRA_LIST_PATH
     if not supports_center_delete or rolling:
         wheel_center_delete_button.visible = false
         _refresh_wheel_restore_button()
@@ -1938,7 +2267,9 @@ func _refresh_wheel_delete_button() -> void :
         _refresh_wheel_restore_button()
         return
     var already_deleted: = false
-    if selected_list_path == WHEEL_LIST_PATH:
+    if _is_garant_result_entry(center_entry):
+        already_deleted = bool(garant_deleted_visible_slots.get(2, false))
+    elif _is_wheel_list_selected():
         already_deleted = bool(wheel_deleted_visible_slots.get(2, false))
     elif selected_list_path == EXTRA_LIST_PATH:
         already_deleted = bool(extra_deleted_visible_slots.get(2, false))
@@ -1962,17 +2293,31 @@ func _on_wheel_center_delete_button_pressed() -> void :
     var center_text: = _entry_to_display_text(center_entry)
     if center_text.is_empty() or center_text.begins_with("---"):
         return
-    if _is_wheel_list_selected():
+    if _is_garant_result_entry(center_entry):
         wheel_description_delete_entry = center_entry
         wheel_description_delete_slot_index = 2
+        wheel_description_delete_source = GARANT_LIST_ID
+        _on_wheel_description_delete_pressed()
+    elif _is_wheel_list_selected():
+        wheel_description_delete_entry = center_entry
+        wheel_description_delete_slot_index = 2
+        wheel_description_delete_source = WHEEL_LIST_ID
         _on_wheel_description_delete_pressed()
     elif selected_list_path == EXTRA_LIST_PATH:
         _delete_extra_center_entry(center_entry, 2)
 
 
 
-func _wheel_has_user_removals() -> bool:
-    return not _load_wheel_removed_entries().is_empty()
+func _wheel_has_user_removals(mode_id: String = "") -> bool:
+    return not _load_wheel_removed_entries(mode_id).is_empty()
+
+
+
+func _wheel_has_any_user_removals() -> bool:
+    for config in WHEEL_MODE_CONFIGS:
+        if _wheel_has_user_removals(str(config.get("id", ""))):
+            return true
+    return false
 
 
 
@@ -1996,7 +2341,7 @@ func _refresh_wheel_restore_button() -> void :
 func _refresh_wheel_undo_delete_button() -> void :
     if wheel_undo_delete_button == null:
         return
-    if selected_list_path != WHEEL_LIST_PATH:
+    if not _is_wheel_list_selected():
         wheel_undo_delete_button.visible = false
         return
     wheel_undo_delete_button.visible = true
@@ -2007,7 +2352,7 @@ func _refresh_wheel_undo_delete_button() -> void :
 func _refresh_wheel_restore_all_button() -> void :
     if wheel_restore_all_button == null:
         return
-    wheel_restore_all_button.disabled = rolling or not _wheel_has_user_removals()
+    wheel_restore_all_button.disabled = rolling or not _wheel_has_any_user_removals()
 
 
 
@@ -2016,7 +2361,10 @@ func _reset_selected_list_ui() -> void :
     list_count_label.text = ""
     base_games = PackedStringArray()
     games = PackedStringArray()
+    garant_roll_active = false
+    garant_result_active = false
     wheel_deleted_visible_slots.clear()
+    garant_deleted_visible_slots.clear()
     global_event_deleted_visible_slots.clear()
     extra_deleted_visible_slots.clear()
     _set_result_links_active(false)
@@ -2094,7 +2442,10 @@ func _apply_letter_digit_filter() -> void :
 
     games = filtered_games
     list_count_label.text = str(games.size()) if not selected_list_path.is_empty() else ""
-    roll_button.disabled = selected_list_path.is_empty() or games.size() <= 1
+    var can_roll_current_list: = games.size() > 1
+    if _garant_roll_available():
+        can_roll_current_list = true
+    roll_button.disabled = selected_list_path.is_empty() or not can_roll_current_list
     ultra_button.disabled = true
     digits_checkbox.disabled = rolling or selected_list_path.is_empty() or base_games.is_empty() or filter_is_digit
     letter_input.editable = not rolling and not selected_list_path.is_empty() and not base_games.is_empty()
@@ -2121,7 +2472,7 @@ func _filter_games_by_digit(source_games: PackedStringArray) -> PackedStringArra
 
 func _entry_matches_prefix(entry: String, prefix: String) -> bool:
     var filterable_entry: = _entry_filter_text(entry)
-    return filterable_entry.begins_with(prefix)
+    return filterable_entry.to_upper().begins_with(prefix)
 
 
 
@@ -2169,7 +2520,11 @@ func _is_letter_character(character: String) -> bool:
 func _reset_roll_slots() -> void :
     slot_entries.clear()
     slot_entries.append_array(DEFAULT_SLOT_TEXTS)
+    garant_result_active = false
+    wheel_result_mode_id = ""
+    wheel_result_source_path = ""
     wheel_deleted_visible_slots.clear()
+    garant_deleted_visible_slots.clear()
     global_event_deleted_visible_slots.clear()
     extra_deleted_visible_slots.clear()
     _render_slots()
@@ -2402,6 +2757,28 @@ func _is_wheel_list_selected() -> bool:
 
 
 
+func _is_garant_result_entry(entry: String) -> bool:
+    if not GARANT_FEATURE_ENABLED:
+        return false
+    if not garant_result_active:
+        return false
+    if not _is_wheel_list_selected():
+        return false
+    var title: = _entry_to_display_text(entry)
+    return not title.is_empty() and not title.begins_with("---")
+
+
+
+func _is_garant_card_entry(entry: String) -> bool:
+    if not GARANT_FEATURE_ENABLED:
+        return false
+    var title: = _entry_to_display_text(entry)
+    if not _is_garant_card_title(title):
+        return false
+    return not _find_matching_original_entry(GARANT_LIST_PATH, entry).is_empty()
+
+
+
 func _is_hardcore_list_selected() -> bool:
     return selected_list_path == HARDCORE_LIST_PATH
 
@@ -2500,7 +2877,9 @@ func _append_log(result_text: String) -> void :
 func _hide_optional_ui() -> void :
     _set_result_links_active(false)
     _hide_wheel_description_popup(false)
+    _hide_garant_card_popup(false)
     _hide_list_preview_popup()
+    _hide_wheel_mode_menu()
 
 
 
@@ -3474,7 +3853,7 @@ func _restore_bottom_bar_tile_selection() -> void :
 
 
 func _settings_controls_available() -> bool:
-    return not platform_browser_open and not special_roll_browser_open and not lootbox_browser_open
+    return not platform_browser_open and not special_roll_browser_open and not lootbox_browser_open and not wheel_mode_menu_open
 
 
 
@@ -3788,6 +4167,92 @@ func _create_wheel_description_popup() -> void :
     wheel_description_close_button.add_theme_font_size_override("font_size", 14)
     wheel_description_close_button.pressed.connect(_on_wheel_description_close_pressed)
     panel.add_child(wheel_description_close_button)
+
+
+
+func _create_garant_card_popup() -> void :
+    garant_card_overlay = Control.new()
+    garant_card_overlay.name = "GarantCardOverlay"
+    garant_card_overlay.anchor_right = 1.0
+    garant_card_overlay.anchor_bottom = 1.0
+    garant_card_overlay.mouse_filter = Control.MOUSE_FILTER_STOP
+    garant_card_overlay.visible = false
+    garant_card_overlay.z_index = 84
+    add_child(garant_card_overlay)
+
+    var backdrop: = ColorRect.new()
+    backdrop.name = "GarantCardBackdrop"
+    backdrop.anchor_right = 1.0
+    backdrop.anchor_bottom = 1.0
+    backdrop.color = Color(0.0, 0.0, 0.0, 0.62)
+    garant_card_overlay.add_child(backdrop)
+
+    var card_position: = Vector2(320, 32)
+    var card_size: = Vector2(384, 576)
+
+    garant_card_halo_panel = Panel.new()
+    garant_card_halo_panel.name = "GarantCardRevealHalo"
+    garant_card_halo_panel.position = card_position - Vector2(18, 18)
+    garant_card_halo_panel.size = card_size + Vector2(36, 36)
+    garant_card_halo_panel.mouse_filter = Control.MOUSE_FILTER_IGNORE
+    garant_card_halo_panel.visible = false
+    garant_card_halo_panel.add_theme_stylebox_override("panel", _create_garant_card_glow_style(Color(0.92, 0.95, 1.0, 1.0)))
+    garant_card_overlay.add_child(garant_card_halo_panel)
+
+    garant_card_texture_rect = TextureRect.new()
+    garant_card_texture_rect.name = "TeleportCard"
+    garant_card_texture_rect.position = card_position
+    garant_card_texture_rect.size = card_size
+    garant_card_texture_rect.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+    garant_card_texture_rect.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+    garant_card_texture_rect.texture = load(GARANT_TELEPORT_CARD_PATH) as Texture2D
+    garant_card_overlay.add_child(garant_card_texture_rect)
+
+    garant_card_glow_rect = ColorRect.new()
+    garant_card_glow_rect.name = "GarantCardRevealGlow"
+    garant_card_glow_rect.position = garant_card_texture_rect.position
+    garant_card_glow_rect.size = garant_card_texture_rect.size
+    garant_card_glow_rect.mouse_filter = Control.MOUSE_FILTER_IGNORE
+    garant_card_glow_rect.visible = false
+    garant_card_overlay.add_child(garant_card_glow_rect)
+
+    garant_card_spark_layer = Control.new()
+    garant_card_spark_layer.name = "GarantCardSparkLayer"
+    garant_card_spark_layer.position = garant_card_texture_rect.position
+    garant_card_spark_layer.size = garant_card_texture_rect.size
+    garant_card_spark_layer.mouse_filter = Control.MOUSE_FILTER_IGNORE
+    garant_card_spark_layer.visible = false
+    garant_card_overlay.add_child(garant_card_spark_layer)
+
+    var button_style: = _create_wheel_description_button_style()
+
+    garant_card_delete_button = Button.new()
+    garant_card_delete_button.position = Vector2(326, 630)
+    garant_card_delete_button.size = Vector2(172, 34)
+    garant_card_delete_button.text = "Удалить"
+    garant_card_delete_button.focus_mode = Control.FOCUS_NONE
+    garant_card_delete_button.mouse_default_cursor_shape = Control.CURSOR_POINTING_HAND
+    garant_card_delete_button.add_theme_stylebox_override("normal", button_style)
+    garant_card_delete_button.add_theme_stylebox_override("pressed", button_style)
+    garant_card_delete_button.add_theme_stylebox_override("hover", button_style)
+    garant_card_delete_button.add_theme_color_override("font_color", Color(0.96, 0.96, 0.98, 1.0))
+    garant_card_delete_button.add_theme_font_size_override("font_size", 16)
+    garant_card_delete_button.pressed.connect(_on_wheel_description_delete_pressed)
+    garant_card_overlay.add_child(garant_card_delete_button)
+
+    garant_card_close_button = Button.new()
+    garant_card_close_button.position = Vector2(526, 630)
+    garant_card_close_button.size = Vector2(172, 34)
+    garant_card_close_button.text = "Закрыть"
+    garant_card_close_button.focus_mode = Control.FOCUS_NONE
+    garant_card_close_button.mouse_default_cursor_shape = Control.CURSOR_POINTING_HAND
+    garant_card_close_button.add_theme_stylebox_override("normal", button_style)
+    garant_card_close_button.add_theme_stylebox_override("pressed", button_style)
+    garant_card_close_button.add_theme_stylebox_override("hover", button_style)
+    garant_card_close_button.add_theme_color_override("font_color", Color(0.96, 0.96, 0.98, 1.0))
+    garant_card_close_button.add_theme_font_size_override("font_size", 16)
+    garant_card_close_button.pressed.connect(_on_garant_card_close_pressed)
+    garant_card_overlay.add_child(garant_card_close_button)
 
 
 
@@ -4232,10 +4697,26 @@ func _load_lootbox_descriptions() -> void :
 
 
 
-func _load_wheel_removed_entries() -> PackedStringArray:
-    if not FileAccess.file_exists(WHEEL_REMOVED_ENTRIES_PATH):
+func _load_wheel_removed_entries(mode_id: String = "") -> PackedStringArray:
+    var path: = _wheel_removed_entries_path(mode_id)
+    if not FileAccess.file_exists(path):
         return PackedStringArray()
-    var text: = _read_text_auto(WHEEL_REMOVED_ENTRIES_PATH)
+    var text: = _read_text_auto(path)
+    if text.is_empty():
+        return PackedStringArray()
+    var result: = PackedStringArray()
+    for raw_line in text.split("\n", false):
+        var line: = raw_line.strip_edges()
+        if not line.is_empty():
+            result.append(line)
+    return result
+
+
+
+func _load_garant_removed_entries() -> PackedStringArray:
+    if not FileAccess.file_exists(GARANT_REMOVED_ENTRIES_PATH):
+        return PackedStringArray()
+    var text: = _read_text_auto(GARANT_REMOVED_ENTRIES_PATH)
     if text.is_empty():
         return PackedStringArray()
     var result: = PackedStringArray()
@@ -4277,8 +4758,17 @@ func _load_global_event_removed_entries() -> PackedStringArray:
 
 
 
-func _save_wheel_removed_entries(entries: PackedStringArray) -> void :
-    var file: = FileAccess.open(WHEEL_REMOVED_ENTRIES_PATH, FileAccess.WRITE)
+func _save_wheel_removed_entries(entries: PackedStringArray, mode_id: String = "") -> void :
+    var file: = FileAccess.open(_wheel_removed_entries_path(mode_id), FileAccess.WRITE)
+    if file == null:
+        return
+    file.store_string("\n".join(entries))
+    file.close()
+
+
+
+func _save_garant_removed_entries(entries: PackedStringArray) -> void :
+    var file: = FileAccess.open(GARANT_REMOVED_ENTRIES_PATH, FileAccess.WRITE)
     if file == null:
         return
     file.store_string("\n".join(entries))
@@ -4304,8 +4794,156 @@ func _save_global_event_removed_entries(entries: PackedStringArray) -> void :
 
 
 
-func _apply_wheel_user_removals(entries: PackedStringArray) -> PackedStringArray:
+func _load_garant_delete_count() -> int:
+    if not FileAccess.file_exists(GARANT_DELETE_COUNT_PATH):
+        return 0
+    var text: = _read_text_auto(GARANT_DELETE_COUNT_PATH).strip_edges()
+    if not text.is_valid_int():
+        return 0
+    return maxi(0, text.to_int())
+
+
+
+func _save_garant_delete_count(count: int) -> void :
+    garant_delete_count = maxi(0, count)
+    _save_string_setting(GARANT_DELETE_COUNT_PATH, str(garant_delete_count))
+
+
+
+func _increment_garant_delete_count() -> void :
+    _save_garant_delete_count(_load_garant_delete_count() + 1)
+
+
+
+func _decrement_garant_delete_count() -> void :
+    _save_garant_delete_count(_load_garant_delete_count() - 1)
+
+
+
+func _consume_garant_roll_charge() -> void :
+    _save_garant_delete_count(_load_garant_delete_count() - GARANT_TRIGGER_DELETE_COUNT)
+
+
+
+func _garant_roll_available() -> bool:
+    if not GARANT_FEATURE_ENABLED:
+        return false
+    if not _is_wheel_list_selected():
+        return false
+    if _load_garant_delete_count() < GARANT_TRIGGER_DELETE_COUNT:
+        return false
+    return not _load_garant_entries().is_empty()
+
+
+
+func _load_garant_entries() -> PackedStringArray:
+    if not _is_web_runtime() and not _list_text_file_exists(GARANT_LIST_PATH):
+        return PackedStringArray()
+
+    var text: = _read_text_auto(GARANT_LIST_PATH)
+    if text.is_empty():
+        return PackedStringArray()
+
+    var result: = PackedStringArray()
+    for raw_line in text.split("\n", false):
+        var line: = raw_line.strip_edges()
+        if not line.is_empty():
+            result.append(line)
+    return _apply_garant_user_removals(result)
+
+
+
+func _load_original_list_entries(path: String) -> PackedStringArray:
+    if not _is_web_runtime() and not _list_text_file_exists(path):
+        return PackedStringArray()
+
+    var text: = _read_text_auto(path)
+    if text.is_empty():
+        return PackedStringArray()
+
+    var result: = PackedStringArray()
+    for raw_line in text.split("\n", false):
+        var line: = raw_line.strip_edges()
+        if not line.is_empty():
+            result.append(line)
+    return result
+
+
+
+func _find_matching_original_entry(path: String, source_entry: String) -> String:
+    var source_title: = _entry_to_display_text(source_entry)
+    if source_title.is_empty():
+        return ""
+
+    var entries: = _load_original_list_entries(path)
+    for entry in entries:
+        if entry == source_entry:
+            return entry
+    for entry in entries:
+        if _entry_to_display_text(entry) == source_title:
+            return entry
+    return ""
+
+
+
+func _removed_entries_include_entry(entries: PackedStringArray, target_entry: String) -> bool:
+    for entry in entries:
+        if entry == target_entry:
+            return true
+    return false
+
+
+
+func _add_matching_garant_removal(source_entry: String) -> bool:
+    if not GARANT_FEATURE_ENABLED:
+        return false
+    var garant_entry: = _find_matching_original_entry(GARANT_LIST_PATH, source_entry)
+    if garant_entry.is_empty():
+        return false
+    var removed_entries: = _load_garant_removed_entries()
+    if _removed_entries_include_entry(removed_entries, garant_entry):
+        return false
+    removed_entries.append(garant_entry)
+    _save_garant_removed_entries(removed_entries)
+    return true
+
+
+
+func _add_matching_wheel_removal(source_entry: String) -> bool:
+    if not GARANT_FEATURE_ENABLED:
+        return false
+    var wheel_entry: = _find_matching_original_entry(WHEEL_LIST_PATH, source_entry)
+    if wheel_entry.is_empty():
+        return false
     var removed_entries: = _load_wheel_removed_entries()
+    if _removed_entries_include_entry(removed_entries, wheel_entry):
+        return false
+    removed_entries.append(wheel_entry)
+    _save_wheel_removed_entries(removed_entries)
+    return true
+
+
+
+func _apply_wheel_user_removals(entries: PackedStringArray, mode_id: String = "") -> PackedStringArray:
+    var removed_entries: = _load_wheel_removed_entries(mode_id)
+    if removed_entries.is_empty():
+        return entries
+    var removed_counts: Dictionary = {}
+    for removed_entry in removed_entries:
+        removed_counts[removed_entry] = int(removed_counts.get(removed_entry, 0)) + 1
+    var filtered: = PackedStringArray()
+    for entry in entries:
+        var remaining: = int(removed_counts.get(entry, 0))
+        if remaining > 0:
+            removed_counts[entry] = remaining - 1
+            continue
+        filtered.append(entry)
+    return filtered
+
+
+
+func _apply_garant_user_removals(entries: PackedStringArray) -> PackedStringArray:
+    var removed_entries: = _load_garant_removed_entries()
     if removed_entries.is_empty():
         return entries
     var removed_counts: Dictionary = {}
@@ -4403,6 +5041,9 @@ func _show_wheel_description_for_entry(entry: String, slot_index: int = -1, spea
     var title: = _entry_to_display_text(entry)
     if title.is_empty() or title.begins_with("---"):
         return
+    if _is_garant_card_entry(entry):
+        _show_garant_card_for_entry(entry, slot_index, speak, include_title_in_speech)
+        return
 
     var description: = _get_wheel_description(title)
     var link_url: = _get_wheel_description_link(title)
@@ -4410,6 +5051,7 @@ func _show_wheel_description_for_entry(entry: String, slot_index: int = -1, spea
         description = "Описание не найдено."
     wheel_description_delete_entry = entry
     wheel_description_delete_slot_index = slot_index
+    wheel_description_delete_source = WHEEL_LIST_ID
     _show_wheel_description_popup(title, description, link_url, true)
 
     if speak:
@@ -4430,6 +5072,7 @@ func _show_hardcore_description_for_entry(entry: String, speak: bool = false, in
         description = "РћРїРёСЃР°РЅРёРµ РЅРµ РЅР°Р№РґРµРЅРѕ."
     wheel_description_delete_entry = ""
     wheel_description_delete_slot_index = -1
+    wheel_description_delete_source = ""
     _show_wheel_description_popup(title, description)
 
     if speak:
@@ -4450,6 +5093,7 @@ func _show_global_event_description_for_entry(entry: String, slot_index: int = -
         description = "Описание не найдено."
     wheel_description_delete_entry = entry
     wheel_description_delete_slot_index = slot_index
+    wheel_description_delete_source = GLOBAL_EVENTS_LIST_ID
     _show_wheel_description_popup(title, description, "", true)
 
     if speak:
@@ -4471,6 +5115,7 @@ func _show_lootbox_description_for_entry(entry: String, speak: bool = false, inc
         description = "Описание не найдено."
     wheel_description_delete_entry = ""
     wheel_description_delete_slot_index = -1
+    wheel_description_delete_source = ""
     _show_wheel_description_popup(title, description, link_url)
 
     if speak:
@@ -4484,6 +5129,7 @@ func _show_lootbox_description_for_entry(entry: String, speak: bool = false, inc
 func _show_wheel_description_popup(title: String, description: String, link_url: String = "", allow_delete: bool = false) -> void :
     if wheel_description_overlay == null:
         return
+    _hide_garant_card_popup(false, false)
     for label in slot_labels:
         label.visible = false
     for image_node in slot_image_nodes:
@@ -4508,6 +5154,7 @@ func _hide_wheel_description_popup(stop_tts: bool = true) -> void :
     wheel_description_link_url = ""
     wheel_description_delete_entry = ""
     wheel_description_delete_slot_index = -1
+    wheel_description_delete_source = ""
     if wheel_description_delete_button != null:
         wheel_description_delete_button.visible = false
     if wheel_description_link_button != null:
@@ -4517,6 +5164,257 @@ func _hide_wheel_description_popup(stop_tts: bool = true) -> void :
     _render_slots()
     if stop_tts:
         _stop_tts_playback()
+
+
+
+func _get_garant_description(title: String) -> String:
+    if title == GARANT_TELEPORT_TITLE:
+        return "Ты телепортируешься на клетку к другому рандомно выбранному стримеру. Телепорт ломается и работает как Сломанный Телепорт если выпал стример, находящийся с тобой на одной клетке."
+    if title == GARANT_GOLDEN_TELEPORT_TITLE:
+        return "Ты телепортируешься на клетку к другому рандомно выбранному стримеру. Золотой Телепорт ломается и работает как Сломанный Телепорт если выпал стример, находящийся с тобой на одной клетке. После данной телепортации, в том числе если получилось так, что сработал Сломанный Телепорт, бросаешь монетку на еще одну телепортацию по тому же принципу или ничего, соответственно телепортируясь дальше или оставаясь на текущей позиции, до тех пор пока не выпадет ничего."
+    return "Описание не найдено."
+
+
+
+func _is_garant_card_title(title: String) -> bool:
+    return title == GARANT_TELEPORT_TITLE or title == GARANT_GOLDEN_TELEPORT_TITLE
+
+
+
+func _get_garant_card_path(title: String) -> String:
+    if title == GARANT_GOLDEN_TELEPORT_TITLE:
+        return GARANT_GOLDEN_TELEPORT_CARD_PATH
+    if title == GARANT_TELEPORT_TITLE:
+        return GARANT_TELEPORT_CARD_PATH
+    return ""
+
+
+
+func _get_garant_card_glow_color(title: String) -> Color:
+    if title == GARANT_GOLDEN_TELEPORT_TITLE:
+        return Color(1.0, 0.62, 0.12, 1.0)
+    return Color(0.92, 0.95, 1.0, 1.0)
+
+
+
+func _create_garant_card_glow_style(glow_color: Color) -> StyleBoxFlat:
+    var style: = StyleBoxFlat.new()
+    style.bg_color = Color(glow_color.r, glow_color.g, glow_color.b, 0.42)
+    style.border_color = Color(1.0, 1.0, 1.0, 0.86)
+    style.border_width_left = 2
+    style.border_width_top = 2
+    style.border_width_right = 2
+    style.border_width_bottom = 2
+    style.corner_radius_top_left = 28
+    style.corner_radius_top_right = 28
+    style.corner_radius_bottom_right = 28
+    style.corner_radius_bottom_left = 28
+    style.shadow_color = Color(glow_color.r, glow_color.g, glow_color.b, 0.96)
+    style.shadow_size = 36
+    return style
+
+
+
+func _clear_garant_card_sparks() -> void :
+    if garant_card_spark_layer == null:
+        return
+    if garant_card_spark_tween != null:
+        garant_card_spark_tween.kill()
+        garant_card_spark_tween = null
+    for child in garant_card_spark_layer.get_children():
+        child.queue_free()
+
+
+
+func _create_garant_card_spark(color: Color, position: Vector2, size: float) -> Label:
+    var spark: = Label.new()
+    spark.text = "*"
+    spark.position = position
+    spark.size = Vector2(size * 1.8, size * 1.8)
+    spark.pivot_offset = spark.size * 0.5
+    spark.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+    spark.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+    spark.mouse_filter = Control.MOUSE_FILTER_IGNORE
+    spark.add_theme_color_override("font_color", color)
+    spark.add_theme_font_size_override("font_size", int(size * 2.2))
+    spark.modulate = Color(1.0, 1.0, 1.0, 0.0)
+    spark.scale = Vector2(0.35, 0.35)
+    if rng.randi_range(0, 1) == 0:
+        spark.rotation = deg_to_rad(45.0)
+    return spark
+
+
+
+func _play_garant_card_sparks(glow_color: Color, fade_duration: float) -> void :
+    if garant_card_spark_layer == null:
+        return
+    _clear_garant_card_sparks()
+    garant_card_spark_layer.visible = true
+    garant_card_spark_layer.move_to_front()
+    if garant_card_delete_button != null:
+        garant_card_delete_button.move_to_front()
+    if garant_card_close_button != null:
+        garant_card_close_button.move_to_front()
+
+    garant_card_spark_tween = create_tween()
+    garant_card_spark_tween.set_parallel(true)
+    garant_card_spark_tween.set_trans(Tween.TRANS_SINE)
+    garant_card_spark_tween.set_ease(Tween.EASE_OUT)
+
+    var spark_count: = 136
+    for index in range(spark_count):
+        var big_spark: = index < 10
+        var spark_size: = rng.randf_range(12.0, 20.0) if big_spark else rng.randf_range(5.0, 11.0)
+        var base_position: = Vector2(
+            rng.randf_range(-18.0, garant_card_spark_layer.size.x + 18.0),
+            rng.randf_range(-18.0, garant_card_spark_layer.size.y + 18.0)
+        )
+        var spark_color: = Color(
+            minf(1.0, glow_color.r + rng.randf_range(0.0, 0.22)),
+            minf(1.0, glow_color.g + rng.randf_range(0.0, 0.22)),
+            minf(1.0, glow_color.b + rng.randf_range(0.0, 0.22)),
+            1.0
+        )
+        if not big_spark and rng.randi_range(0, 2) == 0:
+            spark_color = Color(1.0, 1.0, 1.0, 1.0)
+        var spark: = _create_garant_card_spark(spark_color, base_position, spark_size)
+        garant_card_spark_layer.add_child(spark)
+
+        var drift: = Vector2(rng.randf_range(-46.0, 46.0), rng.randf_range(-58.0, 34.0))
+        var delay: = rng.randf_range(0.0, 0.9)
+        var life: = rng.randf_range(1.2, 2.2) if big_spark else rng.randf_range(0.75, 1.45)
+        var target_scale: = Vector2.ONE * rng.randf_range(1.0, 1.75)
+        garant_card_spark_tween.tween_property(spark, "modulate:a", 1.0, 0.16).set_delay(delay)
+        garant_card_spark_tween.tween_property(spark, "position", base_position + drift, life).set_delay(delay)
+        garant_card_spark_tween.tween_property(spark, "scale", target_scale, life).set_delay(delay)
+        garant_card_spark_tween.tween_property(spark, "rotation", spark.rotation + deg_to_rad(rng.randf_range(90.0, 270.0)), life).set_delay(delay)
+        garant_card_spark_tween.tween_property(spark, "modulate:a", 0.0, 0.55).set_delay(delay + minf(life * 0.62, fade_duration - 0.55))
+
+
+
+func _play_garant_card_reveal_glow(title: String, speech_text: String = "") -> void :
+    if garant_card_glow_rect == null:
+        return
+    if garant_card_glow_tween != null:
+        garant_card_glow_tween.kill()
+        garant_card_glow_tween = null
+    _clear_garant_card_sparks()
+
+    var glow_color: = _get_garant_card_glow_color(title)
+    var fade_duration: = 4.35
+    if garant_card_halo_panel != null:
+        garant_card_halo_panel.add_theme_stylebox_override("panel", _create_garant_card_glow_style(glow_color))
+        garant_card_halo_panel.modulate = Color(1.0, 1.0, 1.0, 1.0)
+        garant_card_halo_panel.visible = true
+    garant_card_glow_rect.color = glow_color
+    garant_card_glow_rect.modulate = Color(1.0, 1.0, 1.0, 1.0)
+    garant_card_glow_rect.visible = true
+    if garant_card_texture_rect != null:
+        garant_card_texture_rect.move_to_front()
+    garant_card_glow_rect.move_to_front()
+    if garant_card_delete_button != null:
+        garant_card_delete_button.move_to_front()
+    if garant_card_close_button != null:
+        garant_card_close_button.move_to_front()
+
+    garant_card_glow_tween = create_tween()
+    garant_card_glow_tween.set_trans(Tween.TRANS_SINE)
+    garant_card_glow_tween.set_ease(Tween.EASE_OUT)
+    garant_card_glow_tween.tween_interval(0.28)
+    _play_garant_card_sparks(glow_color, fade_duration)
+    garant_card_glow_tween.tween_property(garant_card_glow_rect, "modulate:a", 0.0, fade_duration)
+    if garant_card_halo_panel != null:
+        garant_card_glow_tween.parallel().tween_property(garant_card_halo_panel, "modulate:a", 0.0, fade_duration)
+    garant_card_glow_tween.tween_callback(func() -> void :
+        if garant_card_glow_rect != null:
+            garant_card_glow_rect.visible = false
+        if garant_card_halo_panel != null:
+            garant_card_halo_panel.visible = false
+        if garant_card_spark_layer != null:
+            garant_card_spark_layer.visible = false
+        _clear_garant_card_sparks()
+        garant_card_glow_tween = null
+        if not speech_text.is_empty():
+            _queue_tts_text_after_stop_sound(speech_text)
+    )
+
+
+
+func _show_garant_card_for_entry(entry: String, slot_index: int = -1, speak: bool = false, include_title_in_speech: bool = false) -> void :
+    var title: = _entry_to_display_text(entry)
+    if title.is_empty() or title.begins_with("---"):
+        return
+
+    var card_path: = _get_garant_card_path(title)
+    if card_path.is_empty() or garant_card_overlay == null:
+        var description: = _get_garant_description(title)
+        wheel_description_delete_entry = entry
+        wheel_description_delete_slot_index = slot_index
+        wheel_description_delete_source = GARANT_LIST_ID
+        _show_wheel_description_popup(title, description, "", true)
+        if speak:
+            var speech_text: = description
+            if include_title_in_speech:
+                speech_text = "%s. %s" % [title, description]
+            _queue_tts_text_after_stop_sound(speech_text)
+        return
+
+    _hide_wheel_description_popup(false)
+    for label in slot_labels:
+        label.visible = false
+    for image_node in slot_image_nodes:
+        image_node.visible = false
+
+    if garant_card_texture_rect != null:
+        garant_card_texture_rect.texture = load(card_path) as Texture2D
+
+    wheel_description_delete_entry = entry
+    wheel_description_delete_slot_index = slot_index
+    wheel_description_delete_source = GARANT_LIST_ID
+    if garant_card_delete_button != null:
+        var already_deleted: = slot_index >= 0 and bool(garant_deleted_visible_slots.get(slot_index, false))
+        garant_card_delete_button.visible = true
+        garant_card_delete_button.disabled = already_deleted
+    if garant_card_overlay != null:
+        garant_card_overlay.visible = true
+        garant_card_overlay.move_to_front()
+
+    var speech_text: = ""
+    if speak:
+        speech_text = _get_garant_description(title)
+        if include_title_in_speech:
+            speech_text = "%s. %s" % [title, speech_text]
+    _play_garant_card_reveal_glow(title, speech_text)
+
+
+
+func _hide_garant_card_popup(stop_tts: bool = true, clear_delete_source: bool = true) -> void :
+    if garant_card_overlay != null:
+        garant_card_overlay.visible = false
+    if garant_card_glow_tween != null:
+        garant_card_glow_tween.kill()
+        garant_card_glow_tween = null
+    if garant_card_halo_panel != null:
+        garant_card_halo_panel.visible = false
+    if garant_card_glow_rect != null:
+        garant_card_glow_rect.visible = false
+    _clear_garant_card_sparks()
+    if clear_delete_source and wheel_description_delete_source == GARANT_LIST_ID:
+        wheel_description_delete_entry = ""
+        wheel_description_delete_slot_index = -1
+        wheel_description_delete_source = ""
+    if garant_card_delete_button != null:
+        garant_card_delete_button.visible = false
+    for label in slot_labels:
+        label.visible = true
+    _render_slots()
+    if stop_tts:
+        _stop_tts_playback()
+
+
+
+func _on_garant_card_close_pressed() -> void :
+    _hide_garant_card_popup()
 
 
 
@@ -4589,12 +5487,22 @@ func _on_wheel_restore_ok_pressed() -> void :
             DirAccess.remove_absolute(absolute_global_removed_path)
         global_event_deleted_visible_slots.clear()
     else:
-        var absolute_removed_path: = ProjectSettings.globalize_path(WHEEL_REMOVED_ENTRIES_PATH)
-        if FileAccess.file_exists(WHEEL_REMOVED_ENTRIES_PATH):
-            DirAccess.remove_absolute(absolute_removed_path)
+        for config in WHEEL_MODE_CONFIGS:
+            var removed_path: = str(config.get("removed_path", ""))
+            if removed_path.is_empty():
+                continue
+            if FileAccess.file_exists(removed_path):
+                DirAccess.remove_absolute(ProjectSettings.globalize_path(removed_path))
+        if GARANT_FEATURE_ENABLED:
+            var absolute_garant_removed_path: = ProjectSettings.globalize_path(GARANT_REMOVED_ENTRIES_PATH)
+            if FileAccess.file_exists(GARANT_REMOVED_ENTRIES_PATH):
+                DirAccess.remove_absolute(absolute_garant_removed_path)
         wheel_deleted_visible_slots.clear()
+        garant_deleted_visible_slots.clear()
+        if GARANT_FEATURE_ENABLED:
+            _save_garant_delete_count(0)
     _hide_wheel_restore_popup()
-    if selected_list_path == WHEEL_LIST_PATH or selected_list_path == GLOBAL_EVENTS_LIST_PATH:
+    if _is_wheel_list_selected() or selected_list_path == GLOBAL_EVENTS_LIST_PATH:
         _reload_selected_list()
     _refresh_wheel_delete_button()
 
@@ -4609,8 +5517,10 @@ func _on_wheel_undo_delete_button_pressed() -> void :
         return
     removed_entries.remove_at(removed_entries.size() - 1)
     _save_wheel_removed_entries(removed_entries)
+    if GARANT_FEATURE_ENABLED:
+        _decrement_garant_delete_count()
     wheel_deleted_visible_slots.clear()
-    if selected_list_path == WHEEL_LIST_PATH:
+    if _is_wheel_list_selected():
         _reload_selected_list()
     _refresh_wheel_delete_button()
 
@@ -4625,7 +5535,10 @@ func _on_settings_wheel_restore_all_button_pressed() -> void :
 func _on_wheel_description_delete_pressed() -> void :
     if wheel_description_delete_entry.is_empty():
         return
-    if _is_global_events_list_selected():
+    if GARANT_FEATURE_ENABLED and wheel_description_delete_source == GARANT_LIST_ID:
+        _delete_garant_entry(wheel_description_delete_entry, wheel_description_delete_slot_index)
+        return
+    if wheel_description_delete_source == GLOBAL_EVENTS_LIST_ID or _is_global_events_list_selected():
         _delete_global_event_entry(wheel_description_delete_entry, wheel_description_delete_slot_index)
         return
     if wheel_description_delete_slot_index >= 0 and wheel_deleted_visible_slots.get(wheel_description_delete_slot_index, false):
@@ -4634,10 +5547,40 @@ func _on_wheel_description_delete_pressed() -> void :
     var removed_entries: = _load_wheel_removed_entries()
     removed_entries.append(wheel_description_delete_entry)
     _save_wheel_removed_entries(removed_entries)
+    if GARANT_FEATURE_ENABLED:
+        _add_matching_garant_removal(wheel_description_delete_entry)
+        _increment_garant_delete_count()
     if wheel_description_delete_slot_index >= 0:
         wheel_deleted_visible_slots[wheel_description_delete_slot_index] = true
     _hide_wheel_description_popup()
-    if selected_list_path == WHEEL_LIST_PATH:
+    if _is_wheel_list_selected():
+        _reload_selected_list()
+    _refresh_wheel_delete_button()
+
+
+
+func _delete_garant_entry(entry: String, slot_index: int) -> void :
+    if not GARANT_FEATURE_ENABLED:
+        return
+    if entry.is_empty():
+        return
+    if slot_index >= 0 and garant_deleted_visible_slots.get(slot_index, false):
+        _show_wheel_info_popup("Пункт уже удалён")
+        return
+    var removed_entries: = _load_garant_removed_entries()
+    removed_entries.append(entry)
+    _save_garant_removed_entries(removed_entries)
+    var removed_from_wheel: = _add_matching_wheel_removal(entry)
+    if removed_from_wheel:
+        _increment_garant_delete_count()
+        wheel_deleted_visible_slots.clear()
+        if slot_index >= 0:
+            wheel_deleted_visible_slots[slot_index] = true
+    if slot_index >= 0:
+        garant_deleted_visible_slots[slot_index] = true
+    _hide_wheel_description_popup(false)
+    _hide_garant_card_popup()
+    if removed_from_wheel and _is_wheel_list_selected():
         _reload_selected_list()
     _refresh_wheel_delete_button()
 
@@ -4683,6 +5626,178 @@ func _delete_extra_center_entry(entry: String, slot_index: int) -> void :
     if extra_list_editor_overlay != null and extra_list_editor_overlay.visible and extra_list_editor_text_edit != null:
         extra_list_editor_text_edit.text = _build_extra_list_editor_text()
     _refresh_wheel_delete_button()
+
+
+
+func _on_version_label_input(event: InputEvent) -> void :
+    if rolling:
+        return
+
+    var click_position: = Vector2(-1.0, -1.0)
+    var mouse_event: = event as InputEventMouseButton
+    if mouse_event != null:
+        if not mouse_event.pressed or mouse_event.button_index != MOUSE_BUTTON_LEFT:
+            return
+        click_position = mouse_event.position
+    else:
+        var touch_event: = event as InputEventScreenTouch
+        if touch_event == null or not touch_event.pressed:
+            return
+        click_position = touch_event.position
+
+    if not _version_label_rgg_hit(click_position):
+        return
+    version_label.accept_event()
+    _show_missing_descriptions_audit()
+
+
+
+func _version_label_rgg_hit(local_position: Vector2) -> bool:
+    if version_label == null or not Rect2(Vector2.ZERO, version_label.size).has_point(local_position):
+        return false
+
+    var full_text: = version_label.text
+    if not full_text.begins_with("rgg"):
+        return false
+    var font: = version_label.get_theme_font("font")
+    var font_size: = version_label.get_theme_font_size("font_size")
+    var full_width: = font.get_string_size(full_text, HORIZONTAL_ALIGNMENT_LEFT, -1.0, font_size).x
+    var prefix_width: = font.get_string_size("rgg", HORIZONTAL_ALIGNMENT_LEFT, -1.0, font_size).x
+    var text_start_x: = 0.0
+    if version_label.horizontal_alignment == HORIZONTAL_ALIGNMENT_CENTER:
+        text_start_x = (version_label.size.x - full_width) * 0.5
+    elif version_label.horizontal_alignment == HORIZONTAL_ALIGNMENT_RIGHT:
+        text_start_x = version_label.size.x - full_width
+    return local_position.x >= text_start_x and local_position.x <= text_start_x + prefix_width
+
+
+
+func _append_description_audit_spec(
+    specs: Array[Dictionary],
+    seen_specs: Dictionary,
+    source_path: String,
+    description_path: String,
+    descriptions: Dictionary
+) -> void :
+    var spec_key: = "%s|%s" % [source_path, description_path]
+    if source_path.is_empty() or description_path.is_empty() or seen_specs.has(spec_key):
+        return
+    seen_specs[spec_key] = true
+    specs.append({
+        "source_path": source_path,
+        "description_path": description_path,
+        "descriptions": descriptions,
+    })
+
+
+
+func _description_audit_specs() -> Array[Dictionary]:
+    _load_wheel_descriptions()
+    _load_hardcore_descriptions()
+    _load_global_event_descriptions()
+    _load_lootbox_descriptions()
+
+    var specs: Array[Dictionary] = []
+    var seen_specs: Dictionary = {}
+    for config in WHEEL_MODE_CONFIGS:
+        _append_description_audit_spec(
+            specs,
+            seen_specs,
+            str(config.get("normal_path", "")),
+            WHEEL_DESCRIPTION_LIST_PATH,
+            wheel_descriptions
+        )
+        _append_description_audit_spec(
+            specs,
+            seen_specs,
+            str(config.get("legendary_path", "")),
+            WHEEL_DESCRIPTION_LIST_PATH,
+            wheel_descriptions
+        )
+
+    _append_description_audit_spec(
+        specs,
+        seen_specs,
+        HARDCORE_LIST_PATH,
+        HARDCORE_DESCRIPTION_LIST_PATH,
+        hardcore_descriptions
+    )
+    _append_description_audit_spec(
+        specs,
+        seen_specs,
+        GLOBAL_EVENTS_LIST_PATH,
+        GLOBAL_EVENTS_DESCRIPTION_LIST_PATH,
+        global_event_descriptions
+    )
+    for source_path in LOOTBOX_DESCRIPTION_TARGET_PATHS:
+        _append_description_audit_spec(
+            specs,
+            seen_specs,
+            source_path,
+            LOOTBOX_DESCRIPTION_LIST_PATH,
+            lootbox_descriptions
+        )
+    return specs
+
+
+
+func _build_missing_descriptions_audit() -> String:
+    var specs: = _description_audit_specs()
+    var sections: Array[String] = []
+    var missing_count: = 0
+    var unreadable_count: = 0
+
+    for spec in specs:
+        var source_path: = str(spec.get("source_path", ""))
+        var description_path: = str(spec.get("description_path", ""))
+        var descriptions: Dictionary = spec.get("descriptions", {})
+        var source_name: = source_path.get_file()
+        var description_name: = description_path.get_file()
+        var source_text: = _read_text_auto(source_path)
+        if source_text.is_empty():
+            sections.append("%s -> %s\n[список пуст или не прочитан]" % [source_name, description_name])
+            unreadable_count += 1
+            continue
+
+        var missing_titles: Array[String] = []
+        var seen_titles: Dictionary = {}
+        for raw_line in source_text.split("\n", false):
+            var entry: = raw_line.strip_edges()
+            var title: = _entry_to_display_text(entry)
+            if title.is_empty() or title.begins_with("---") or seen_titles.has(title):
+                continue
+            seen_titles[title] = true
+            if not descriptions.has(title) or str(descriptions.get(title, "")).strip_edges().is_empty():
+                missing_titles.append(title)
+
+        if missing_titles.is_empty():
+            continue
+        missing_titles.sort()
+        missing_count += missing_titles.size()
+        var lines: Array[String] = ["%s -> %s (%d)" % [source_name, description_name, missing_titles.size()]]
+        for title in missing_titles:
+            lines.append("- %s" % title)
+        sections.append("\n".join(lines))
+
+    if sections.is_empty():
+        return "Проверено технических списков: %d\nВсе пункты имеют описания." % specs.size()
+
+    var summary: = "Проверено технических списков: %d\nОтсутствующих связок пункт-описание: %d" % [specs.size(), missing_count]
+    if unreadable_count > 0:
+        summary += "\nПустых или непрочитанных списков: %d" % unreadable_count
+    return "%s\n\n%s" % [summary, "\n\n".join(sections)]
+
+
+
+func _show_missing_descriptions_audit() -> void :
+    if list_preview_overlay == null:
+        return
+    list_preview_title_label.text = "Пункты без описаний"
+    list_preview_body_label.clear()
+    list_preview_body_label.add_text(_build_missing_descriptions_audit())
+    list_preview_body_label.scroll_to_line(0)
+    list_preview_overlay.visible = true
+    list_preview_overlay.move_to_front()
 
 
 
@@ -5942,6 +7057,92 @@ func _create_lootbox_browser() -> void :
 
 
 
+func _create_wheel_mode_menu() -> void :
+    wheel_mode_menu_panel = Panel.new()
+    wheel_mode_menu_panel.visible = false
+    wheel_mode_menu_panel.position = Vector2(212, 500)
+    wheel_mode_menu_panel.size = Vector2(236, 116)
+    wheel_mode_menu_panel.add_theme_stylebox_override("panel", _create_platform_browser_style())
+    add_child(wheel_mode_menu_panel)
+
+    var button_style: = _create_wheel_description_button_style()
+    for index in range(WHEEL_MODE_CONFIGS.size()):
+        var config: Dictionary = WHEEL_MODE_CONFIGS[index]
+        var mode_id: = str(config.get("id", ""))
+        var button: = Button.new()
+        button.name = "WheelModeButton_%s" % mode_id
+        button.position = Vector2(10, 10 + index * 34)
+        button.size = Vector2(216, 28)
+        button.text = str(config.get("title", "Колесо"))
+        button.focus_mode = Control.FOCUS_NONE
+        button.mouse_default_cursor_shape = Control.CURSOR_POINTING_HAND
+        button.add_theme_stylebox_override("normal", button_style)
+        button.add_theme_stylebox_override("pressed", button_style)
+        button.add_theme_stylebox_override("hover", button_style)
+        button.add_theme_color_override("font_color", Color(0.96, 0.96, 0.98, 1.0))
+        button.add_theme_font_size_override("font_size", 13)
+        button.pressed.connect(_on_wheel_mode_button_pressed.bind(mode_id))
+        wheel_mode_menu_panel.add_child(button)
+        wheel_mode_buttons[mode_id] = button
+
+    _update_wheel_mode_menu_selection()
+
+
+
+func _toggle_wheel_mode_menu(force_state: int = -1) -> void :
+    var should_open: = not wheel_mode_menu_open
+    if force_state == 0:
+        should_open = false
+    elif force_state == 1:
+        should_open = true
+    if should_open == wheel_mode_menu_open:
+        return
+    if should_open and platform_browser_open:
+        _toggle_platform_browser(0)
+    if should_open and special_roll_browser_open:
+        _toggle_special_roll_browser(0)
+    if should_open and lootbox_browser_open:
+        _toggle_lootbox_browser(0)
+
+    wheel_mode_menu_open = should_open
+    if wheel_mode_menu_panel != null:
+        wheel_mode_menu_panel.visible = should_open
+        if should_open:
+            wheel_mode_menu_panel.move_to_front()
+            _update_wheel_mode_menu_selection()
+    _refresh_settings_menu_visibility()
+
+
+
+func _hide_wheel_mode_menu() -> void :
+    if not wheel_mode_menu_open and (wheel_mode_menu_panel == null or not wheel_mode_menu_panel.visible):
+        return
+    wheel_mode_menu_open = false
+    if wheel_mode_menu_panel != null:
+        wheel_mode_menu_panel.visible = false
+    _refresh_settings_menu_visibility()
+
+
+
+func _on_wheel_mode_button_pressed(mode_id: String) -> void :
+    if rolling:
+        return
+    _select_wheel_mode(mode_id)
+
+
+
+func _update_wheel_mode_menu_selection() -> void :
+    for mode_id_variant in wheel_mode_buttons.keys():
+        var mode_id: String = mode_id_variant
+        var button: Button = wheel_mode_buttons[mode_id]
+        if button == null:
+            continue
+        var prefix: = "> " if mode_id == selected_wheel_mode_id and _is_wheel_list_selected() else ""
+        var config: = _get_wheel_mode_config(mode_id)
+        button.text = "%s%s" % [prefix, str(config.get("title", "Колесо"))]
+
+
+
 func _create_platform_browser_style() -> StyleBoxFlat:
     var style: = StyleBoxFlat.new()
     style.bg_color = Color(0.18, 0.18, 0.18, 0.95)
@@ -6363,6 +7564,10 @@ func _toggle_platform_browser(force_state: int = -1) -> void :
         return
     if should_open and special_roll_browser_open:
         _toggle_special_roll_browser(0)
+    if should_open and lootbox_browser_open:
+        _toggle_lootbox_browser(0)
+    if should_open and wheel_mode_menu_open:
+        _hide_wheel_mode_menu()
 
     platform_browser_open = should_open
 
@@ -6400,6 +7605,8 @@ func _toggle_special_roll_browser(force_state: int = -1) -> void :
         _toggle_platform_browser(0)
     if should_open and lootbox_browser_open:
         _toggle_lootbox_browser(0)
+    if should_open and wheel_mode_menu_open:
+        _hide_wheel_mode_menu()
 
     special_roll_browser_open = should_open
 
@@ -6438,6 +7645,8 @@ func _toggle_lootbox_browser(force_state: int = -1) -> void :
         _toggle_platform_browser(0)
     if should_open and special_roll_browser_open:
         _toggle_special_roll_browser(0)
+    if should_open and wheel_mode_menu_open:
+        _hide_wheel_mode_menu()
 
     lootbox_browser_open = should_open
 
@@ -6668,8 +7877,11 @@ func _load_list(path: String) -> PackedStringArray:
         if not line.is_empty():
             result.append(line)
 
-    if path == WHEEL_LIST_PATH:
-        return _apply_wheel_user_removals(result)
+    var wheel_mode_id: = _wheel_mode_id_for_path(path)
+    if selected_platform == WHEEL_LIST_ID and not wheel_mode_id.is_empty():
+        return _apply_wheel_user_removals(result, wheel_mode_id)
+    if GARANT_FEATURE_ENABLED and path == GARANT_LIST_PATH:
+        return _apply_garant_user_removals(result)
     if path == GLOBAL_EVENTS_LIST_PATH:
         return _apply_global_event_user_removals(result)
     if path == EXTRA_LIST_PATH:
