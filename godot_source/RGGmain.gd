@@ -29,15 +29,18 @@ const EXTRA_REMOVED_ENTRIES_PATH: = "user://extra_removed_entries.dat"
 const WHEEL_LIST_ID: = "wheel"
 const WHEEL_LIST_PATH: = "res://lists/wheel.dat"
 const WHEEL_LEGENDARY_LIST_PATH: = "res://lists/legendary.dat"
+const BASIC_WHEEL_LEGENDARY_LIST_PATH: = "res://lists/basic_wheel_legendary.dat"
 const WHEEL_REMOVED_ENTRIES_PATH: = "user://wheel_removed_entries.dat"
 const WHEEL_PITY_COUNT_PATH: = "user://wheel_pity_count.txt"
-const WEAPON_WHEEL_LIST_PATH: = "res://lists/weapon_wheel.dat"
+const WHEEL_PITY_UNDO_PATH: = "user://wheel_pity_undo.json"
 const WEAPON_WHEEL_LEGENDARY_LIST_PATH: = "res://lists/weapon_legendary.dat"
 const WEAPON_WHEEL_REMOVED_ENTRIES_PATH: = "user://weapon_wheel_removed_entries.dat"
 const WEAPON_WHEEL_PITY_COUNT_PATH: = "user://weapon_wheel_pity_count.txt"
+const WEAPON_WHEEL_PITY_UNDO_PATH: = "user://weapon_wheel_pity_undo.json"
 const START_WHEEL_LIST_PATH: = "res://lists/start_wheel.dat"
 const START_WHEEL_REMOVED_ENTRIES_PATH: = "user://start_wheel_removed_entries.dat"
 const START_WHEEL_PITY_COUNT_PATH: = "user://start_wheel_pity_count.txt"
+const START_WHEEL_PITY_UNDO_PATH: = "user://start_wheel_pity_undo.json"
 const WHEEL_MODE_STANDARD_ID: = "standard"
 const WHEEL_MODE_WEAPON_ID: = "weapon"
 const WHEEL_MODE_START_ID: = "start"
@@ -52,6 +55,7 @@ const GARANT_TELEPORT_TITLE: = "Телепорт"
 const GARANT_TELEPORT_CARD_PATH: = "res://images/cards/teleport.png"
 const GARANT_GOLDEN_TELEPORT_TITLE: = "Золотой телепорт"
 const GARANT_GOLDEN_TELEPORT_CARD_PATH: = "res://images/cards/golden_teleport.png"
+const LEGENDARY_CARP_CARD_PATH: = "res://images/cards/legendary_carp.png"
 const CUSTOM_BACKGROUND_IMAGE_PATH: = "user://custom_background.png"
 const CUSTOM_BACKGROUND_MODE_PATH: = "user://custom_background_mode.txt"
 const CUSTOM_BACKGROUND_MODE_STRETCH: = "stretch"
@@ -71,6 +75,7 @@ const WHEEL_DESCRIPTION_LIST_PATH: = "res://lists/wheel_list.dat"
 const WHEEL_MODE_TITLE: = "Колесо добра"
 const WHEEL_LEGENDARY_MAIN_COLOR: = Color(1.0, 0.82, 0.22, 1.0)
 const WHEEL_LEGENDARY_SECONDARY_COLOR: = Color(0.86, 0.58, 0.12, 1.0)
+const WHEEL_LEGENDARY_FLASH_INTERVAL: = 0.16
 const PLATFORMS_MODE_TITLE: = "Платформы"
 const CAT_MODE_TITLE: = "Кот в мешке"
 
@@ -101,6 +106,7 @@ const LOOTBOX_DESCRIPTION_TARGET_PATHS: Array[String] = [
     "res://lists/golden.dat", 
     "res://lists/specrolls.dat", 
     "res://lists/effects.dat", 
+    "res://lists/funny.dat",
 ]
 const BROWSER_ICON_SCALE: = 1.5
 const BROWSER_ICON_DROP: = 4.0
@@ -174,11 +180,11 @@ const SPECIAL_ROLL_ITEMS: Array[Dictionary] = [
     {"id": "mario", "title": "Mario", "path": "res://lists/mario.dat", "tooltip": "Официальные игры, неофициальные игры, хаки, моды и фан-геймы по Марио"},
     {"id": "sonic", "title": "Sonic", "path": "res://lists/sonic.dat", "tooltip": "Официальные игры, неофициальные игры, хаки, моды и фан-геймы по Сонику"},
     {"id": "megaman", "title": "Megaman", "path": "res://lists/megaman.dat", "tooltip": "Официальные игры, неофициальные игры, хаки, моды и фан-геймы по Мегамену"},
-    {"id": "jim", "title": "Earthworm Jim", "path": "res://lists/jim.dat", "tooltip": "Игры по Червяку Джиму"},
-    {"id": "makaimura", "title": "Ghosts'n Goblins", "path": "res://lists/makaimura.dat", "tooltip": "Игры из серии Ghosts 'n Goblins"},
+    # {"id": "jim", "title": "Earthworm Jim", "path": "res://lists/jim.dat", "tooltip": "Игры по Червяку Джиму"},
+    # {"id": "makaimura", "title": "Ghosts'n Goblins", "path": "res://lists/makaimura.dat", "tooltip": "Игры из серии Ghosts 'n Goblins"},
     {"id": "dizzy", "title": "Dizzy", "path": "res://lists/dizzy.dat", "tooltip": "Официальные игры, неофициальные игры, хаки, моды и фан-геймы по Диззи"},
-    {"id": "mermaid", "title": "Русалочка", "path": "res://lists/mermaid.dat", "tooltip": "Игры по Русалочке"},
-    {"id": "flintstones", "title": "Flintstones", "path": "res://lists/flintstones.dat", "tooltip": "Игры по Флинтстоунам"},
+    # {"id": "mermaid", "title": "Русалочка", "path": "res://lists/mermaid.dat", "tooltip": "Игры по Русалочке"},
+    # {"id": "flintstones", "title": "Flintstones", "path": "res://lists/flintstones.dat", "tooltip": "Игры по Флинтстоунам"},
     {"id": "castlevania", "title": "Castlevania", "path": "res://lists/castlevania.dat", "tooltip": "Официальные игры, неофициальные игры, хаки, моды и фан-геймы по Кастлвании"},
     {"id": "metroidvania", "title": "Metroidvania", "path": "res://lists/metroidvania.dat", "tooltip": "Метроидвании"},
     {"id": "AVGN", "title": "AVGN", "path": "res://lists/AVGN.dat", "tooltip": "Игры, которые обозревал Angry Video Game Nerd"},
@@ -236,6 +242,10 @@ const SPECIAL_ROLL_ITEMS: Array[Dictionary] = [
     {"id": "checkers", "title": "Шашки", "path": "res://lists/checkers.dat", "tooltip": "Игры, в которые играли в RGG-Шашках"},
     {"id": "irvin", "title": "Ирвин", "path": "res://lists/irvin.dat", "tooltip": "Платформеры от Ирвина"},
     {"id": "shnumi", "title": "Коротыши", "path": "res://lists/shnumi.dat", "tooltip": "Короткие игры от Шнума"},
+    {"id": "attention", "title": "Attention", "path": "res://lists/attention.dat", "tooltip": "Игры на внимательность"},
+    {"id": "comix", "title": "Супергерои", "path": "res://lists/comix.dat", "tooltip": "Игры про супергероев"},
+    {"id": "beer", "title": "Пиво", "path": "res://lists/beer.dat", "tooltip": "Игры про пиво"},
+    {"id": "rails", "title": "Рельсы", "path": "res://lists/rails.dat", "tooltip": "Рельсовые стрелялки"},
     {"id": "higan", "title": "Higan", "path": "res://lists/higan.dat", "tooltip": "Игры от Higan"},
 ]
 const SPECIAL_ROLL_ICON_PATHS: = {
@@ -243,12 +253,15 @@ const SPECIAL_ROLL_ICON_PATHS: = {
     "allpc": "res://images/specrolls/allpc.png", 
     "anime": "res://images/specrolls/anime.png", 
     "arcade": "res://images/specrolls/arcade.png", 
+    "attention": "res://images/specrolls/attention.jpg",
     "AVGN": "res://images/specrolls/avgn.png", 
     "boobs": "res://images/specrolls/boobs.png", 
+    "beer": "res://images/specrolls/beer.png",
     "browjey": "res://images/specrolls/бровян.png", 
     "capcom": "res://images/specrolls/capcom.png", 
     "castlevania": "res://images/specrolls/castelvania.png", 
     "checkers": "res://images/specrolls/checkers.png",
+    "comix": "res://images/specrolls/comix.png",
     "disney": "res://images/specrolls/disney.png", 
     "dizzy": "res://images/specrolls/dizzy.png", 
     "doom": "res://images/specrolls/doom.png", 
@@ -284,6 +297,7 @@ const SPECIAL_ROLL_ICON_PATHS: = {
     "playstation": "res://images/specrolls/playstation.png", 
     "ports": "res://images/specrolls/порты.png", 
     "racing": "res://images/specrolls/racing.png", 
+    "rails": "res://images/specrolls/rails.png",
     "rare": "res://images/specrolls/rare.png", 
     "rats": "res://images/specrolls/rusty.png", 
     "rggland": "res://images/specrolls/RGG.png", 
@@ -340,6 +354,8 @@ const LOOTBOX_ITEMS: Array[Dictionary] = [
     {"id": "roulette", "title": "Рулетка", "path": "res://lists/roulette.dat"}, 
     {"id": "effects", "title": "Эффекты", "path": "res://lists/effects.dat"}, 
     {"id": "specrolls", "title": "Спец роллы", "path": "res://lists/specrolls.dat"}, 
+    {"id": "points", "title": "Очковый", "path": "res://lists/points.dat"},
+    {"id": "funny", "title": "Смешные", "path": "res://lists/funny.dat"},
 ]
 const LOOTBOX_ICON_PATHS: = {
     "bombs": "res://images/lootboxes/бомбы.png", 
@@ -362,6 +378,8 @@ const LOOTBOX_ICON_PATHS: = {
     "roulette": "res://images/lootboxes/рулетка.png", 
     "specrolls": "res://images/lootboxes/спецролы.png", 
     "effects": "res://images/lootboxes/effects.png", 
+    "points": "res://images/lootboxes/points.png",
+    "funny": "res://images/lootboxes/funny.png",
 }
 const DEFAULT_SLOT_TEXTS: Array[String] = ["-----", "------", "------", "-----", "----"]
 const SLOT_TEXT_LAYOUTS: = [
@@ -414,6 +432,9 @@ const DOUBLE_ROLL_DURATION_LISTS: Array[String] = [
 const ROLL_SOUND_CANDIDATES: Array[String] = [
     "res://audio/roll.wav", 
 ]
+const WHEEL_LEGENDARY_ROLL_SOUND_CANDIDATES: Array[String] = [
+    "res://audio/legendary_roll.mp3",
+]
 const ROLL_2007_SOUND_CANDIDATES: Array[String] = [
     "res://audio/3poloski2007.mp3", 
 ]
@@ -429,6 +450,13 @@ const SPECTRUM_ROLL_SOUND_CANDIDATES: Array[String] = [
 const HAKON_ROLL_SOUND_CANDIDATES: Array[String] = [
     "res://audio/Hakon.mp3", 
 ]
+const HIGAN_ROLL_SOUND_CANDIDATES: Array[String] = [
+    "res://audio/higan_roll.mp3",
+]
+const ZHEM_ROLL_SOUND_CANDIDATES: Array[String] = [
+    "res://audio/zhem_roll.mp3",
+]
+const HIGAN_ZHEM_ROLL_VOLUME_DB: = 5.0
 const PIZZA_ROLL_SOUND_CANDIDATES: Array[String] = [
     "res://audio/пицца.mp3", 
 ]
@@ -491,9 +519,10 @@ const WHEEL_MODE_CONFIGS: Array[Dictionary] = [
         "id": WHEEL_MODE_STANDARD_ID,
         "title": "Стандартное Колесо",
         "normal_path": WHEEL_LIST_PATH,
-        "legendary_path": WHEEL_LEGENDARY_LIST_PATH,
+        "legendary_path": BASIC_WHEEL_LEGENDARY_LIST_PATH,
         "removed_path": WHEEL_REMOVED_ENTRIES_PATH,
         "pity_path": WHEEL_PITY_COUNT_PATH,
+        "pity_undo_path": WHEEL_PITY_UNDO_PATH,
         "base_chance": 0.6,
         "soft_pity_start": 75,
         "soft_pity_step": 5.0,
@@ -503,10 +532,11 @@ const WHEEL_MODE_CONFIGS: Array[Dictionary] = [
     {
         "id": WHEEL_MODE_WEAPON_ID,
         "title": "Оружейное Колесо",
-        "normal_path": WEAPON_WHEEL_LIST_PATH,
+        "normal_path": WHEEL_LIST_PATH,
         "legendary_path": WEAPON_WHEEL_LEGENDARY_LIST_PATH,
         "removed_path": WEAPON_WHEEL_REMOVED_ENTRIES_PATH,
         "pity_path": WEAPON_WHEEL_PITY_COUNT_PATH,
+        "pity_undo_path": WEAPON_WHEEL_PITY_UNDO_PATH,
         "base_chance": 0.8,
         "soft_pity_start": 65,
         "soft_pity_step": 5.0,
@@ -517,9 +547,10 @@ const WHEEL_MODE_CONFIGS: Array[Dictionary] = [
         "id": WHEEL_MODE_START_ID,
         "title": "Стартовое Колесо",
         "normal_path": START_WHEEL_LIST_PATH,
-        "legendary_path": WHEEL_LEGENDARY_LIST_PATH,
+        "legendary_path": BASIC_WHEEL_LEGENDARY_LIST_PATH,
         "removed_path": START_WHEEL_REMOVED_ENTRIES_PATH,
         "pity_path": START_WHEEL_PITY_COUNT_PATH,
+        "pity_undo_path": START_WHEEL_PITY_UNDO_PATH,
         "base_chance": 0.6,
         "soft_pity_start": 0,
         "soft_pity_step": 0.0,
@@ -546,6 +577,7 @@ var wheel_roll_forced_title: = ""
 var wheel_roll_source_path: = ""
 var wheel_result_mode_id: = ""
 var wheel_result_source_path: = ""
+var wheel_result_pity_before: = -1
 var rolling: = false
 var stop_requested: = false
 var ultra_stop_pending: = false
@@ -607,6 +639,7 @@ var result_links_active: = false
 var rng: = RandomNumberGenerator.new()
 var roll_timer: Timer
 var finalize_timer: Timer
+var wheel_legendary_flash_timer: Timer
 var delay_timer: Timer
 var ultra_delay_timer: Timer
 var ultra_stop_timer: Timer
@@ -648,6 +681,7 @@ var web_file_picker_callback_ref = null
 @onready var background_rect: ColorRect = $Background
 @onready var selected_list_label: Label = $SelectedListLabel
 @onready var list_count_label: Label = $ListCountLabel
+@onready var wheel_pity_label: Label = $WheelPityLabel
 @onready var roll_button: Button = $RollButton
 @onready var ultra_button: Button = $UltraButton
 @onready var wheel_undo_delete_button: Button = $WheelUndoDeleteButton
@@ -848,8 +882,7 @@ func _ready() -> void :
     _create_wheel_mode_menu()
     _create_result_link_buttons()
     _create_wheel_description_popup()
-    if GARANT_FEATURE_ENABLED:
-        _create_garant_card_popup()
+    _create_garant_card_popup()
     _create_wheel_info_popup()
     _create_wheel_restore_popup()
     _create_list_preview_popup()
@@ -1408,13 +1441,95 @@ func _save_wheel_pity_count(mode_id: String, count: int) -> void:
         return
     file.store_string(str(maxi(0, count)))
     file.close()
+    _refresh_wheel_pity_label()
+
+
+
+func _refresh_wheel_pity_label() -> void:
+    if wheel_pity_label == null:
+        return
+    var show: = _is_wheel_list_selected() and not platform_browser_open and not special_roll_browser_open and not lootbox_browser_open
+    wheel_pity_label.visible = show
+    if not show:
+        return
+    var config: = _current_wheel_mode_config()
+    var pity_count: = _load_wheel_pity_count(selected_wheel_mode_id)
+    var remaining: = maxi(0, int(config.get("hard_pity", 0)) - pity_count)
+    wheel_pity_label.text = "ГАРАНТ" if remaining == 0 else "До гаранта: %d" % remaining
+
+
+
+func _wheel_pity_undo_path(mode_id: String) -> String:
+    return str(_get_wheel_mode_config(mode_id).get("pity_undo_path", ""))
+
+
+
+func _load_wheel_pity_undo_state(mode_id: String) -> Dictionary:
+    var path: = _wheel_pity_undo_path(mode_id)
+    if path.is_empty() or not FileAccess.file_exists(path):
+        return {}
+    var payload = JSON.parse_string(_read_text_auto(path))
+    if typeof(payload) != TYPE_DICTIONARY:
+        return {}
+    var state: Dictionary = payload
+    return state
+
+
+
+func _load_wheel_pity_undo_history(mode_id: String) -> Dictionary:
+    var state: = _load_wheel_pity_undo_state(mode_id)
+    if typeof(state.get("history")) == TYPE_DICTIONARY:
+        return state["history"]
+    if state.has("entry") and state.has("removed_count"):
+        return {str(state["removed_count"]): {"entry": state["entry"], "pity_before": state.get("pity_before", -1), "counted": true}}
+    return {}
+
+
+
+func _save_wheel_pity_undo_history(mode_id: String, history: Dictionary) -> void:
+    var path: = _wheel_pity_undo_path(mode_id)
+    if path.is_empty():
+        return
+    var file: = FileAccess.open(path, FileAccess.WRITE)
+    if file == null:
+        return
+    file.store_string(JSON.stringify({"history": history}))
+    file.close()
+
+
+
+func _save_wheel_pity_undo_state(mode_id: String, entry: String, removed_count: int, pity_before: int, counted: bool) -> void:
+    var history: = _load_wheel_pity_undo_history(mode_id)
+    history[str(removed_count)] = {"entry": entry.strip_edges(), "pity_before": pity_before, "counted": counted}
+    _save_wheel_pity_undo_history(mode_id, history)
+
+
+
+func _invalidate_wheel_pity_undo_resets(mode_id: String) -> void:
+    var history: = _load_wheel_pity_undo_history(mode_id)
+    var changed: = false
+    for key in history:
+        var state: Dictionary = history[key]
+        if int(state.get("pity_before", -1)) >= 0:
+            state["pity_before"] = -1
+            history[key] = state
+            changed = true
+    if changed:
+        _save_wheel_pity_undo_history(mode_id, history)
+
+
+
+func _clear_wheel_pity_undo_state(mode_id: String) -> void:
+    var path: = _wheel_pity_undo_path(mode_id)
+    if not path.is_empty() and FileAccess.file_exists(path):
+        DirAccess.remove_absolute(ProjectSettings.globalize_path(path))
 
 
 
 func _wheel_legendary_chance_percent(config: Dictionary, pity_count: int) -> float:
     var attempt_number: = pity_count + 1
     var hard_pity: = int(config.get("hard_pity", 0))
-    if hard_pity > 0 and attempt_number >= hard_pity:
+    if hard_pity > 0 and pity_count >= hard_pity:
         return 100.0
 
     var chance: = float(config.get("base_chance", 0.0))
@@ -1429,7 +1544,7 @@ func _wheel_legendary_chance_percent(config: Dictionary, pity_count: int) -> flo
 func _load_wheel_mode_entries(config: Dictionary, legendary: bool) -> PackedStringArray:
     var path: = str(config.get("legendary_path", WHEEL_LEGENDARY_LIST_PATH)) if legendary else str(config.get("normal_path", WHEEL_LIST_PATH))
     var entries: = _load_original_list_entries(path)
-    return _apply_wheel_user_removals(entries, str(config.get("id", WHEEL_MODE_STANDARD_ID)))
+    return _apply_wheel_user_removals(entries, str(config.get("id", WHEEL_MODE_STANDARD_ID)), not legendary and path == WHEEL_LIST_PATH)
 
 
 
@@ -1444,12 +1559,11 @@ func _prepare_wheel_roll_pool() -> void:
     var config: = _current_wheel_mode_config()
     var mode_id: = str(config.get("id", WHEEL_MODE_STANDARD_ID))
     var pity_count: = _load_wheel_pity_count(mode_id)
-    var attempt_number: = pity_count + 1
     var hard_pity: = int(config.get("hard_pity", 0))
     var hard_title: = str(config.get("hard_title", ""))
     var legendary_roll: = false
 
-    if hard_pity > 0 and attempt_number >= hard_pity:
+    if hard_pity > 0 and pity_count >= hard_pity:
         legendary_roll = true
         wheel_roll_forced_title = hard_title
     else:
@@ -1458,10 +1572,11 @@ func _prepare_wheel_roll_pool() -> void:
 
     if legendary_roll:
         var legendary_entries: = _load_wheel_mode_entries(config, true)
+        if legendary_entries.is_empty() and not wheel_roll_forced_title.is_empty():
+            legendary_entries.append(wheel_roll_forced_title)
         if not legendary_entries.is_empty():
             base_games = legendary_entries
             games = legendary_entries.duplicate()
-            list_count_label.text = str(games.size())
             wheel_roll_mode_id = mode_id
             wheel_roll_legendary_active = true
             wheel_roll_source_path = str(config.get("legendary_path", WHEEL_LEGENDARY_LIST_PATH))
@@ -1475,10 +1590,17 @@ func _prepare_wheel_roll_pool() -> void:
 func _complete_wheel_roll_pity() -> void:
     if not _is_wheel_list_selected() or wheel_roll_mode_id.is_empty():
         return
-    if wheel_roll_legendary_active:
-        _save_wheel_pity_count(wheel_roll_mode_id, 0)
-    else:
-        _save_wheel_pity_count(wheel_roll_mode_id, _load_wheel_pity_count(wheel_roll_mode_id) + 1)
+    var mode_id: = wheel_roll_mode_id
+    wheel_result_pity_before = -1
+    if mode_id == WHEEL_MODE_START_ID:
+        if not wheel_roll_forced_title.is_empty():
+            _invalidate_wheel_pity_undo_resets(mode_id)
+            wheel_result_pity_before = _load_wheel_pity_count(mode_id)
+            _save_wheel_pity_count(mode_id, 0)
+    elif wheel_roll_legendary_active:
+        _invalidate_wheel_pity_undo_resets(mode_id)
+        wheel_result_pity_before = _load_wheel_pity_count(mode_id)
+        _save_wheel_pity_count(mode_id, 0)
 
 
 
@@ -1734,7 +1856,7 @@ func _on_delay_timer_timeout() -> void :
         roll_button.disabled = roll_button.text != "STOP"
         return
 
-    roll_button.disabled = selected_list_path.is_empty() or games.size() <= 1
+    roll_button.disabled = selected_list_path.is_empty() or games.is_empty()
     ultra_button.disabled = true
 
 
@@ -1781,6 +1903,7 @@ func _select_list(list_id: String, title: String, path: String, tile = null) -> 
     base_games = _load_list(path)
 
     selected_list_label.text = title
+    _refresh_wheel_pity_label()
     _set_result_links_active(false)
     _hide_wheel_description_popup()
     _hide_garant_card_popup()
@@ -1812,6 +1935,7 @@ func _start_roll() -> void :
     ultra_stop_timer.stop()
     roll_timer.stop()
     finalize_timer.stop()
+    _stop_wheel_legendary_flashes()
     _hide_wheel_restore_popup()
     _hide_wheel_info_popup()
     _hide_wheel_mode_menu()
@@ -1831,8 +1955,7 @@ func _start_roll() -> void :
     if not garant_roll_active:
         _prepare_wheel_roll_pool()
 
-    var minimum_roll_size: = 1 if GARANT_FEATURE_ENABLED and garant_roll_active else 2
-    if games.size() < minimum_roll_size:
+    if games.is_empty():
         return
 
     _reset_slot_images()
@@ -1851,6 +1974,8 @@ func _start_roll() -> void :
 
     selected_result_entry = ""
     rolling = true
+    if wheel_roll_legendary_active:
+        wheel_legendary_flash_timer.start()
     _refresh_wheel_delete_button()
     stop_requested = false
     ultra_stop_pending = false
@@ -1867,7 +1992,6 @@ func _start_roll() -> void :
     stop_length = clampi(shuffled_games.size(), MIN_STOP_LENGTH, MAX_STOP_LENGTH)
     _rnd_stopwheel()
     var generated_stopwheel: = _generate_stopwheel()
-    _force_shuffled_center_title_for_future_steps(generated_stopwheel, wheel_roll_forced_title)
     _plan_roll_target(generated_stopwheel)
 
     roll_button.text = "STOP"
@@ -1881,10 +2005,18 @@ func _start_roll() -> void :
     var roll_sound_candidates: Array[String] = ROLL_SOUND_CANDIDATES
     var roll_sound_volume_db: = 0.0
     var use_custom_default_roll_music: = false
-    if _is_hardcore_list_selected():
+    if _is_wheel_list_selected() and wheel_roll_legendary_active:
+        roll_sound_candidates = WHEEL_LEGENDARY_ROLL_SOUND_CANDIDATES
+    elif _is_hardcore_list_selected():
         roll_sound_candidates = HARDCORE_ROLL_SOUND_CANDIDATES
     elif selected_list_path == "res://lists/hakon.dat":
         roll_sound_candidates = HAKON_ROLL_SOUND_CANDIDATES
+    elif selected_list_path == "res://lists/higan.dat":
+        roll_sound_candidates = HIGAN_ROLL_SOUND_CANDIDATES
+        roll_sound_volume_db = HIGAN_ZHEM_ROLL_VOLUME_DB
+    elif selected_list_path == "res://lists/zhem.dat":
+        roll_sound_candidates = ZHEM_ROLL_SOUND_CANDIDATES
+        roll_sound_volume_db = HIGAN_ZHEM_ROLL_VOLUME_DB
     elif selected_list_path == "res://lists/pizza.dat":
         roll_sound_candidates = PIZZA_ROLL_SOUND_CANDIDATES
         roll_sound_volume_db = PIZZA_ROLL_VOLUME_DB
@@ -1981,6 +2113,7 @@ func _plan_roll_target(min_future_steps: int) -> void :
         return
 
     planned_stop_step = mas_j + maxi(1, min_future_steps)
+    _force_shuffled_center_title_for_future_steps(min_future_steps, wheel_roll_forced_title)
     var target_index: = _shuffled_index_for_center_step(planned_stop_step)
     planned_center_entry = shuffled_games[target_index]
 
@@ -2020,10 +2153,13 @@ func _button_megastop_click() -> void :
     if ultra_stop_pending:
         return
 
-    ultra_stop_pending = true
     stop_via_ultra = true
     ultra_button.disabled = true
     roll_button.disabled = true
+    if not wheel_roll_forced_title.is_empty():
+        _plan_roll_target(MANUAL_STOP_MIN_STEPS)
+        return
+    ultra_stop_pending = true
     ultra_stop_timer.start(rng.randf_range(ULTRA_STOP_MIN_WAIT, ULTRA_STOP_MAX_WAIT))
 
 
@@ -2101,6 +2237,7 @@ func _roll_stopped() -> void :
     ultra_stop_timer.stop()
     roll_timer.stop()
     finalize_timer.stop()
+    _stop_wheel_legendary_flashes()
 
     selected_result_entry = slot_entries[2]
     var result_text: = _entry_to_display_text(selected_result_entry)
@@ -2116,6 +2253,8 @@ func _roll_stopped() -> void :
     if GARANT_FEATURE_ENABLED and completed_garant_roll and selected_list_path == WHEEL_LIST_PATH:
         _consume_garant_roll_charge()
         base_games = _load_list(WHEEL_LIST_PATH)
+    if _is_wheel_list_selected():
+        base_games = _load_list(selected_list_path)
     _apply_letter_digit_filter()
     _apply_final_roll_colors()
     _refresh_wheel_delete_button()
@@ -2191,6 +2330,58 @@ func _choose_roll_colors() -> void :
         secondary_color = _generate_secondary_text_color(main_color)
     text_color_stat = 0
     _apply_final_roll_colors()
+
+
+
+func _stop_wheel_legendary_flashes() -> void:
+    if wheel_legendary_flash_timer != null:
+        wheel_legendary_flash_timer.stop()
+    for label in slot_labels:
+        for child in label.get_children():
+            if child.has_meta("wheel_legendary_flash"):
+                child.queue_free()
+
+
+
+func _on_wheel_legendary_flash_timer_timeout() -> void:
+    if not rolling or not wheel_roll_legendary_active:
+        _stop_wheel_legendary_flashes()
+        return
+    for count in range(8):
+        var label: = slot_labels[rng.randi_range(0, slot_labels.size() - 1)]
+        if label.text.is_empty():
+            continue
+        var font: = label.get_theme_font("font")
+        var font_size: = label.get_theme_font_size("font_size")
+        var text_width: = minf(font.get_string_size(label.text, HORIZONTAL_ALIGNMENT_LEFT, -1, font_size).x, label.size.x * 0.88)
+        var side: = -1.0 if rng.randi_range(0, 1) == 0 else 1.0
+        var position: = Vector2(label.size.x * 0.5 + side * (text_width * 0.5 + 8.0), label.size.y * 0.5 + rng.randf_range(-12.0, 12.0))
+        var flash: = Label.new()
+        flash.name = "WheelLegendaryFlash"
+        flash.set_meta("wheel_legendary_flash", true)
+        flash.text = "✦"
+        flash.position = position - Vector2(20.0, 20.0)
+        flash.size = Vector2(40.0, 40.0)
+        flash.pivot_offset = flash.size * 0.5
+        flash.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+        flash.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+        flash.mouse_filter = Control.MOUSE_FILTER_IGNORE
+        flash.add_theme_font_size_override("font_size", rng.randi_range(20, 30))
+        flash.add_theme_color_override("font_color", Color(1.0, rng.randf_range(0.78, 0.96), 0.28))
+        flash.add_theme_color_override("font_outline_color", Color(0.9, 0.48, 0.04, 0.9))
+        flash.add_theme_constant_override("outline_size", 3)
+        flash.modulate = Color(1.0, 1.0, 1.0, 0.0)
+        flash.scale = Vector2(0.35, 0.35)
+        label.add_child(flash)
+
+        var fade: = create_tween().bind_node(flash)
+        fade.tween_property(flash, "modulate:a", 1.0, 0.1)
+        fade.tween_interval(0.14)
+        fade.tween_property(flash, "modulate:a", 0.0, 0.36)
+        fade.tween_callback(flash.queue_free)
+        var motion: = create_tween().bind_node(flash).set_parallel(true)
+        motion.tween_property(flash, "scale", Vector2(1.2, 1.2), 0.6)
+        motion.tween_property(flash, "position", flash.position + Vector2(0.0, -rng.randf_range(8.0, 18.0)), 0.6)
 
 
 
@@ -2313,9 +2504,10 @@ func _wheel_has_user_removals(mode_id: String = "") -> bool:
 
 
 
-func _wheel_has_any_user_removals() -> bool:
+func _wheel_has_resettable_progress() -> bool:
     for config in WHEEL_MODE_CONFIGS:
-        if _wheel_has_user_removals(str(config.get("id", ""))):
+        var mode_id: = str(config.get("id", ""))
+        if _wheel_has_user_removals(mode_id) or _load_wheel_pity_count(mode_id) > 0:
             return true
     return false
 
@@ -2352,13 +2544,14 @@ func _refresh_wheel_undo_delete_button() -> void :
 func _refresh_wheel_restore_all_button() -> void :
     if wheel_restore_all_button == null:
         return
-    wheel_restore_all_button.disabled = rolling or not _wheel_has_any_user_removals()
+    wheel_restore_all_button.disabled = rolling or not _wheel_has_resettable_progress()
 
 
 
 func _reset_selected_list_ui() -> void :
     selected_list_label.text = ""
     list_count_label.text = ""
+    wheel_pity_label.visible = false
     base_games = PackedStringArray()
     games = PackedStringArray()
     garant_roll_active = false
@@ -2442,7 +2635,14 @@ func _apply_letter_digit_filter() -> void :
 
     games = filtered_games
     list_count_label.text = str(games.size()) if not selected_list_path.is_empty() else ""
-    var can_roll_current_list: = games.size() > 1
+    var can_roll_current_list: = not games.is_empty()
+    if _is_wheel_list_selected() and not can_roll_current_list:
+        var config: = _current_wheel_mode_config()
+        var hard_pity: = int(config.get("hard_pity", 0))
+        var pity_count: = _load_wheel_pity_count(selected_wheel_mode_id)
+        var hard_pity_ready: = hard_pity > 0 and pity_count >= hard_pity
+        if hard_pity_ready:
+            can_roll_current_list = not _load_wheel_mode_entries(config, true).is_empty() or not str(config.get("hard_title", "")).is_empty()
     if _garant_roll_available():
         can_roll_current_list = true
     roll_button.disabled = selected_list_path.is_empty() or not can_roll_current_list
@@ -2523,6 +2723,7 @@ func _reset_roll_slots() -> void :
     garant_result_active = false
     wheel_result_mode_id = ""
     wheel_result_source_path = ""
+    wheel_result_pity_before = -1
     wheel_deleted_visible_slots.clear()
     garant_deleted_visible_slots.clear()
     global_event_deleted_visible_slots.clear()
@@ -2770,12 +2971,10 @@ func _is_garant_result_entry(entry: String) -> bool:
 
 
 func _is_garant_card_entry(entry: String) -> bool:
-    if not GARANT_FEATURE_ENABLED:
+    if not _is_wheel_list_selected():
         return false
     var title: = _entry_to_display_text(entry)
-    if not _is_garant_card_title(title):
-        return false
-    return not _find_matching_original_entry(GARANT_LIST_PATH, entry).is_empty()
+    return _is_garant_card_title(title)
 
 
 
@@ -3741,6 +3940,8 @@ func _apply_custom_button_color_theme() -> void :
         selected_list_label.add_theme_color_override("font_color", custom_button_color if custom_button_color_enabled else DEFAULT_SELECTED_LIST_TEXT_COLOR)
     if list_count_label != null:
         list_count_label.add_theme_color_override("font_color", custom_button_color if custom_button_color_enabled else DEFAULT_SELECTED_COUNT_TEXT_COLOR)
+    if wheel_pity_label != null:
+        wheel_pity_label.add_theme_color_override("font_color", custom_button_color if custom_button_color_enabled else DEFAULT_SELECTED_COUNT_TEXT_COLOR)
     if digits_checkbox != null:
         digits_checkbox.add_theme_color_override("font_color", shared_color)
     for label in [hero_label, platforms_label, bag_label, wheel_label, extra_label]:
@@ -4323,7 +4524,7 @@ func _create_wheel_restore_popup() -> void :
     wheel_restore_message_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
     wheel_restore_message_label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
     wheel_restore_message_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-    wheel_restore_message_label.text = "ВСЕ ИЗНАЧАЛЬНЫЕ ПУНКТЫ КОЛЕСА ДОБРА ВЕРНУТСЯ. И ЭТО ИЗМЕНЕНИЕ НЕЛЬЗЯ БУДЕТ ОТКАТИТЬ"
+    wheel_restore_message_label.text = "ПУНКТЫ ВСЕХ КОЛЁС ВЕРНУТСЯ, А СЧЁТЧИКИ ГАРАНТА СБРОСЯТСЯ. ЭТО ИЗМЕНЕНИЕ НЕЛЬЗЯ БУДЕТ ОТКАТИТЬ"
     wheel_restore_message_label.add_theme_color_override("font_color", Color(0.96, 0.96, 0.98, 1.0))
     wheel_restore_message_label.add_theme_font_size_override("font_size", 22)
     panel.add_child(wheel_restore_message_label)
@@ -4924,8 +5125,13 @@ func _add_matching_wheel_removal(source_entry: String) -> bool:
 
 
 
-func _apply_wheel_user_removals(entries: PackedStringArray, mode_id: String = "") -> PackedStringArray:
+func _apply_wheel_user_removals(entries: PackedStringArray, mode_id: String = "", shared_normal_pool: bool = false) -> PackedStringArray:
     var removed_entries: = _load_wheel_removed_entries(mode_id)
+    if shared_normal_pool:
+        var other_mode_id: = WHEEL_MODE_WEAPON_ID if mode_id == WHEEL_MODE_STANDARD_ID else WHEEL_MODE_STANDARD_ID
+        for removed_entry in _load_wheel_removed_entries(other_mode_id):
+            if not removed_entries.has(removed_entry):
+                removed_entries.append(removed_entry)
     if removed_entries.is_empty():
         return entries
     var removed_counts: Dictionary = {}
@@ -5177,11 +5383,13 @@ func _get_garant_description(title: String) -> String:
 
 
 func _is_garant_card_title(title: String) -> bool:
-    return title == GARANT_TELEPORT_TITLE or title == GARANT_GOLDEN_TELEPORT_TITLE
+    return title == GARANT_TELEPORT_TITLE or title == GARANT_GOLDEN_TELEPORT_TITLE or title == LEGENDARY_CARP_TITLE
 
 
 
 func _get_garant_card_path(title: String) -> String:
+    if title == LEGENDARY_CARP_TITLE:
+        return LEGENDARY_CARP_CARD_PATH
     if title == GARANT_GOLDEN_TELEPORT_TITLE:
         return GARANT_GOLDEN_TELEPORT_CARD_PATH
     if title == GARANT_TELEPORT_TITLE:
@@ -5191,7 +5399,7 @@ func _get_garant_card_path(title: String) -> String:
 
 
 func _get_garant_card_glow_color(title: String) -> Color:
-    if title == GARANT_GOLDEN_TELEPORT_TITLE:
+    if title == GARANT_GOLDEN_TELEPORT_TITLE or title == LEGENDARY_CARP_TITLE:
         return Color(1.0, 0.62, 0.12, 1.0)
     return Color(0.92, 0.95, 1.0, 1.0)
 
@@ -5347,16 +5555,15 @@ func _show_garant_card_for_entry(entry: String, slot_index: int = -1, speak: boo
 
     var card_path: = _get_garant_card_path(title)
     if card_path.is_empty() or garant_card_overlay == null:
-        var description: = _get_garant_description(title)
+        var description: = _get_wheel_description(title)
+        if description.is_empty():
+            description = "Описание не найдено."
         wheel_description_delete_entry = entry
         wheel_description_delete_slot_index = slot_index
-        wheel_description_delete_source = GARANT_LIST_ID
+        wheel_description_delete_source = WHEEL_LIST_ID
         _show_wheel_description_popup(title, description, "", true)
         if speak:
-            var speech_text: = description
-            if include_title_in_speech:
-                speech_text = "%s. %s" % [title, description]
-            _queue_tts_text_after_stop_sound(speech_text)
+            _queue_tts_text_after_stop_sound("%s. %s" % [title, description] if include_title_in_speech else description)
         return
 
     _hide_wheel_description_popup(false)
@@ -5370,9 +5577,9 @@ func _show_garant_card_for_entry(entry: String, slot_index: int = -1, speak: boo
 
     wheel_description_delete_entry = entry
     wheel_description_delete_slot_index = slot_index
-    wheel_description_delete_source = GARANT_LIST_ID
+    wheel_description_delete_source = WHEEL_LIST_ID
     if garant_card_delete_button != null:
-        var already_deleted: = slot_index >= 0 and bool(garant_deleted_visible_slots.get(slot_index, false))
+        var already_deleted: = slot_index >= 0 and bool(wheel_deleted_visible_slots.get(slot_index, false))
         garant_card_delete_button.visible = true
         garant_card_delete_button.disabled = already_deleted
     if garant_card_overlay != null:
@@ -5381,7 +5588,7 @@ func _show_garant_card_for_entry(entry: String, slot_index: int = -1, speak: boo
 
     var speech_text: = ""
     if speak:
-        speech_text = _get_garant_description(title)
+        speech_text = _get_wheel_description(title)
         if include_title_in_speech:
             speech_text = "%s. %s" % [title, speech_text]
     _play_garant_card_reveal_glow(title, speech_text)
@@ -5389,6 +5596,7 @@ func _show_garant_card_for_entry(entry: String, slot_index: int = -1, speak: boo
 
 
 func _hide_garant_card_popup(stop_tts: bool = true, clear_delete_source: bool = true) -> void :
+    var was_visible: = garant_card_overlay != null and garant_card_overlay.visible
     if garant_card_overlay != null:
         garant_card_overlay.visible = false
     if garant_card_glow_tween != null:
@@ -5399,7 +5607,7 @@ func _hide_garant_card_popup(stop_tts: bool = true, clear_delete_source: bool = 
     if garant_card_glow_rect != null:
         garant_card_glow_rect.visible = false
     _clear_garant_card_sparks()
-    if clear_delete_source and wheel_description_delete_source == GARANT_LIST_ID:
+    if clear_delete_source and was_visible:
         wheel_description_delete_entry = ""
         wheel_description_delete_slot_index = -1
         wheel_description_delete_source = ""
@@ -5460,7 +5668,7 @@ func _show_wheel_restore_popup(target_list_id: String = "") -> void :
         wheel_restore_message_label.text = "ВСЕ ИЗНАЧАЛЬНЫЕ ГЛОБАЛЫ ВЕРНУТСЯ. И ЭТО ИЗМЕНЕНИЕ НЕЛЬЗЯ БУДЕТ ОТКАТИТЬ"
         wheel_restore_ok_button.text = "ВЕРНУТЬ ВСЕ ГЛОБАЛЫ"
     else:
-        wheel_restore_message_label.text = "ВСЕ ИЗНАЧАЛЬНЫЕ ПУНКТЫ КОЛЕСА ДОБРА ВЕРНУТСЯ. И ЭТО ИЗМЕНЕНИЕ НЕЛЬЗЯ БУДЕТ ОТКАТИТЬ"
+        wheel_restore_message_label.text = "ПУНКТЫ ВСЕХ КОЛЁС ВЕРНУТСЯ, А СЧЁТЧИКИ ГАРАНТА СБРОСЯТСЯ. ЭТО ИЗМЕНЕНИЕ НЕЛЬЗЯ БУДЕТ ОТКАТИТЬ"
         wheel_restore_ok_button.text = "ВЕРНУТЬ ВСЕ ПУНКТЫ КОЛЕСА"
     wheel_restore_overlay.visible = true
     wheel_restore_overlay.move_to_front()
@@ -5488,6 +5696,9 @@ func _on_wheel_restore_ok_pressed() -> void :
         global_event_deleted_visible_slots.clear()
     else:
         for config in WHEEL_MODE_CONFIGS:
+            var mode_id: = str(config.get("id", ""))
+            _save_wheel_pity_count(mode_id, 0)
+            _clear_wheel_pity_undo_state(mode_id)
             var removed_path: = str(config.get("removed_path", ""))
             if removed_path.is_empty():
                 continue
@@ -5499,6 +5710,7 @@ func _on_wheel_restore_ok_pressed() -> void :
                 DirAccess.remove_absolute(absolute_garant_removed_path)
         wheel_deleted_visible_slots.clear()
         garant_deleted_visible_slots.clear()
+        wheel_result_pity_before = -1
         if GARANT_FEATURE_ENABLED:
             _save_garant_delete_count(0)
     _hide_wheel_restore_popup()
@@ -5515,8 +5727,24 @@ func _on_wheel_undo_delete_button_pressed() -> void :
     if removed_entries.is_empty():
         _refresh_wheel_delete_button()
         return
+    var mode_id: = selected_wheel_mode_id
+    var history: = _load_wheel_pity_undo_history(mode_id)
+    var history_key: = str(removed_entries.size())
+    var undo_state: Dictionary = history.get(history_key, {})
+    var matches_last_entry: = str(undo_state.get("entry", "")) == removed_entries[removed_entries.size() - 1]
+    var counted: = bool(undo_state.get("counted", true)) if matches_last_entry else true
+    var pity_before: = int(undo_state.get("pity_before", -1)) if matches_last_entry else -1
     removed_entries.remove_at(removed_entries.size() - 1)
     _save_wheel_removed_entries(removed_entries)
+    if history.has(history_key):
+        history.erase(history_key)
+        _save_wheel_pity_undo_history(mode_id, history)
+    if pity_before >= 0:
+        # Keep other deletions made since the legendary result.
+        _save_wheel_pity_count(mode_id, _load_wheel_pity_count(mode_id) - (1 if counted else 0) + pity_before)
+        wheel_result_pity_before = -1
+    elif counted:
+        _save_wheel_pity_count(mode_id, _load_wheel_pity_count(mode_id) - 1)
     if GARANT_FEATURE_ENABLED:
         _decrement_garant_delete_count()
     wheel_deleted_visible_slots.clear()
@@ -5547,12 +5775,26 @@ func _on_wheel_description_delete_pressed() -> void :
     var removed_entries: = _load_wheel_removed_entries()
     removed_entries.append(wheel_description_delete_entry)
     _save_wheel_removed_entries(removed_entries)
+    var legendary_source: = wheel_result_source_path == str(_current_wheel_mode_config().get("legendary_path", ""))
+    var deleted_reset_result: = (
+        wheel_result_pity_before >= 0
+        and wheel_result_mode_id == selected_wheel_mode_id
+        and legendary_source
+        and wheel_description_delete_slot_index == 2
+        and wheel_description_delete_entry == selected_result_entry
+    )
+    _save_wheel_pity_undo_state(selected_wheel_mode_id, wheel_description_delete_entry, removed_entries.size(), wheel_result_pity_before if deleted_reset_result else -1, not legendary_source)
+    if not legendary_source:
+        _save_wheel_pity_count(selected_wheel_mode_id, _load_wheel_pity_count(selected_wheel_mode_id) + 1)
     if GARANT_FEATURE_ENABLED:
         _add_matching_garant_removal(wheel_description_delete_entry)
         _increment_garant_delete_count()
     if wheel_description_delete_slot_index >= 0:
         wheel_deleted_visible_slots[wheel_description_delete_slot_index] = true
-    _hide_wheel_description_popup()
+    if garant_card_overlay != null and garant_card_overlay.visible:
+        _hide_garant_card_popup()
+    else:
+        _hide_wheel_description_popup()
     if _is_wheel_list_selected():
         _reload_selected_list()
     _refresh_wheel_delete_button()
@@ -6006,6 +6248,11 @@ func _create_runtime_nodes() -> void :
     finalize_timer.timeout.connect(_on_finalize_timer_timeout)
     add_child(finalize_timer)
 
+    wheel_legendary_flash_timer = Timer.new()
+    wheel_legendary_flash_timer.wait_time = WHEEL_LEGENDARY_FLASH_INTERVAL
+    wheel_legendary_flash_timer.timeout.connect(_on_wheel_legendary_flash_timer_timeout)
+    add_child(wheel_legendary_flash_timer)
+
     delay_timer = Timer.new()
     delay_timer.one_shot = true
     delay_timer.autostart = false
@@ -6267,15 +6514,15 @@ func _create_settings_menu() -> void :
     var reset_button: = Button.new()
     reset_button.name = "SettingsResetButton"
     reset_button.position = Vector2(14, 398)
-    reset_button.size = Vector2(196, 26)
-    reset_button.text = "Сбросить всё"
+    reset_button.size = Vector2(196, 38)
+    reset_button.text = "Сбросить настройки\nкастомизации"
     reset_button.focus_mode = Control.FOCUS_NONE
     reset_button.mouse_default_cursor_shape = Control.CURSOR_POINTING_HAND
     reset_button.add_theme_stylebox_override("normal", settings_item_style)
     reset_button.add_theme_stylebox_override("pressed", settings_item_style)
     reset_button.add_theme_stylebox_override("hover", settings_item_style)
     reset_button.add_theme_color_override("font_color", Color(0.96, 0.96, 0.98, 1.0))
-    reset_button.add_theme_font_size_override("font_size", 14)
+    reset_button.add_theme_font_size_override("font_size", 12)
     reset_button.pressed.connect(_on_settings_reset_button_pressed)
     settings_panel.add_child(reset_button)
 
@@ -6291,7 +6538,7 @@ func _create_settings_menu() -> void :
     wheel_restore_all_button.add_theme_stylebox_override("hover", settings_item_style)
     wheel_restore_all_button.add_theme_color_override("font_color", Color(0.96, 0.96, 0.98, 1.0))
     wheel_restore_all_button.add_theme_font_size_override("font_size", 11)
-    wheel_restore_all_button.disabled = not _wheel_has_user_removals()
+    wheel_restore_all_button.disabled = not _wheel_has_resettable_progress()
     wheel_restore_all_button.pressed.connect(_on_settings_wheel_restore_all_button_pressed)
     settings_panel.add_child(wheel_restore_all_button)
 
@@ -7428,17 +7675,19 @@ func _populate_lootbox_browser_grid() -> void :
         "Фри-спины",
     ]
     var row3_titles: Array[String] = [
-        "Моды", 
         "Рулетка", 
         "Спец роллы", 
+        "Эффекты",
+        "Очковый",
+        "Смешные",
     ]
     var row4_titles: Array[String] = [
-        "Эффекты", 
+        "Моды",
     ]
 
     _add_lootbox_row(item_map, row1_titles, 0)
     _add_lootbox_row(item_map, row2_titles, 1)
-    _add_lootbox_row(item_map, row3_titles, 3)
+    _add_lootbox_row(item_map, row3_titles, 2)
     _add_lootbox_row(item_map, row4_titles, 4)
 
 
@@ -7683,6 +7932,7 @@ func _apply_platform_browser_layout(is_open: bool) -> void :
         _refresh_settings_menu_visibility()
     selected_list_label.visible = not is_open
     list_count_label.visible = not is_open
+    _refresh_wheel_pity_label()
     bottom_placeholder_1.visible = not is_open
     bottom_placeholder_2.visible = not is_open
     bottom_bar.visible = not is_open
@@ -7701,6 +7951,7 @@ func _apply_special_roll_browser_layout(is_open: bool) -> void :
         _refresh_settings_menu_visibility()
     selected_list_label.visible = not is_open
     list_count_label.visible = not is_open
+    _refresh_wheel_pity_label()
     bottom_placeholder_1.visible = not is_open
     bottom_placeholder_2.visible = not is_open
     bottom_bar.visible = not is_open
@@ -7719,6 +7970,7 @@ func _apply_lootbox_browser_layout(is_open: bool) -> void :
         _refresh_settings_menu_visibility()
     selected_list_label.visible = not is_open
     list_count_label.visible = not is_open
+    _refresh_wheel_pity_label()
     bottom_placeholder_1.visible = not is_open
     bottom_placeholder_2.visible = not is_open
     bottom_bar.visible = not is_open
@@ -7877,9 +8129,9 @@ func _load_list(path: String) -> PackedStringArray:
         if not line.is_empty():
             result.append(line)
 
-    var wheel_mode_id: = _wheel_mode_id_for_path(path)
+    var wheel_mode_id: = selected_wheel_mode_id if selected_platform == WHEEL_LIST_ID and path == WHEEL_LIST_PATH else _wheel_mode_id_for_path(path)
     if selected_platform == WHEEL_LIST_ID and not wheel_mode_id.is_empty():
-        return _apply_wheel_user_removals(result, wheel_mode_id)
+        return _apply_wheel_user_removals(result, wheel_mode_id, path == WHEEL_LIST_PATH)
     if GARANT_FEATURE_ENABLED and path == GARANT_LIST_PATH:
         return _apply_garant_user_removals(result)
     if path == GLOBAL_EVENTS_LIST_PATH:
