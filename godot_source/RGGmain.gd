@@ -41,6 +41,7 @@ const START_WHEEL_LIST_PATH: = "res://lists/start_wheel.dat"
 const START_WHEEL_REMOVED_ENTRIES_PATH: = "user://start_wheel_removed_entries.dat"
 const START_WHEEL_PITY_COUNT_PATH: = "user://start_wheel_pity_count.txt"
 const START_WHEEL_PITY_UNDO_PATH: = "user://start_wheel_pity_undo.json"
+const START_WHEEL_COMPLETED_PATH: = "user://start_wheel_completed.txt"
 const WHEEL_MODE_STANDARD_ID: = "standard"
 const WHEEL_MODE_WEAPON_ID: = "weapon"
 const WHEEL_MODE_START_ID: = "start"
@@ -247,6 +248,8 @@ const SPECIAL_ROLL_ITEMS: Array[Dictionary] = [
     {"id": "beer", "title": "Пиво", "path": "res://lists/beer.dat", "tooltip": "Игры про пиво"},
     {"id": "rails", "title": "Рельсы", "path": "res://lists/rails.dat", "tooltip": "Рельсовые стрелялки"},
     {"id": "higan", "title": "Higan", "path": "res://lists/higan.dat", "tooltip": "Игры от Higan"},
+    {"id": "tower", "title": "Башня", "path": "res://lists/tower.dat"},
+    {"id": "japan", "title": "Япония", "path": "res://lists/japan.dat"},
 ]
 const SPECIAL_ROLL_ICON_PATHS: = {
     "2007": "res://images/specrolls/2007.png", 
@@ -332,6 +335,8 @@ const SPECIAL_ROLL_ICON_PATHS: = {
     "mini": "res://images/specrolls/mini.png", 
     "tornis": "res://images/specrolls/tornis.png", 
     "kover": "res://images/specrolls/kover.png", 
+    "tower": "res://images/specrolls/tower.png",
+    "japan": "res://images/specrolls/japan.png",
 }
 const LOOTBOX_ITEMS: Array[Dictionary] = [
     {"id": "bombs", "title": "Бомбы", "path": "res://lists/bombs.dat"}, 
@@ -453,10 +458,11 @@ const HAKON_ROLL_SOUND_CANDIDATES: Array[String] = [
 const HIGAN_ROLL_SOUND_CANDIDATES: Array[String] = [
     "res://audio/higan_roll.mp3",
 ]
+const HIGAN_ROLL_VOLUME_DB: = -3.0
 const ZHEM_ROLL_SOUND_CANDIDATES: Array[String] = [
     "res://audio/zhem_roll.mp3",
 ]
-const HIGAN_ZHEM_ROLL_VOLUME_DB: = 5.0
+const ZHEM_ROLL_VOLUME_DB: = 5.0
 const PIZZA_ROLL_SOUND_CANDIDATES: Array[String] = [
     "res://audio/пицца.mp3", 
 ]
@@ -469,6 +475,9 @@ const STOP_SOUND_CANDIDATES: Array[String] = [
 ]
 const WHEEL_STOP_SOUND_CANDIDATES: Array[String] = [
     "res://audio/whl.wav", 
+]
+const WHEEL_LEGENDARY_STOP_SOUND_CANDIDATES: Array[String] = [
+    "res://audio/legendary_stop.mp3",
 ]
 const ULTRA_STOP_SOUND_CANDIDATES: Array[String] = [
     "res://audio/aopa.wav", 
@@ -517,7 +526,7 @@ const TTS_LANGUAGE_LABELS: Array[String] = ["Auto", "EN", "RU"]
 const WHEEL_MODE_CONFIGS: Array[Dictionary] = [
     {
         "id": WHEEL_MODE_STANDARD_ID,
-        "title": "Стандартное Колесо",
+        "title": "Базовое Колесо",
         "normal_path": WHEEL_LIST_PATH,
         "legendary_path": BASIC_WHEEL_LEGENDARY_LIST_PATH,
         "removed_path": WHEEL_REMOVED_ENTRIES_PATH,
@@ -1445,6 +1454,26 @@ func _save_wheel_pity_count(mode_id: String, count: int) -> void:
 
 
 
+func _is_start_wheel_complete() -> bool:
+    return FileAccess.file_exists(START_WHEEL_COMPLETED_PATH)
+
+
+
+func _is_selected_start_wheel_complete() -> bool:
+    return _is_wheel_list_selected() and selected_wheel_mode_id == WHEEL_MODE_START_ID and _is_start_wheel_complete()
+
+
+
+func _complete_start_wheel() -> void:
+    var file: = FileAccess.open(START_WHEEL_COMPLETED_PATH, FileAccess.WRITE)
+    if file == null:
+        return
+    file.store_string("1")
+    file.close()
+    _refresh_wheel_pity_label()
+
+
+
 func _refresh_wheel_pity_label() -> void:
     if wheel_pity_label == null:
         return
@@ -1452,10 +1481,13 @@ func _refresh_wheel_pity_label() -> void:
     wheel_pity_label.visible = show
     if not show:
         return
+    if _is_selected_start_wheel_complete():
+        wheel_pity_label.text = "Карп получен"
+        return
     var config: = _current_wheel_mode_config()
     var pity_count: = _load_wheel_pity_count(selected_wheel_mode_id)
     var remaining: = maxi(0, int(config.get("hard_pity", 0)) - pity_count)
-    wheel_pity_label.text = "ГАРАНТ" if remaining == 0 else "До гаранта: %d" % remaining
+    wheel_pity_label.text = "ГАРАНТ" if remaining == 0 else "До гаранта: %d попыт." % remaining
 
 
 
@@ -1544,7 +1576,7 @@ func _wheel_legendary_chance_percent(config: Dictionary, pity_count: int) -> flo
 func _load_wheel_mode_entries(config: Dictionary, legendary: bool) -> PackedStringArray:
     var path: = str(config.get("legendary_path", WHEEL_LEGENDARY_LIST_PATH)) if legendary else str(config.get("normal_path", WHEEL_LIST_PATH))
     var entries: = _load_original_list_entries(path)
-    return _apply_wheel_user_removals(entries, str(config.get("id", WHEEL_MODE_STANDARD_ID)), not legendary and path == WHEEL_LIST_PATH)
+    return _apply_wheel_user_removals(entries, str(config.get("id", WHEEL_MODE_STANDARD_ID)))
 
 
 
@@ -1593,10 +1625,9 @@ func _complete_wheel_roll_pity() -> void:
     var mode_id: = wheel_roll_mode_id
     wheel_result_pity_before = -1
     if mode_id == WHEEL_MODE_START_ID:
-        if not wheel_roll_forced_title.is_empty():
+        if wheel_roll_forced_title == LEGENDARY_CARP_TITLE and _entry_to_display_text(selected_result_entry) == LEGENDARY_CARP_TITLE:
             _invalidate_wheel_pity_undo_resets(mode_id)
-            wheel_result_pity_before = _load_wheel_pity_count(mode_id)
-            _save_wheel_pity_count(mode_id, 0)
+            _complete_start_wheel()
     elif wheel_roll_legendary_active:
         _invalidate_wheel_pity_undo_resets(mode_id)
         wheel_result_pity_before = _load_wheel_pity_count(mode_id)
@@ -1856,7 +1887,7 @@ func _on_delay_timer_timeout() -> void :
         roll_button.disabled = roll_button.text != "STOP"
         return
 
-    roll_button.disabled = selected_list_path.is_empty() or games.is_empty()
+    roll_button.disabled = selected_list_path.is_empty() or games.is_empty() or _is_selected_start_wheel_complete()
     ultra_button.disabled = true
 
 
@@ -1925,6 +1956,8 @@ func _select_list(list_id: String, title: String, path: String, tile = null) -> 
 
 
 func _start_roll() -> void :
+    if _is_selected_start_wheel_complete():
+        return
     if selected_list_path.is_empty():
         selected_list_label.text = "Список не выбран"
         list_count_label.text = ""
@@ -2013,10 +2046,10 @@ func _start_roll() -> void :
         roll_sound_candidates = HAKON_ROLL_SOUND_CANDIDATES
     elif selected_list_path == "res://lists/higan.dat":
         roll_sound_candidates = HIGAN_ROLL_SOUND_CANDIDATES
-        roll_sound_volume_db = HIGAN_ZHEM_ROLL_VOLUME_DB
+        roll_sound_volume_db = HIGAN_ROLL_VOLUME_DB
     elif selected_list_path == "res://lists/zhem.dat":
         roll_sound_candidates = ZHEM_ROLL_SOUND_CANDIDATES
-        roll_sound_volume_db = HIGAN_ZHEM_ROLL_VOLUME_DB
+        roll_sound_volume_db = ZHEM_ROLL_VOLUME_DB
     elif selected_list_path == "res://lists/pizza.dat":
         roll_sound_candidates = PIZZA_ROLL_SOUND_CANDIDATES
         roll_sound_volume_db = PIZZA_ROLL_VOLUME_DB
@@ -2262,7 +2295,9 @@ func _roll_stopped() -> void :
     _set_result_links_active(_result_links_enabled_for_selected_list() and not result_text.is_empty())
     _append_log(result_text)
     var stop_sound_candidates: Array[String] = STOP_SOUND_CANDIDATES
-    if _is_wheel_list_selected():
+    if _is_wheel_list_selected() and wheel_roll_legendary_active:
+        stop_sound_candidates = WHEEL_LEGENDARY_STOP_SOUND_CANDIDATES
+    elif _is_wheel_list_selected():
         stop_sound_candidates = WHEEL_STOP_SOUND_CANDIDATES
     elif stop_via_ultra:
         stop_sound_candidates = ULTRA_STOP_SOUND_CANDIDATES
@@ -2505,6 +2540,8 @@ func _wheel_has_user_removals(mode_id: String = "") -> bool:
 
 
 func _wheel_has_resettable_progress() -> bool:
+    if _is_start_wheel_complete():
+        return true
     for config in WHEEL_MODE_CONFIGS:
         var mode_id: = str(config.get("id", ""))
         if _wheel_has_user_removals(mode_id) or _load_wheel_pity_count(mode_id) > 0:
@@ -2645,7 +2682,7 @@ func _apply_letter_digit_filter() -> void :
             can_roll_current_list = not _load_wheel_mode_entries(config, true).is_empty() or not str(config.get("hard_title", "")).is_empty()
     if _garant_roll_available():
         can_roll_current_list = true
-    roll_button.disabled = selected_list_path.is_empty() or not can_roll_current_list
+    roll_button.disabled = selected_list_path.is_empty() or not can_roll_current_list or _is_selected_start_wheel_complete()
     ultra_button.disabled = true
     digits_checkbox.disabled = rolling or selected_list_path.is_empty() or base_games.is_empty() or filter_is_digit
     letter_input.editable = not rolling and not selected_list_path.is_empty() and not base_games.is_empty()
@@ -5125,13 +5162,8 @@ func _add_matching_wheel_removal(source_entry: String) -> bool:
 
 
 
-func _apply_wheel_user_removals(entries: PackedStringArray, mode_id: String = "", shared_normal_pool: bool = false) -> PackedStringArray:
+func _apply_wheel_user_removals(entries: PackedStringArray, mode_id: String = "") -> PackedStringArray:
     var removed_entries: = _load_wheel_removed_entries(mode_id)
-    if shared_normal_pool:
-        var other_mode_id: = WHEEL_MODE_WEAPON_ID if mode_id == WHEEL_MODE_STANDARD_ID else WHEEL_MODE_STANDARD_ID
-        for removed_entry in _load_wheel_removed_entries(other_mode_id):
-            if not removed_entries.has(removed_entry):
-                removed_entries.append(removed_entry)
     if removed_entries.is_empty():
         return entries
     var removed_counts: Dictionary = {}
@@ -5695,6 +5727,8 @@ func _on_wheel_restore_ok_pressed() -> void :
             DirAccess.remove_absolute(absolute_global_removed_path)
         global_event_deleted_visible_slots.clear()
     else:
+        if _is_start_wheel_complete():
+            DirAccess.remove_absolute(ProjectSettings.globalize_path(START_WHEEL_COMPLETED_PATH))
         for config in WHEEL_MODE_CONFIGS:
             var mode_id: = str(config.get("id", ""))
             _save_wheel_pity_count(mode_id, 0)
@@ -8131,7 +8165,7 @@ func _load_list(path: String) -> PackedStringArray:
 
     var wheel_mode_id: = selected_wheel_mode_id if selected_platform == WHEEL_LIST_ID and path == WHEEL_LIST_PATH else _wheel_mode_id_for_path(path)
     if selected_platform == WHEEL_LIST_ID and not wheel_mode_id.is_empty():
-        return _apply_wheel_user_removals(result, wheel_mode_id, path == WHEEL_LIST_PATH)
+        return _apply_wheel_user_removals(result, wheel_mode_id)
     if GARANT_FEATURE_ENABLED and path == GARANT_LIST_PATH:
         return _apply_garant_user_removals(result)
     if path == GLOBAL_EVENTS_LIST_PATH:
