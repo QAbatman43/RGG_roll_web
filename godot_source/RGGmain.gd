@@ -248,8 +248,8 @@ const SPECIAL_ROLL_ITEMS: Array[Dictionary] = [
     {"id": "beer", "title": "Пиво", "path": "res://lists/beer.dat", "tooltip": "Игры про пиво"},
     {"id": "rails", "title": "Рельсы", "path": "res://lists/rails.dat", "tooltip": "Рельсовые стрелялки"},
     {"id": "higan", "title": "Higan", "path": "res://lists/higan.dat", "tooltip": "Игры от Higan"},
-    {"id": "tower", "title": "Башня", "path": "res://lists/tower.dat"},
-    {"id": "japan", "title": "Япония", "path": "res://lists/japan.dat"},
+    {"id": "tower", "title": "Башня", "path": "res://lists/tower.dat", "tooltip": "Игры из Башни"},
+    {"id": "japan", "title": "Япония", "path": "res://lists/japan.dat", "tooltip": "Игра с японским сеттингом"},
 ]
 const SPECIAL_ROLL_ICON_PATHS: = {
     "2007": "res://images/specrolls/2007.png", 
