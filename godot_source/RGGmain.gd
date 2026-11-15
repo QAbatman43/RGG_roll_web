@@ -4679,7 +4679,7 @@ func _create_garant_card_popup() -> void :
     garant_card_texture_rect.size = card_size
     garant_card_texture_rect.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
     garant_card_texture_rect.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
-    garant_card_texture_rect.texture = load(GARANT_TELEPORT_CARD_PATH) as Texture2D
+    garant_card_texture_rect.texture = null
     garant_card_overlay.add_child(garant_card_texture_rect)
 
     garant_card_glow_rect = ColorRect.new()
@@ -6109,13 +6109,58 @@ func _play_garant_card_reveal_glow(title: String, speech_text: String = "") -> v
 
 
 
+func _load_card_texture(path: String) -> Texture2D:
+    if path.is_empty():
+        return null
+    if image_cache.has(path):
+        return image_cache[path]
+    if not _is_web_runtime():
+        var local_texture: = load(path) as Texture2D
+        if local_texture != null:
+            image_cache[path] = local_texture
+        return local_texture
+
+    var script: = """
+(function () {
+    const filename = %s;
+    for (const base of ["godot_source/images/cards/", "images/cards/"]) {
+        try {
+            const request = new XMLHttpRequest();
+            request.open("GET", base + encodeURIComponent(filename), false);
+            request.overrideMimeType("text/plain; charset=x-user-defined");
+            try { request.responseType = "arraybuffer"; } catch (error) {}
+            request.send(null);
+            if (request.status !== 200 && request.status !== 0) { continue; }
+            if (request.response instanceof ArrayBuffer) { return request.response; }
+            const raw = request.responseText || "";
+            if (!raw) { continue; }
+            const bytes = new Uint8Array(raw.length);
+            for (let i = 0; i < raw.length; i += 1) { bytes[i] = raw.charCodeAt(i) & 0xFF; }
+            return bytes;
+        } catch (error) {}
+    }
+    return null;
+})()
+""" % JSON.stringify(path.get_file())
+    var bytes = JavaScriptBridge.eval(script, true)
+    if typeof(bytes) != TYPE_PACKED_BYTE_ARRAY or bytes.is_empty():
+        return null
+    var image: = Image.new()
+    if image.load_png_from_buffer(bytes) != OK:
+        return null
+    var texture: = ImageTexture.create_from_image(image)
+    image_cache[path] = texture
+    return texture
+
+
 func _show_garant_card_for_entry(entry: String, slot_index: int = -1, speak: bool = false, include_title_in_speech: bool = false) -> void :
     var title: = _entry_to_display_text(entry)
     if title.is_empty() or title.begins_with("---"):
         return
 
     var card_path: = _get_garant_card_path(title)
-    if card_path.is_empty() or garant_card_overlay == null:
+    var card_texture: = _load_card_texture(card_path)
+    if card_texture == null or garant_card_overlay == null:
         var description: = _get_wheel_description(title)
         if description.is_empty():
             description = "Описание не найдено."
@@ -6134,7 +6179,7 @@ func _show_garant_card_for_entry(entry: String, slot_index: int = -1, speak: boo
         image_node.visible = false
 
     if garant_card_texture_rect != null:
-        garant_card_texture_rect.texture = load(card_path) as Texture2D
+        garant_card_texture_rect.texture = card_texture
     if garant_card_description_panel != null:
         garant_card_description_panel.visible = false
     if garant_card_description_button != null:
