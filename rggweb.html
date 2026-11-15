@@ -163,6 +163,191 @@ const engine = new Engine(GODOT_CONFIG);
 		window.rggToggleFullscreen();
 	}, true);
 
+	const backgroundStoreName = "rgg-roll-background";
+	const backgroundMaxBytes = 30 * 1024 * 1024;
+	let backgroundGeneration = 0;
+	let backgroundTimer = null;
+	let backgroundMedia = null;
+	let backgroundObjectUrl = null;
+
+	function openBackgroundStore() {
+		return new Promise(function (resolve, reject) {
+			if (typeof indexedDB === "undefined") {
+				reject(new Error("Браузер не разрешает сохранять анимированный фон"));
+				return;
+			}
+			const request = indexedDB.open(backgroundStoreName, 1);
+			request.onupgradeneeded = function () {
+				request.result.createObjectStore("media");
+			};
+			request.onsuccess = function () { resolve(request.result); };
+			request.onerror = function () { reject(request.error); };
+		});
+	}
+
+	async function readBackgroundMedia() {
+		const database = await openBackgroundStore();
+		try {
+			return await new Promise(function (resolve, reject) {
+				const request = database.transaction("media", "readonly").objectStore("media").get("selected");
+				request.onsuccess = function () { resolve(request.result || null); };
+				request.onerror = function () { reject(request.error); };
+			});
+		} finally {
+			database.close();
+		}
+	}
+
+	async function writeBackgroundMedia(value) {
+		const database = await openBackgroundStore();
+		try {
+			await new Promise(function (resolve, reject) {
+				const transaction = database.transaction("media", "readwrite");
+				transaction.oncomplete = resolve;
+				transaction.onerror = function () { reject(transaction.error); };
+				if (value) {
+					transaction.objectStore("media").put(value, "selected");
+				} else {
+					transaction.objectStore("media").delete("selected");
+				}
+			});
+		} finally {
+			database.close();
+		}
+	}
+
+	function disposeBackgroundMedia(media, objectUrl) {
+		if (media) {
+			media.onerror = null;
+			media.onload = null;
+			media.onloadedmetadata = null;
+			if (media.tagName === "VIDEO") {
+				media.pause();
+				media.removeAttribute("src");
+				media.load();
+			}
+		}
+		if (objectUrl) {
+			URL.revokeObjectURL(objectUrl);
+		}
+	}
+
+	function stopBackgroundAnimation() {
+		backgroundGeneration += 1;
+		if (backgroundTimer !== null) {
+			clearInterval(backgroundTimer);
+			backgroundTimer = null;
+		}
+		disposeBackgroundMedia(backgroundMedia, backgroundObjectUrl);
+		backgroundMedia = null;
+		backgroundObjectUrl = null;
+		return backgroundGeneration;
+	}
+
+	function prepareBackgroundMedia(type, objectUrl) {
+		return new Promise(function (resolve, reject) {
+			const media = type === "gif" ? new Image() : document.createElement("video");
+			function fail(message) {
+				media.onerror = null;
+				media.onload = null;
+				media.onloadedmetadata = null;
+				disposeBackgroundMedia(media, null);
+				reject(new Error(message || "Не удалось открыть GIF или видео в этом браузере"));
+			}
+			if (type === "gif") {
+				media.onload = function () {
+					if (media.naturalWidth > 0 && media.naturalHeight > 0) { resolve(media); }
+					else { fail(); }
+				};
+				media.onerror = function () { fail(); };
+			} else {
+				media.muted = true;
+				media.defaultMuted = true;
+				media.volume = 0;
+				media.playsInline = true;
+				media.loop = true;
+				media.preload = "auto";
+				media.addEventListener("volumechange", function () {
+					if (!media.muted) { media.muted = true; }
+					if (media.volume !== 0) { media.volume = 0; }
+				});
+				media.onloadedmetadata = function () {
+					if (!Number.isFinite(media.duration) || media.duration <= 0 || media.duration > 20) {
+						fail("Видео должно быть не длиннее 20 секунд");
+						return;
+					}
+					if (media.videoWidth <= 0 || media.videoHeight <= 0) {
+						fail("В файле нет видеодорожки");
+						return;
+					}
+					resolve(media);
+				};
+				media.onerror = function () { fail(); };
+			}
+			media.src = objectUrl;
+		});
+	}
+
+	window.rggStopBackgroundAnimation = stopBackgroundAnimation;
+	window.rggClearBackgroundAnimation = function () {
+		stopBackgroundAnimation();
+		writeBackgroundMedia(null).catch(console.error);
+	};
+	window.rggStartBackgroundAnimation = function (frameCallback, errorCallback) {
+		const generation = stopBackgroundAnimation();
+		if (typeof indexedDB === "undefined") { return; }
+		let pendingMedia = null;
+		let pendingUrl = null;
+		(async function () {
+			try {
+				const saved = await readBackgroundMedia();
+				if (!saved || generation !== backgroundGeneration) { return; }
+				pendingUrl = URL.createObjectURL(saved.blob);
+				pendingMedia = await prepareBackgroundMedia(saved.type, pendingUrl);
+				if (generation !== backgroundGeneration) { return; }
+				if (saved.type !== "gif") {
+					await pendingMedia.play();
+				}
+				if (generation !== backgroundGeneration) { return; }
+
+				backgroundMedia = pendingMedia;
+				backgroundObjectUrl = pendingUrl;
+				const canvas = document.createElement("canvas");
+				const width = saved.type === "gif" ? pendingMedia.naturalWidth : pendingMedia.videoWidth;
+				const height = saved.type === "gif" ? pendingMedia.naturalHeight : pendingMedia.videoHeight;
+				const scale = Math.min(1, 1280 / width, 720 / height);
+				canvas.width = Math.max(1, Math.round(width * scale));
+				canvas.height = Math.max(1, Math.round(height * scale));
+				const context = canvas.getContext("2d", { alpha: false });
+				if (!context) { throw new Error("Не удалось создать кадр фона"); }
+				function sendFrame() {
+					if (generation !== backgroundGeneration) { return; }
+					if (saved.type !== "gif" && pendingMedia.readyState < 2) { return; }
+					context.fillStyle = "#282828";
+					context.fillRect(0, 0, canvas.width, canvas.height);
+					context.drawImage(pendingMedia, 0, 0, canvas.width, canvas.height);
+					frameCallback(canvas.toDataURL("image/jpeg", 0.7));
+				}
+				sendFrame();
+				backgroundTimer = setInterval(function () {
+					try { sendFrame(); } catch (error) {
+						stopBackgroundAnimation();
+						errorCallback("Не удалось воспроизвести анимированный фон");
+					}
+				}, 83);
+			} catch (error) {
+				if (generation === backgroundGeneration) {
+					stopBackgroundAnimation();
+					errorCallback(error.message || "Не удалось загрузить анимированный фон");
+				}
+			} finally {
+				if (pendingMedia !== backgroundMedia) {
+					disposeBackgroundMedia(pendingMedia, pendingUrl);
+				}
+			}
+		}());
+	};
+
 	window.rggOpenUserFilePicker = function (kind, accept, callback) {
 		const input = document.createElement("input");
 		input.type = "file";
@@ -183,7 +368,7 @@ const engine = new Engine(GODOT_CONFIG);
 			}
 		}
 
-		input.addEventListener("change", function () {
+		input.addEventListener("change", async function () {
 			const file = input.files && input.files[0];
 			if (!file) {
 				sendPayload({ kind: kind || "", data_url: "" });
@@ -191,6 +376,28 @@ const engine = new Engine(GODOT_CONFIG);
 			}
 
 			if (kind === "background") {
+				const isGif = file.type === "image/gif" || /\.gif$/i.test(file.name);
+				const isVideo = /\.(mp4|webm)$/i.test(file.name);
+				if (isGif || isVideo) {
+					try {
+						if (file.size > backgroundMaxBytes) {
+							throw new Error("Анимированный фон должен быть не больше 30 МБ");
+						}
+						const type = isGif ? "gif" : "video";
+						const objectUrl = URL.createObjectURL(file);
+						try {
+							const media = await prepareBackgroundMedia(type, objectUrl);
+							disposeBackgroundMedia(media, null);
+						} finally {
+							URL.revokeObjectURL(objectUrl);
+						}
+						await writeBackgroundMedia({ blob: file, type: type });
+						sendPayload({ kind: kind, media_type: "animated", name: file.name || "" });
+					} catch (error) {
+						sendPayload({ kind: kind, error: error.message || "Не удалось сохранить фон" });
+					}
+					return;
+				}
 				const reader = new FileReader();
 				reader.onload = function (event) {
 					const sourceDataUrl = String((event.target && event.target.result) || "");
@@ -200,7 +407,7 @@ const engine = new Engine(GODOT_CONFIG);
 					}
 
 					const image = new Image();
-					image.onload = function () {
+					image.onload = async function () {
 						const canvas = document.createElement("canvas");
 						canvas.width = image.naturalWidth || image.width || 1;
 						canvas.height = image.naturalHeight || image.height || 1;
@@ -209,12 +416,15 @@ const engine = new Engine(GODOT_CONFIG);
 							sendPayload({ kind: kind || "", data_url: "" });
 							return;
 						}
-						context.drawImage(image, 0, 0);
-						sendPayload({
-							kind: kind || "",
-							name: file.name || "",
-							data_url: canvas.toDataURL("image/png")
-						});
+						try {
+							context.drawImage(image, 0, 0);
+							const dataUrl = canvas.toDataURL("image/png");
+							try { await writeBackgroundMedia(null); } catch (error) { console.error(error); }
+							stopBackgroundAnimation();
+							sendPayload({ kind: kind, name: file.name || "", data_url: dataUrl });
+						} catch (error) {
+							sendPayload({ kind: kind, error: "Не удалось сохранить картинку фона" });
+						}
 					};
 					image.onerror = function () {
 						sendPayload({ kind: kind || "", data_url: "" });
@@ -244,6 +454,29 @@ const engine = new Engine(GODOT_CONFIG);
 
 		document.body.appendChild(input);
 		input.click();
+	};
+	window.rggReadBackupBackground = async function (callback) {
+		try {
+			const saved = await readBackgroundMedia();
+			if (!saved || !saved.blob) { callback(JSON.stringify({ type: "", mime: "", data_url: "" })); return; }
+			const reader = new FileReader();
+			reader.onload = function () { callback(JSON.stringify({ type: saved.type, mime: saved.blob.type || "application/octet-stream", data_url: String(reader.result || "") })); };
+			reader.onerror = function () { callback(JSON.stringify({ error: "Не удалось прочитать анимированный фон" })); };
+			reader.readAsDataURL(saved.blob);
+		} catch (error) { callback(JSON.stringify({ error: error.message || "Не удалось прочитать фон" })); }
+	};
+	window.rggRestoreBackupBackground = async function (type, mime, dataUrl, callback) {
+		try {
+			if (type && type !== "gif" && type !== "video") { throw new Error("Неверный тип фона"); }
+			if (type) {
+				const response = await fetch(dataUrl);
+				const bytes = await response.arrayBuffer();
+				if (!bytes.byteLength || bytes.byteLength > backgroundMaxBytes) { throw new Error("Фон должен быть не больше 30 МБ"); }
+				await writeBackgroundMedia({ blob: new Blob([bytes], { type: mime }), type: type });
+			} else { await writeBackgroundMedia(null); }
+			stopBackgroundAnimation();
+			callback(JSON.stringify({ ok: true }));
+		} catch (error) { callback(JSON.stringify({ error: error.message || "Не удалось восстановить фон" })); }
 	};
 	// RGG custom web bridge end
 

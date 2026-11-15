@@ -4,6 +4,7 @@
 [ext_resource type="Texture2D" uid="uid://bru8vh723i7yc" path="res://sprites/logo43.png" id="2"]
 [ext_resource type="Texture2D" uid="uid://dh3pkwa80i4av" path="res://sprites/links/MobyGames.png" id="3"]
 [ext_resource type="Texture2D" uid="uid://0m55d6n6y44p" path="res://sprites/links/gamefaqs.png" id="4"]
+[ext_resource type="Texture2D" path="res://sprites/links/howlongtobeat.png" id="12"]
 [ext_resource type="Texture2D" uid="uid://dwqx6xkjghg0d" path="res://sprites/links/rgg.png" id="5"]
 [ext_resource type="Texture2D" uid="uid://bhr7mdwg53c26" path="res://sprites/main/global.png" id="6"]
 [ext_resource type="Texture2D" uid="uid://dab5nvkc11j01" path="res://sprites/main/platforms.png" id="7"]
@@ -243,9 +244,9 @@ mouse_filter = 2
 [node name="MobyGamesButton" type="TextureButton" parent="LinkButtons" unique_id=405796037]
 layout_mode = 0
 offset_left = 718.0
-offset_top = 536.0
-offset_right = 794.0
-offset_bottom = 570.0
+offset_top = 526.0
+offset_right = 788.0
+offset_bottom = 574.0
 focus_mode = 0
 mouse_default_cursor_shape = 2
 texture_normal = ExtResource("3")
@@ -256,15 +257,29 @@ stretch_mode = 5
 
 [node name="GameFAQsButton" type="TextureButton" parent="LinkButtons" unique_id=1420454203]
 layout_mode = 0
-offset_left = 802.0
-offset_top = 527.0
-offset_right = 930.0
-offset_bottom = 581.0
+offset_left = 795.0
+offset_top = 526.0
+offset_right = 865.0
+offset_bottom = 574.0
 focus_mode = 0
 mouse_default_cursor_shape = 2
 texture_normal = ExtResource("4")
 texture_pressed = ExtResource("4")
 texture_hover = ExtResource("4")
+ignore_texture_size = true
+stretch_mode = 5
+
+[node name="HowLongToBeatButton" type="TextureButton" parent="LinkButtons"]
+layout_mode = 0
+offset_left = 872.0
+offset_top = 526.0
+offset_right = 942.0
+offset_bottom = 574.0
+focus_mode = 0
+mouse_default_cursor_shape = 2
+texture_normal = ExtResource("12")
+texture_pressed = ExtResource("12")
+texture_hover = ExtResource("12")
 ignore_texture_size = true
 stretch_mode = 5
 
@@ -604,7 +619,7 @@ text = "Отменить последнее удаление"
 z_index = 20
 layout_mode = 0
 offset_left = 770.0
-offset_top = 212.0
+offset_top = 146.0
 offset_right = 994.0
 offset_bottom = 666.0
 

@@ -46,6 +46,67 @@ const WHEEL_MODE_STANDARD_ID: = "standard"
 const WHEEL_MODE_WEAPON_ID: = "weapon"
 const WHEEL_MODE_START_ID: = "start"
 const LEGENDARY_CARP_TITLE: = "Легендарный Карп"
+const LEGENDARY_KAL_TITLE: = "Легендарный Кал"
+const RAT_GOD_TITLE: = "Крысиный Бог"
+const LEGENDARY_FAIRY_TITLE: = "Легендарная Фея"
+const LEGENDARY_DAISY_TITLE: = "Легендарная Ромашка Култхарда"
+const LEGENDARY_YUCHI_WHEEL_TITLE: = "Легендарная Форма Колеса Ючи"
+const WHEEL_HELL_TITLE: = "Колесный ад"
+const LEGENDARY_METEOR_HAT_TITLE: = "Легендарная Метеоритная Шляпа"
+const LEGENDARY_CUCUMBER_TITLE: = "Легендарный Огурец Оляши"
+const LEGENDARY_ALISKA_HAT_TITLE: = "Легендарная Шляпа Алиски"
+const LEGENDARY_ONTI_BORSCHT_TITLE: = "Легендарный Борщ Онти"
+const POSITIVE_TELEPORT_TITLE: = "Позитивный телепорт"
+const NEGATIVE_TELEPORT_TITLE: = "Негативный телепорт"
+const LEGENDARY_HIGAN_BOMB_TITLE: = "Легендарная Бомба Хиган"
+const LEGENDARY_ANCHOR_TITLE: = "Легендарный Якорь"
+const LEGENDARY_RAT_PEDAL_TITLE: = "Легендарная Крысиная Педалька"
+const LEGENDARY_PIRANHA_TITLE: = "Легендарная Пиранья"
+const LEGENDARY_TOMATO_TITLE: = "Легендарный Томат"
+const LEGENDARY_CARROT_TITLE: = "Легендарная Морковка"
+const LEGENDARY_SHNUM_GLOVE_TITLE: = "Легендарная Перчатка Шнума"
+const LEGENDARY_BREAM_TITLE: = "Легендарный Лещ"
+const LEGENDARY_QUANTUM_CUBE_TITLE: = "Легендарный Кубик Квантовой Суперпозиции Торниса"
+const LEGENDARY_ISAAC_CUBE_TITLE: = "Легендарный Кубик Айзека"
+const LEGENDARY_VARAN_POTATO_TITLE: = "Легендарная Картошка Варана"
+const CULMINATION_TITLE: = "Кульминация"
+const LEGENDARY_FREAK_MAP_TITLE: = "Легендарная Карта Фрика"
+const LEGENDARY_GOLDEN_CUBE_TITLE: = "Легендарный Золотой Кубик"
+const LEGENDARY_IRVIN_SHOP_ROLL_TITLE: = "Легендарный Магазинный Ролл Ирвина"
+const LEGENDARY_PTICHKERS_TITLE: = "Легендарный Птичкерс ИгоряГХК"
+const LEGENDARY_RUBEN_ENERGY_TITLE: = "Легендарный Энергетик Рубена"
+const LEGENDARY_PROJECTILE_TITLE: = "Легендарный Cнаряд"
+const LEGENDARY_DEMOBILIZATION_POTION_TITLE: = "Легендарное дембельское зелье"
+const LEGENDARY_TIME_MACHINE_TITLE: = "Легендарная Машина времени"
+const LEGENDARY_DOUGH_TITLE: = "Легендарное Тесто"
+const LEGENDARY_MAGNETISM_POTION_TITLE: = "Легендарное Зелье магнетизма"
+const LEGENDARY_SEEPAGE_POTION_TITLE: = "Легендарное Зелье просачивания"
+const LEGENDARY_PRIORITY_POTION_TITLE: = "Легендарное Зелье понижения приоритета"
+const LEGENDARY_MUTUAL_AID_POTION_TITLE: = "Легендарное Зелье взаимопомощи"
+const LEGENDARY_NOYKA_PIZZA_TITLE: = "Легендарная Пицца Нойки"
+const LEGENDARY_TOSTAR_AMULET_TITLE: = "Легендарный Амулет Тостара"
+const LEGENDARY_MORIKO_HOUSE_TITLE: = "Легендарный Домик Морико"
+const LEGENDARY_DAVID_PRAYER_TITLE: = "Легендарная Молитва Колесу Добра Давида"
+const LEGENDARY_GITMAN_BEER_TITLE: = "Легендарное Пиво Гитмана"
+const LEGENDARY_RUSTY_HELP_TITLE: = "Легендарная Помощь Расти"
+const LEGENDARY_SOLIST_DETONATOR_TITLE: = "Легендарный Детонатор Солиста"
+const LEGENDARY_ALOE_WATERMELON_TITLE: = "Легендарный Арбузик АлоэКоалы"
+const LEGENDARY_REKVI_INVULNERABILITY_POTION_TITLE: = "Легендарное Зелье неуязвимости Рекви"
+const LEGENDARY_ZELENKA_JADE_JAM_TITLE: = "Легендарное Нефритовое Варенье Зеленки"
+const LEGENDARY_JUDY_SPEED_BOOTS_TITLE: = "Легендарные Сапоги-скороходы Джуди"
+const LEGENDARY_BRADHAI_SWINOPITHECUS_TITLE: = "Легендарный Свинопитек Брадхая"
+const LEGENDARY_TIDJOY_CHEESE_TITLE: = "Легендарный Сыр Тиджоя"
+const LEGENDARY_PING_FLOWER_TITLE: = "Легендарный Нежный Цветочек Пинг"
+const LEGENDARY_PING_CAT_TITLE: = "Легендарный Котик Пинг"
+const LEGENDARY_PING_RIDEABLE_CAT_TITLE: = "Легендарный Ездовой Кот Пинг"
+const LEGENDARY_RUSTY_UNICORN_TITLE: = "Легендарный Единорог Расти"
+const LEGENDARY_HAKON_HIPPO_TITLE: = "Легендарный Бегемот Хакона"
+const LEGENDARY_HAKON_KNOCKBACK_POTION_TITLE: = "Легендарное Зелье отбрасывания Хакона"
+const LEGENDARY_PEPA_MASK_TITLE: = "Легендарная Маска Пепы"
+const LEGENDARY_LILA_CHRYSALID_TITLE: = "Легендарный Крисалид Лилы"
+const LEGENDARY_PHOENIX_GREMLIN_TITLE: = "Легендарный Гремлин Феникса"
+const LEGENDARY_MARISON_HARPOON_TITLE: = "Легендарный Гарпун Марисона"
+const LEGENDARY_FROPSI_CHAMOMILE_BREW_TITLE: = "Легендарный Ромашковый Отвар Фропси"
 const GARANT_FEATURE_ENABLED: = false
 const GARANT_LIST_ID: = "garant"
 const GARANT_LIST_PATH: = "res://lists/garant.dat"
@@ -57,11 +118,85 @@ const GARANT_TELEPORT_CARD_PATH: = "res://images/cards/teleport.png"
 const GARANT_GOLDEN_TELEPORT_TITLE: = "Золотой телепорт"
 const GARANT_GOLDEN_TELEPORT_CARD_PATH: = "res://images/cards/golden_teleport.png"
 const LEGENDARY_CARP_CARD_PATH: = "res://images/cards/legendary_carp.png"
+const LEGENDARY_KAL_CARD_PATH: = "res://images/cards/legendary_kal.png"
+const RAT_GOD_CARD_PATH: = "res://images/cards/rat_god.png"
+const LEGENDARY_FAIRY_CARD_PATH: = "res://images/cards/legendary_fairy.png"
+const LEGENDARY_DAISY_CARD_PATH: = "res://images/cards/legendary_daisy.png"
+const LEGENDARY_YUCHI_WHEEL_CARD_PATH: = "res://images/cards/legendary_yuchi_wheel.png"
+const WHEEL_HELL_CARD_PATH: = "res://images/cards/wheel_hell.png"
+const LEGENDARY_METEOR_HAT_CARD_PATH: = "res://images/cards/legendary_meteor_hat.png"
+const LEGENDARY_CUCUMBER_CARD_PATH: = "res://images/cards/legendary_cucumber.png"
+const LEGENDARY_ALISKA_HAT_CARD_PATH: = "res://images/cards/legendary_aliska_hat.png"
+const LEGENDARY_ONTI_BORSCHT_CARD_PATH: = "res://images/cards/legendary_onti_borscht.png"
+const POSITIVE_TELEPORT_CARD_PATH: = "res://images/cards/positive_teleport.png"
+const NEGATIVE_TELEPORT_CARD_PATH: = "res://images/cards/negative_teleport.png"
+const LEGENDARY_HIGAN_BOMB_CARD_PATH: = "res://images/cards/legendary_higan_bomb.png"
+const LEGENDARY_ANCHOR_CARD_PATH: = "res://images/cards/legendary_anchor.png"
+const LEGENDARY_RAT_PEDAL_CARD_PATH: = "res://images/cards/legendary_rat_pedal.png"
+const LEGENDARY_PIRANHA_CARD_PATH: = "res://images/cards/legendary_piranha.png"
+const LEGENDARY_TOMATO_CARD_PATH: = "res://images/cards/legendary_tomato.png"
+const LEGENDARY_CARROT_CARD_PATH: = "res://images/cards/legendary_carrot.png"
+const LEGENDARY_SHNUM_GLOVE_CARD_PATH: = "res://images/cards/legendary_shnum_glove.png"
+const LEGENDARY_BREAM_CARD_PATH: = "res://images/cards/legendary_bream.png"
+const LEGENDARY_QUANTUM_CUBE_CARD_PATH: = "res://images/cards/legendary_quantum_cube.png"
+const LEGENDARY_ISAAC_CUBE_CARD_PATH: = "res://images/cards/legendary_isaac_cube.png"
+const LEGENDARY_VARAN_POTATO_CARD_PATH: = "res://images/cards/legendary_varan_potato.png"
+const CULMINATION_CARD_PATH: = "res://images/cards/culmination.png"
+const LEGENDARY_FREAK_MAP_CARD_PATH: = "res://images/cards/legendary_freak_map.png"
+const LEGENDARY_GOLDEN_CUBE_CARD_PATH: = "res://images/cards/legendary_golden_cube.png"
+const LEGENDARY_IRVIN_SHOP_ROLL_CARD_PATH: = "res://images/cards/legendary_irvin_shop_roll.png"
+const LEGENDARY_PTICHKERS_CARD_PATH: = "res://images/cards/legendary_ptichkers.png"
+const LEGENDARY_RUBEN_ENERGY_CARD_PATH: = "res://images/cards/legendary_ruben_energy.png"
+const LEGENDARY_PROJECTILE_CARD_PATH: = "res://images/cards/legendary_projectile.png"
+const LEGENDARY_DEMOBILIZATION_POTION_CARD_PATH: = "res://images/cards/legendary_demobilization_potion.png"
+const LEGENDARY_TIME_MACHINE_CARD_PATH: = "res://images/cards/legendary_time_machine.png"
+const LEGENDARY_DOUGH_CARD_PATH: = "res://images/cards/legendary_dough.png"
+const LEGENDARY_MAGNETISM_POTION_CARD_PATH: = "res://images/cards/legendary_magnetism_potion.png"
+const LEGENDARY_SEEPAGE_POTION_CARD_PATH: = "res://images/cards/legendary_seepage_potion.png"
+const LEGENDARY_PRIORITY_POTION_CARD_PATH: = "res://images/cards/legendary_priority_potion.png"
+const LEGENDARY_MUTUAL_AID_POTION_CARD_PATH: = "res://images/cards/legendary_mutual_aid_potion.png"
+const LEGENDARY_NOYKA_PIZZA_CARD_PATH: = "res://images/cards/legendary_noyka_pizza.png"
+const LEGENDARY_TOSTAR_AMULET_CARD_PATH: = "res://images/cards/legendary_tostar_amulet.png"
+const LEGENDARY_MORIKO_HOUSE_CARD_PATH: = "res://images/cards/legendary_moriko_house.png"
+const LEGENDARY_DAVID_PRAYER_CARD_PATH: = "res://images/cards/legendary_david_prayer.png"
+const LEGENDARY_GITMAN_BEER_CARD_PATH: = "res://images/cards/legendary_gitman_beer.png"
+const LEGENDARY_RUSTY_HELP_CARD_PATH: = "res://images/cards/legendary_rusty_help.png"
+const LEGENDARY_SOLIST_DETONATOR_CARD_PATH: = "res://images/cards/legendary_solist_detonator.png"
+const LEGENDARY_ALOE_WATERMELON_CARD_PATH: = "res://images/cards/legendary_aloe_watermelon.png"
+const LEGENDARY_REKVI_INVULNERABILITY_POTION_CARD_PATH: = "res://images/cards/legendary_rekvi_invulnerability_potion.png"
+const LEGENDARY_ZELENKA_JADE_JAM_CARD_PATH: = "res://images/cards/legendary_zelenka_jade_jam.png"
+const LEGENDARY_JUDY_SPEED_BOOTS_CARD_PATH: = "res://images/cards/legendary_judy_speed_boots.png"
+const LEGENDARY_BRADHAI_SWINOPITHECUS_CARD_PATH: = "res://images/cards/legendary_bradhai_swinopithecus.png"
+const LEGENDARY_TIDJOY_CHEESE_CARD_PATH: = "res://images/cards/legendary_tidjoy_cheese.png"
+const LEGENDARY_PING_FLOWER_CARD_PATH: = "res://images/cards/legendary_ping_flower.png"
+const LEGENDARY_PING_CAT_CARD_PATH: = "res://images/cards/legendary_ping_cat.png"
+const LEGENDARY_PING_RIDEABLE_CAT_CARD_PATH: = "res://images/cards/legendary_ping_rideable_cat.png"
+const LEGENDARY_RUSTY_UNICORN_CARD_PATH: = "res://images/cards/legendary_rusty_unicorn.png"
+const LEGENDARY_HAKON_HIPPO_CARD_PATH: = "res://images/cards/legendary_hakon_hippo.png"
+const LEGENDARY_HAKON_KNOCKBACK_POTION_CARD_PATH: = "res://images/cards/legendary_hakon_knockback_potion.png"
+const LEGENDARY_PEPA_MASK_CARD_PATH: = "res://images/cards/legendary_pepa_mask.png"
+const LEGENDARY_LILA_CHRYSALID_CARD_PATH: = "res://images/cards/legendary_lila_chrysalid.png"
+const LEGENDARY_PHOENIX_GREMLIN_CARD_PATH: = "res://images/cards/legendary_phoenix_gremlin.png"
+const LEGENDARY_MARISON_HARPOON_CARD_PATH: = "res://images/cards/legendary_marison_harpoon.png"
+const LEGENDARY_FROPSI_CHAMOMILE_BREW_CARD_PATH: = "res://images/cards/legendary_fropsi_chamomile_brew.png"
 const CUSTOM_BACKGROUND_IMAGE_PATH: = "user://custom_background.png"
 const CUSTOM_BACKGROUND_MODE_PATH: = "user://custom_background_mode.txt"
 const CUSTOM_BACKGROUND_MODE_STRETCH: = "stretch"
 const CUSTOM_BACKGROUND_MODE_CENTER: = "center"
 const CUSTOM_ROLL_MUSIC_PATH: = "user://custom_roll_music.mp3"
+const BACKUP_FILE_PATHS: Array[String] = [
+    GLOBAL_EVENTS_REMOVED_ENTRIES_PATH, EXTRA_USER_LIST_PATH, EXTRA_REMOVED_ENTRIES_PATH,
+    WHEEL_REMOVED_ENTRIES_PATH, WHEEL_PITY_COUNT_PATH, WHEEL_PITY_UNDO_PATH,
+    WEAPON_WHEEL_REMOVED_ENTRIES_PATH, WEAPON_WHEEL_PITY_COUNT_PATH, WEAPON_WHEEL_PITY_UNDO_PATH,
+    START_WHEEL_REMOVED_ENTRIES_PATH, START_WHEEL_PITY_COUNT_PATH, START_WHEEL_PITY_UNDO_PATH,
+    START_WHEEL_COMPLETED_PATH, GARANT_REMOVED_ENTRIES_PATH, GARANT_DELETE_COUNT_PATH,
+    CUSTOM_BACKGROUND_IMAGE_PATH, CUSTOM_BACKGROUND_MODE_PATH, CUSTOM_ROLL_MUSIC_PATH,
+    "user://custom_roll_item_color.txt", "user://custom_button_color.txt", "user://custom_button_fill_color.txt",
+    "user://sound_muted.txt", "user://sound_volume_percent.txt", "user://tts_enabled.txt",
+    "user://tts_volume_percent.txt", "user://tts_rate.txt", "user://tts_language.txt",
+]
+const BACKUP_TEMP_PATH: = "user://rgg_transfer.zip"
+const BACKUP_MAX_BYTES: = 128 * 1024 * 1024
 const CUSTOM_ROLL_ITEM_COLOR_PATH: = "user://custom_roll_item_color.txt"
 const CUSTOM_BUTTON_COLOR_PATH: = "user://custom_button_color.txt"
 const CUSTOM_BUTTON_FILL_COLOR_PATH: = "user://custom_button_fill_color.txt"
@@ -165,6 +300,7 @@ const PLATFORM_BROWSER_ITEMS: Array[Dictionary] = [
     {"id": "steam", "title": "Steam", "path": "res://lists/steam.dat", "icon_path": "res://images/platforms/steam.png"}, 
 ]
 const SPECIAL_ROLL_ITEMS: Array[Dictionary] = [
+    {"id": "achievements", "title": "Ачивки", "url": "https://rutonychat.com/steamachievementroulette/", "tooltip": "Невыполненные ачивки"},
     {"id": "guitman", "title": "Гитман", "path": "res://lists/guitman.dat", "tooltip": "Список игр с платформ, вышедших в ХХ веке, плюс GBA как каноничная платформа оригинального Retro Game Gauntlet"},
     {"id": "kernel", "title": "Kernel", "path": "res://lists/kernel.dat", "tooltip": "Недопройденные игры стримеров на конец сезона RGG-LAND"},
     {"id": "female", "title": "Female", "path": "res://lists/female.dat", "tooltip": "Игры с протагонистом женского пола"},
@@ -252,6 +388,7 @@ const SPECIAL_ROLL_ITEMS: Array[Dictionary] = [
     {"id": "japan", "title": "Япония", "path": "res://lists/japan.dat", "tooltip": "Игра с японским сеттингом"},
 ]
 const SPECIAL_ROLL_ICON_PATHS: = {
+    "achievements": "res://images/specrolls/achievements.png",
     "2007": "res://images/specrolls/2007.png", 
     "allpc": "res://images/specrolls/allpc.png", 
     "anime": "res://images/specrolls/anime.png", 
@@ -505,6 +642,7 @@ const KONAMI_SPECIAL_ROLL_SOUND_CANDIDATES: Array[String] = [
 ]
 const MOBYGAMES_ICON_PATH: = "res://sprites/links/MobyGames.png"
 const GAMEFAQS_ICON_PATH: = "res://sprites/links/gamefaqs.png"
+const HOWLONGTOBEAT_ICON_PATH: = "res://sprites/links/howlongtobeat.png"
 const RGGLAND_ICON_PATH: = "res://sprites/links/rgg.png"
 const RGGLAND_URL: = "https://games.rgg.land/search/"
 const TTS_DELAY_AFTER_STOP: = 0.02
@@ -642,6 +780,7 @@ var lootbox_browser_open: = false
 var lootbox_browser_tween: Tween
 var mobygames_button: TextureButton
 var gamefaqs_button: TextureButton
+var howlongtobeat_button: TextureButton
 var rggland_button: TextureButton
 var result_links_active: = false
 
@@ -673,6 +812,14 @@ var last_tts_toggle_msec: = -1000000
 var settings_menu_open: = false
 var custom_background_mode: = CUSTOM_BACKGROUND_MODE_STRETCH
 var custom_roll_music_stream: AudioStream
+var backup_background_callback_ref = null
+var backup_restore_callback_ref = null
+var backup_import_dialog: ConfirmationDialog
+var pending_backup_files: Dictionary = {}
+var pending_backup_background: PackedByteArray
+var pending_backup_background_type: = ""
+var pending_backup_background_mime: = ""
+var backup_original_files: Dictionary = {}
 var custom_roll_item_color: = DEFAULT_ROLL_ITEM_COLOR
 var custom_roll_item_color_enabled: = false
 var custom_button_color: = DEFAULT_UI_BUTTON_TEXT_COLOR
@@ -681,6 +828,10 @@ var custom_button_fill_color: = Color(0.0, 0.0, 0.0, 0.0)
 var custom_button_fill_color_enabled: = false
 var web_cache_buster: = str(Time.get_unix_time_from_system())
 var web_file_picker_callback_ref = null
+var web_background_frame_callback_ref = null
+var web_background_error_callback_ref = null
+var web_background_texture: ImageTexture
+var web_background_active: = false
 
 @onready var top_placeholder_1: Label = $TopPlaceholder1
 @onready var top_placeholder_2: Label = $TopPlaceholder2
@@ -810,6 +961,10 @@ var garant_card_spark_layer: Control
 var garant_card_glow_tween: Tween
 var garant_card_spark_tween: Tween
 var garant_card_delete_button: Button
+var garant_card_description_button: Button
+var garant_card_description_panel: Panel
+var garant_card_description_title_label: Label
+var garant_card_description_body_label: RichTextLabel
 var garant_card_close_button: Button
 var wheel_info_overlay: Control
 var wheel_info_label: Label
@@ -1064,7 +1219,7 @@ func _focused_editable_text_shortcut_target() -> Control :
 
 
 func _selected_rich_text_shortcut_target() -> RichTextLabel :
-    for label_variant in [wheel_description_body_label, list_preview_body_label]:
+    for label_variant in [wheel_description_body_label, garant_card_description_body_label, list_preview_body_label]:
         var label: = label_variant as RichTextLabel
         if label != null and label.is_visible_in_tree() and not _selected_text_from_shortcut_target(label).is_empty():
             return label
@@ -1767,6 +1922,14 @@ func _on_gamefaqs_button_pressed() -> void :
         return
 
     _open_external_url(gamefaqs_url)
+
+
+
+func _on_howlongtobeat_button_pressed() -> void:
+    if not _can_open_result_links() or howlongtobeat_url.is_empty():
+        return
+
+    _open_external_url(howlongtobeat_url)
 
 
 
@@ -2946,7 +3109,7 @@ func _build_search_urls(result_text: String) -> void :
         return
 
     var query: = _current_result_query_text()
-    howlongtobeat_url = "https://howlongtobeat.com/?q=%s" % query
+    howlongtobeat_url = "https://howlongtobeat.com/?q=%s" % query.uri_encode().uri_encode()
     emuparadise_url = "http://www.emuparadise.me/roms/search.php?query=%s&section=roms&sysid=%d" % [query, platform]
     gamefaqs_url = "https://gamefaqs.gamespot.com/search?game=%s" % query
 
@@ -3439,7 +3602,7 @@ func _set_settings_menu_open(is_open: bool) -> void :
 func _on_settings_background_button_pressed() -> void :
     _set_settings_menu_open(false)
     if _is_web_runtime():
-        _open_web_file_picker("background", "image/*")
+        _open_web_file_picker("background", "image/*,.gif,.mp4,.webm,video/mp4,video/webm")
         return
     if background_file_dialog == null:
         return
@@ -3506,6 +3669,7 @@ func _on_settings_button_fill_color_button_pressed() -> void :
 
 func _on_settings_reset_button_pressed() -> void :
     _set_settings_menu_open(false)
+    _stop_web_background_animation(true)
     _delete_user_settings_file(CUSTOM_BACKGROUND_IMAGE_PATH)
     _delete_user_settings_file(CUSTOM_BACKGROUND_MODE_PATH)
     _delete_user_settings_file(CUSTOM_ROLL_MUSIC_PATH)
@@ -3595,6 +3759,22 @@ func _on_web_file_picker_result(args) -> void :
         return
     var result: Dictionary = payload
     var kind: = str(result.get("kind", ""))
+    var error_message: = str(result.get("error", ""))
+    if not error_message.is_empty():
+        _show_wheel_info_popup(error_message)
+        return
+    if kind == "backup":
+        var backup_data_url: = str(result.get("data_url", ""))
+        if not backup_data_url.is_empty():
+            _prepare_backup_import(_decode_data_url_bytes(backup_data_url))
+        return
+    if kind == "background" and str(result.get("media_type", "")) == "animated":
+        _delete_user_settings_file(CUSTOM_BACKGROUND_IMAGE_PATH)
+        background_image_rect.texture = null
+        background_image_rect.visible = false
+        web_background_texture = null
+        _start_web_background_animation()
+        return
     var data_url: = str(result.get("data_url", ""))
     if data_url.is_empty():
         return
@@ -3612,6 +3792,61 @@ func _on_web_file_picker_result(args) -> void :
 
     if kind == "music":
         _store_custom_roll_music_bytes(_decode_data_url_bytes(data_url))
+
+
+
+func _start_web_background_animation() -> void:
+    if not _is_web_runtime() or background_image_rect == null:
+        return
+    if web_background_frame_callback_ref == null:
+        web_background_frame_callback_ref = JavaScriptBridge.create_callback(_on_web_background_frame)
+        web_background_error_callback_ref = JavaScriptBridge.create_callback(_on_web_background_error)
+    var window_interface = JavaScriptBridge.get_interface("window")
+    if window_interface == null:
+        return
+    web_background_active = true
+    window_interface.rggStartBackgroundAnimation(web_background_frame_callback_ref, web_background_error_callback_ref)
+
+
+
+func _stop_web_background_animation(clear_saved: bool) -> void:
+    web_background_active = false
+    web_background_texture = null
+    if not _is_web_runtime():
+        return
+    var window_interface = JavaScriptBridge.get_interface("window")
+    if window_interface == null:
+        return
+    if clear_saved:
+        window_interface.rggClearBackgroundAnimation()
+    else:
+        window_interface.rggStopBackgroundAnimation()
+
+
+
+func _on_web_background_frame(args) -> void:
+    if not web_background_active or args == null or args.size() == 0:
+        return
+    var image_bytes: = _decode_data_url_bytes(str(args[0]))
+    if image_bytes.is_empty():
+        return
+    var image: = Image.new()
+    if image.load_jpg_from_buffer(image_bytes) != OK:
+        return
+    if web_background_texture == null or Vector2i(web_background_texture.get_size()) != image.get_size():
+        web_background_texture = ImageTexture.create_from_image(image)
+        background_image_rect.texture = web_background_texture
+    else:
+        web_background_texture.update(image)
+    background_image_rect.visible = true
+
+
+
+func _on_web_background_error(args) -> void:
+    if not web_background_active or args == null or args.size() == 0:
+        return
+    _stop_web_background_animation(false)
+    _show_wheel_info_popup(str(args[0]))
 
 
 
@@ -3760,6 +3995,7 @@ func _load_saved_custom_background_mode() -> void :
 func _apply_custom_background_image(image: Image) -> void :
     if background_image_rect == null or image == null or image.is_empty():
         return
+    _stop_web_background_animation(false)
     background_image_rect.texture = ImageTexture.create_from_image(image)
     background_image_rect.visible = true
 
@@ -4466,7 +4702,7 @@ func _create_garant_card_popup() -> void :
 
     garant_card_delete_button = Button.new()
     garant_card_delete_button.position = Vector2(326, 630)
-    garant_card_delete_button.size = Vector2(172, 34)
+    garant_card_delete_button.size = Vector2(116, 34)
     garant_card_delete_button.text = "Удалить"
     garant_card_delete_button.focus_mode = Control.FOCUS_NONE
     garant_card_delete_button.mouse_default_cursor_shape = Control.CURSOR_POINTING_HAND
@@ -4478,9 +4714,24 @@ func _create_garant_card_popup() -> void :
     garant_card_delete_button.pressed.connect(_on_wheel_description_delete_pressed)
     garant_card_overlay.add_child(garant_card_delete_button)
 
+    garant_card_description_button = Button.new()
+    garant_card_description_button.name = "GarantCardDescriptionButton"
+    garant_card_description_button.position = Vector2(454, 630)
+    garant_card_description_button.size = Vector2(116, 34)
+    garant_card_description_button.text = "Описание"
+    garant_card_description_button.focus_mode = Control.FOCUS_NONE
+    garant_card_description_button.mouse_default_cursor_shape = Control.CURSOR_POINTING_HAND
+    garant_card_description_button.add_theme_stylebox_override("normal", button_style)
+    garant_card_description_button.add_theme_stylebox_override("pressed", button_style)
+    garant_card_description_button.add_theme_stylebox_override("hover", button_style)
+    garant_card_description_button.add_theme_color_override("font_color", Color(0.96, 0.96, 0.98, 1.0))
+    garant_card_description_button.add_theme_font_size_override("font_size", 16)
+    garant_card_description_button.pressed.connect(_on_garant_card_description_pressed)
+    garant_card_overlay.add_child(garant_card_description_button)
+
     garant_card_close_button = Button.new()
-    garant_card_close_button.position = Vector2(526, 630)
-    garant_card_close_button.size = Vector2(172, 34)
+    garant_card_close_button.position = Vector2(582, 630)
+    garant_card_close_button.size = Vector2(116, 34)
     garant_card_close_button.text = "Закрыть"
     garant_card_close_button.focus_mode = Control.FOCUS_NONE
     garant_card_close_button.mouse_default_cursor_shape = Control.CURSOR_POINTING_HAND
@@ -4491,6 +4742,46 @@ func _create_garant_card_popup() -> void :
     garant_card_close_button.add_theme_font_size_override("font_size", 16)
     garant_card_close_button.pressed.connect(_on_garant_card_close_pressed)
     garant_card_overlay.add_child(garant_card_close_button)
+
+    garant_card_description_panel = Panel.new()
+    garant_card_description_panel.name = "GarantCardDescriptionPanel"
+    garant_card_description_panel.position = Vector2(718, 32)
+    garant_card_description_panel.size = Vector2(270, 576)
+    garant_card_description_panel.visible = false
+    var description_style: = StyleBoxFlat.new()
+    description_style.bg_color = Color(0.09, 0.10, 0.12, 0.97)
+    description_style.border_color = Color(0.57, 0.59, 0.63, 1.0)
+    description_style.border_width_left = 1
+    description_style.border_width_top = 1
+    description_style.border_width_right = 1
+    description_style.border_width_bottom = 1
+    description_style.corner_radius_top_left = 4
+    description_style.corner_radius_top_right = 4
+    description_style.corner_radius_bottom_right = 4
+    description_style.corner_radius_bottom_left = 4
+    garant_card_description_panel.add_theme_stylebox_override("panel", description_style)
+    garant_card_overlay.add_child(garant_card_description_panel)
+
+    garant_card_description_title_label = Label.new()
+    garant_card_description_title_label.position = Vector2(16, 14)
+    garant_card_description_title_label.size = Vector2(238, 36)
+    garant_card_description_title_label.add_theme_color_override("font_color", Color(0.96, 0.96, 0.98, 1.0))
+    garant_card_description_title_label.add_theme_font_size_override("font_size", 18)
+    garant_card_description_panel.add_child(garant_card_description_title_label)
+
+    garant_card_description_body_label = RichTextLabel.new()
+    garant_card_description_body_label.position = Vector2(16, 60)
+    garant_card_description_body_label.size = Vector2(238, 500)
+    garant_card_description_body_label.bbcode_enabled = false
+    garant_card_description_body_label.fit_content = false
+    garant_card_description_body_label.scroll_active = true
+    garant_card_description_body_label.selection_enabled = true
+    garant_card_description_body_label.context_menu_enabled = true
+    garant_card_description_body_label.shortcut_keys_enabled = true
+    garant_card_description_body_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+    garant_card_description_body_label.add_theme_color_override("default_color", Color(0.96, 0.96, 0.98, 1.0))
+    garant_card_description_body_label.add_theme_font_size_override("normal_font_size", 18)
+    garant_card_description_panel.add_child(garant_card_description_body_label)
 
 
 
@@ -5415,13 +5706,135 @@ func _get_garant_description(title: String) -> String:
 
 
 func _is_garant_card_title(title: String) -> bool:
-    return title == GARANT_TELEPORT_TITLE or title == GARANT_GOLDEN_TELEPORT_TITLE or title == LEGENDARY_CARP_TITLE
+    return not _get_garant_card_path(title).is_empty()
 
 
 
 func _get_garant_card_path(title: String) -> String:
     if title == LEGENDARY_CARP_TITLE:
         return LEGENDARY_CARP_CARD_PATH
+    if title == LEGENDARY_KAL_TITLE:
+        return LEGENDARY_KAL_CARD_PATH
+    if title == RAT_GOD_TITLE:
+        return RAT_GOD_CARD_PATH
+    if title == LEGENDARY_FAIRY_TITLE:
+        return LEGENDARY_FAIRY_CARD_PATH
+    if title == LEGENDARY_DAISY_TITLE:
+        return LEGENDARY_DAISY_CARD_PATH
+    if title == LEGENDARY_YUCHI_WHEEL_TITLE:
+        return LEGENDARY_YUCHI_WHEEL_CARD_PATH
+    if title == WHEEL_HELL_TITLE:
+        return WHEEL_HELL_CARD_PATH
+    if title == LEGENDARY_METEOR_HAT_TITLE:
+        return LEGENDARY_METEOR_HAT_CARD_PATH
+    if title == LEGENDARY_CUCUMBER_TITLE:
+        return LEGENDARY_CUCUMBER_CARD_PATH
+    if title == LEGENDARY_ALISKA_HAT_TITLE:
+        return LEGENDARY_ALISKA_HAT_CARD_PATH
+    if title == LEGENDARY_ONTI_BORSCHT_TITLE:
+        return LEGENDARY_ONTI_BORSCHT_CARD_PATH
+    if title == POSITIVE_TELEPORT_TITLE:
+        return POSITIVE_TELEPORT_CARD_PATH
+    if title == NEGATIVE_TELEPORT_TITLE:
+        return NEGATIVE_TELEPORT_CARD_PATH
+    if title == LEGENDARY_HIGAN_BOMB_TITLE:
+        return LEGENDARY_HIGAN_BOMB_CARD_PATH
+    if title == LEGENDARY_ANCHOR_TITLE:
+        return LEGENDARY_ANCHOR_CARD_PATH
+    if title == LEGENDARY_RAT_PEDAL_TITLE:
+        return LEGENDARY_RAT_PEDAL_CARD_PATH
+    if title == LEGENDARY_PIRANHA_TITLE:
+        return LEGENDARY_PIRANHA_CARD_PATH
+    if title == LEGENDARY_TOMATO_TITLE:
+        return LEGENDARY_TOMATO_CARD_PATH
+    if title == LEGENDARY_CARROT_TITLE:
+        return LEGENDARY_CARROT_CARD_PATH
+    if title == LEGENDARY_SHNUM_GLOVE_TITLE:
+        return LEGENDARY_SHNUM_GLOVE_CARD_PATH
+    if title == LEGENDARY_BREAM_TITLE:
+        return LEGENDARY_BREAM_CARD_PATH
+    if title == LEGENDARY_QUANTUM_CUBE_TITLE:
+        return LEGENDARY_QUANTUM_CUBE_CARD_PATH
+    if title == LEGENDARY_ISAAC_CUBE_TITLE:
+        return LEGENDARY_ISAAC_CUBE_CARD_PATH
+    if title == LEGENDARY_VARAN_POTATO_TITLE:
+        return LEGENDARY_VARAN_POTATO_CARD_PATH
+    if title == CULMINATION_TITLE:
+        return CULMINATION_CARD_PATH
+    if title == LEGENDARY_FREAK_MAP_TITLE:
+        return LEGENDARY_FREAK_MAP_CARD_PATH
+    if title == LEGENDARY_GOLDEN_CUBE_TITLE:
+        return LEGENDARY_GOLDEN_CUBE_CARD_PATH
+    if title == LEGENDARY_IRVIN_SHOP_ROLL_TITLE:
+        return LEGENDARY_IRVIN_SHOP_ROLL_CARD_PATH
+    if title == LEGENDARY_PTICHKERS_TITLE:
+        return LEGENDARY_PTICHKERS_CARD_PATH
+    if title == LEGENDARY_RUBEN_ENERGY_TITLE:
+        return LEGENDARY_RUBEN_ENERGY_CARD_PATH
+    if title == LEGENDARY_PROJECTILE_TITLE:
+        return LEGENDARY_PROJECTILE_CARD_PATH
+    if title == LEGENDARY_DEMOBILIZATION_POTION_TITLE:
+        return LEGENDARY_DEMOBILIZATION_POTION_CARD_PATH
+    if title == LEGENDARY_TIME_MACHINE_TITLE:
+        return LEGENDARY_TIME_MACHINE_CARD_PATH
+    if title == LEGENDARY_DOUGH_TITLE:
+        return LEGENDARY_DOUGH_CARD_PATH
+    if title == LEGENDARY_MAGNETISM_POTION_TITLE:
+        return LEGENDARY_MAGNETISM_POTION_CARD_PATH
+    if title == LEGENDARY_SEEPAGE_POTION_TITLE:
+        return LEGENDARY_SEEPAGE_POTION_CARD_PATH
+    if title == LEGENDARY_PRIORITY_POTION_TITLE:
+        return LEGENDARY_PRIORITY_POTION_CARD_PATH
+    if title == LEGENDARY_MUTUAL_AID_POTION_TITLE:
+        return LEGENDARY_MUTUAL_AID_POTION_CARD_PATH
+    if title == LEGENDARY_NOYKA_PIZZA_TITLE:
+        return LEGENDARY_NOYKA_PIZZA_CARD_PATH
+    if title == LEGENDARY_TOSTAR_AMULET_TITLE:
+        return LEGENDARY_TOSTAR_AMULET_CARD_PATH
+    if title == LEGENDARY_MORIKO_HOUSE_TITLE:
+        return LEGENDARY_MORIKO_HOUSE_CARD_PATH
+    if title == LEGENDARY_DAVID_PRAYER_TITLE:
+        return LEGENDARY_DAVID_PRAYER_CARD_PATH
+    if title == LEGENDARY_GITMAN_BEER_TITLE:
+        return LEGENDARY_GITMAN_BEER_CARD_PATH
+    if title == LEGENDARY_RUSTY_HELP_TITLE:
+        return LEGENDARY_RUSTY_HELP_CARD_PATH
+    if title == LEGENDARY_SOLIST_DETONATOR_TITLE:
+        return LEGENDARY_SOLIST_DETONATOR_CARD_PATH
+    if title == LEGENDARY_ALOE_WATERMELON_TITLE:
+        return LEGENDARY_ALOE_WATERMELON_CARD_PATH
+    if title == LEGENDARY_REKVI_INVULNERABILITY_POTION_TITLE:
+        return LEGENDARY_REKVI_INVULNERABILITY_POTION_CARD_PATH
+    if title == LEGENDARY_ZELENKA_JADE_JAM_TITLE:
+        return LEGENDARY_ZELENKA_JADE_JAM_CARD_PATH
+    if title == LEGENDARY_JUDY_SPEED_BOOTS_TITLE:
+        return LEGENDARY_JUDY_SPEED_BOOTS_CARD_PATH
+    if title == LEGENDARY_BRADHAI_SWINOPITHECUS_TITLE:
+        return LEGENDARY_BRADHAI_SWINOPITHECUS_CARD_PATH
+    if title == LEGENDARY_TIDJOY_CHEESE_TITLE:
+        return LEGENDARY_TIDJOY_CHEESE_CARD_PATH
+    if title == LEGENDARY_PING_FLOWER_TITLE:
+        return LEGENDARY_PING_FLOWER_CARD_PATH
+    if title == LEGENDARY_PING_CAT_TITLE:
+        return LEGENDARY_PING_CAT_CARD_PATH
+    if title == LEGENDARY_PING_RIDEABLE_CAT_TITLE:
+        return LEGENDARY_PING_RIDEABLE_CAT_CARD_PATH
+    if title == LEGENDARY_RUSTY_UNICORN_TITLE:
+        return LEGENDARY_RUSTY_UNICORN_CARD_PATH
+    if title == LEGENDARY_HAKON_HIPPO_TITLE:
+        return LEGENDARY_HAKON_HIPPO_CARD_PATH
+    if title == LEGENDARY_HAKON_KNOCKBACK_POTION_TITLE:
+        return LEGENDARY_HAKON_KNOCKBACK_POTION_CARD_PATH
+    if title == LEGENDARY_PEPA_MASK_TITLE:
+        return LEGENDARY_PEPA_MASK_CARD_PATH
+    if title == LEGENDARY_LILA_CHRYSALID_TITLE:
+        return LEGENDARY_LILA_CHRYSALID_CARD_PATH
+    if title == LEGENDARY_PHOENIX_GREMLIN_TITLE:
+        return LEGENDARY_PHOENIX_GREMLIN_CARD_PATH
+    if title == LEGENDARY_MARISON_HARPOON_TITLE:
+        return LEGENDARY_MARISON_HARPOON_CARD_PATH
+    if title == LEGENDARY_FROPSI_CHAMOMILE_BREW_TITLE:
+        return LEGENDARY_FROPSI_CHAMOMILE_BREW_CARD_PATH
     if title == GARANT_GOLDEN_TELEPORT_TITLE:
         return GARANT_GOLDEN_TELEPORT_CARD_PATH
     if title == GARANT_TELEPORT_TITLE:
@@ -5431,7 +5844,119 @@ func _get_garant_card_path(title: String) -> String:
 
 
 func _get_garant_card_glow_color(title: String) -> Color:
-    if title == GARANT_GOLDEN_TELEPORT_TITLE or title == LEGENDARY_CARP_TITLE:
+    if title == LEGENDARY_MARISON_HARPOON_TITLE:
+        return Color(0.32, 0.8, 1.0, 1.0)
+    if title == LEGENDARY_FROPSI_CHAMOMILE_BREW_TITLE:
+        return Color(0.72, 0.94, 0.26, 1.0)
+    if title == LEGENDARY_LILA_CHRYSALID_TITLE:
+        return Color(1.0, 0.38, 0.85, 1.0)
+    if title == LEGENDARY_PHOENIX_GREMLIN_TITLE:
+        return Color(1.0, 0.47, 0.12, 1.0)
+    if title == LEGENDARY_PEPA_MASK_TITLE:
+        return Color(0.7, 0.9, 0.2, 1.0)
+    if title == LEGENDARY_HAKON_KNOCKBACK_POTION_TITLE:
+        return Color(1.0, 0.38, 0.2, 1.0)
+    if title == LEGENDARY_HAKON_HIPPO_TITLE:
+        return Color(1.0, 0.57, 0.24, 1.0)
+    if title == LEGENDARY_RUSTY_UNICORN_TITLE:
+        return Color(0.82, 0.56, 1.0, 1.0)
+    if title == LEGENDARY_PING_FLOWER_TITLE:
+        return Color(1.0, 0.64, 0.86, 1.0)
+    if title == LEGENDARY_PING_CAT_TITLE or title == LEGENDARY_PING_RIDEABLE_CAT_TITLE:
+        return Color(0.7, 0.42, 1.0, 1.0)
+    if title == LEGENDARY_TIDJOY_CHEESE_TITLE:
+        return Color(1.0, 0.77, 0.25, 1.0)
+    if title == LEGENDARY_JUDY_SPEED_BOOTS_TITLE:
+        return Color(1.0, 0.66, 0.32, 1.0)
+    if title == LEGENDARY_BRADHAI_SWINOPITHECUS_TITLE:
+        return Color(1.0, 0.58, 0.22, 1.0)
+    if title == LEGENDARY_ZELENKA_JADE_JAM_TITLE:
+        return Color(0.36, 1.0, 0.24, 1.0)
+    if title == LEGENDARY_REKVI_INVULNERABILITY_POTION_TITLE:
+        return Color(1.0, 0.76, 0.22, 1.0)
+    if title == LEGENDARY_ALOE_WATERMELON_TITLE:
+        return Color(0.78, 1.0, 0.3, 1.0)
+    if title == LEGENDARY_SOLIST_DETONATOR_TITLE:
+        return Color(1.0, 0.43, 0.12, 1.0)
+    if title == LEGENDARY_RUSTY_HELP_TITLE:
+        return Color(1.0, 0.74, 0.26, 1.0)
+    if title == LEGENDARY_MORIKO_HOUSE_TITLE:
+        return Color(0.95, 0.53, 0.82, 1.0)
+    if title == LEGENDARY_DAVID_PRAYER_TITLE:
+        return Color(1.0, 0.78, 0.2, 1.0)
+    if title == LEGENDARY_GITMAN_BEER_TITLE:
+        return Color(1.0, 0.64, 0.18, 1.0)
+    if title == LEGENDARY_TOSTAR_AMULET_TITLE:
+        return Color(0.84, 0.46, 1.0, 1.0)
+    if title == LEGENDARY_MUTUAL_AID_POTION_TITLE:
+        return Color(1.0, 0.8, 0.28, 1.0)
+    if title == LEGENDARY_NOYKA_PIZZA_TITLE:
+        return Color(1.0, 0.64, 0.18, 1.0)
+    if title == LEGENDARY_MAGNETISM_POTION_TITLE:
+        return Color(1.0, 0.72, 0.17, 1.0)
+    if title == LEGENDARY_SEEPAGE_POTION_TITLE:
+        return Color(0.38, 0.85, 1.0, 1.0)
+    if title == LEGENDARY_PRIORITY_POTION_TITLE:
+        return Color(1.0, 0.55, 0.22, 1.0)
+    if title == LEGENDARY_DOUGH_TITLE:
+        return Color(1.0, 0.77, 0.3, 1.0)
+    if title == LEGENDARY_TIME_MACHINE_TITLE:
+        return Color(1.0, 0.7, 0.24, 1.0)
+    if title == LEGENDARY_DEMOBILIZATION_POTION_TITLE:
+        return Color(1.0, 0.48, 0.18, 1.0)
+    if title == LEGENDARY_PROJECTILE_TITLE:
+        return Color(1.0, 0.48, 0.12, 1.0)
+    if title == LEGENDARY_RUBEN_ENERGY_TITLE:
+        return Color(0.68, 0.3, 1.0, 1.0)
+    if title == LEGENDARY_PTICHKERS_TITLE:
+        return Color(0.76, 0.35, 1.0, 1.0)
+    if title == LEGENDARY_IRVIN_SHOP_ROLL_TITLE:
+        return Color(1.0, 0.72, 0.2, 1.0)
+    if title == LEGENDARY_GOLDEN_CUBE_TITLE:
+        return Color(1.0, 0.78, 0.22, 1.0)
+    if title == LEGENDARY_FREAK_MAP_TITLE:
+        return Color(1.0, 0.67, 0.22, 1.0)
+    if title == CULMINATION_TITLE:
+        return Color(0.86, 0.4, 1.0, 1.0)
+    if title == LEGENDARY_VARAN_POTATO_TITLE:
+        return Color(1.0, 0.72, 0.26, 1.0)
+    if title == LEGENDARY_ISAAC_CUBE_TITLE:
+        return Color(1.0, 0.68, 0.24, 1.0)
+    if title == LEGENDARY_QUANTUM_CUBE_TITLE:
+        return Color(0.3, 0.68, 1.0, 1.0)
+    if title == LEGENDARY_BREAM_TITLE:
+        return Color(0.45, 0.85, 0.78, 1.0)
+    if title == LEGENDARY_SHNUM_GLOVE_TITLE:
+        return Color(1.0, 0.63, 0.2, 1.0)
+    if title == LEGENDARY_TOMATO_TITLE:
+        return Color(1.0, 0.3, 0.13, 1.0)
+    if title == LEGENDARY_CARROT_TITLE:
+        return Color(1.0, 0.62, 0.14, 1.0)
+    if title == LEGENDARY_PIRANHA_TITLE:
+        return Color(1.0, 0.32, 0.13, 1.0)
+    if title == LEGENDARY_RAT_PEDAL_TITLE:
+        return Color(1.0, 0.64, 0.18, 1.0)
+    if title == LEGENDARY_ANCHOR_TITLE:
+        return Color(0.78, 0.92, 0.22, 1.0)
+    if title == LEGENDARY_HIGAN_BOMB_TITLE:
+        return Color(0.7, 1.0, 0.15, 1.0)
+    if title == NEGATIVE_TELEPORT_TITLE:
+        return Color(0.92, 0.18, 0.38, 1.0)
+    if title == POSITIVE_TELEPORT_TITLE:
+        return Color(1.0, 0.48, 0.63, 1.0)
+    if title == LEGENDARY_ONTI_BORSCHT_TITLE:
+        return Color(1.0, 0.42, 0.16, 1.0)
+    if title == LEGENDARY_ALISKA_HAT_TITLE:
+        return Color(0.87, 0.35, 0.9, 1.0)
+    if title == LEGENDARY_CUCUMBER_TITLE:
+        return Color(1.0, 0.48, 0.78, 1.0)
+    if title == LEGENDARY_METEOR_HAT_TITLE:
+        return Color(1.0, 0.48, 0.14, 1.0)
+    if title == WHEEL_HELL_TITLE:
+        return Color(1.0, 0.24, 0.1, 1.0)
+    if title == LEGENDARY_FAIRY_TITLE:
+        return Color(0.78, 0.9, 1.0, 1.0)
+    if title == GARANT_GOLDEN_TELEPORT_TITLE or title == LEGENDARY_CARP_TITLE or title == LEGENDARY_KAL_TITLE or title == RAT_GOD_TITLE or title == LEGENDARY_DAISY_TITLE or title == LEGENDARY_YUCHI_WHEEL_TITLE:
         return Color(1.0, 0.62, 0.12, 1.0)
     return Color(0.92, 0.95, 1.0, 1.0)
 
@@ -5493,6 +6018,8 @@ func _play_garant_card_sparks(glow_color: Color, fade_duration: float) -> void :
     garant_card_spark_layer.move_to_front()
     if garant_card_delete_button != null:
         garant_card_delete_button.move_to_front()
+    if garant_card_description_button != null:
+        garant_card_description_button.move_to_front()
     if garant_card_close_button != null:
         garant_card_close_button.move_to_front()
 
@@ -5554,6 +6081,8 @@ func _play_garant_card_reveal_glow(title: String, speech_text: String = "") -> v
     garant_card_glow_rect.move_to_front()
     if garant_card_delete_button != null:
         garant_card_delete_button.move_to_front()
+    if garant_card_description_button != null:
+        garant_card_description_button.move_to_front()
     if garant_card_close_button != null:
         garant_card_close_button.move_to_front()
 
@@ -5606,6 +6135,16 @@ func _show_garant_card_for_entry(entry: String, slot_index: int = -1, speak: boo
 
     if garant_card_texture_rect != null:
         garant_card_texture_rect.texture = load(card_path) as Texture2D
+    if garant_card_description_panel != null:
+        garant_card_description_panel.visible = false
+    if garant_card_description_button != null:
+        garant_card_description_button.text = "Описание"
+    if garant_card_description_title_label != null:
+        garant_card_description_title_label.text = title
+    if garant_card_description_body_label != null:
+        var description: = _get_wheel_description(title)
+        garant_card_description_body_label.clear()
+        garant_card_description_body_label.add_text(description if not description.is_empty() else "Описание не найдено.")
 
     wheel_description_delete_entry = entry
     wheel_description_delete_slot_index = slot_index
@@ -5645,6 +6184,10 @@ func _hide_garant_card_popup(stop_tts: bool = true, clear_delete_source: bool = 
         wheel_description_delete_source = ""
     if garant_card_delete_button != null:
         garant_card_delete_button.visible = false
+    if garant_card_description_panel != null:
+        garant_card_description_panel.visible = false
+    if garant_card_description_button != null:
+        garant_card_description_button.text = "Описание"
     for label in slot_labels:
         label.visible = true
     _render_slots()
@@ -5655,6 +6198,15 @@ func _hide_garant_card_popup(stop_tts: bool = true, clear_delete_source: bool = 
 
 func _on_garant_card_close_pressed() -> void :
     _hide_garant_card_popup()
+
+
+
+func _on_garant_card_description_pressed() -> void:
+    if garant_card_description_panel != null:
+        garant_card_description_panel.visible = not garant_card_description_panel.visible
+        garant_card_description_button.text = "Скрыть" if garant_card_description_panel.visible else "Описание"
+        if garant_card_description_panel.visible:
+            garant_card_description_panel.move_to_front()
 
 
 
@@ -6560,6 +7112,40 @@ func _create_settings_menu() -> void :
     reset_button.pressed.connect(_on_settings_reset_button_pressed)
     settings_panel.add_child(reset_button)
 
+    if _is_web_runtime():
+        var export_button: = Button.new()
+        export_button.name = "SettingsExportButton"
+        export_button.position = Vector2(14, 442)
+        export_button.size = Vector2(94, 27)
+        export_button.text = "Export"
+        export_button.focus_mode = Control.FOCUS_NONE
+        export_button.mouse_default_cursor_shape = Control.CURSOR_POINTING_HAND
+        export_button.add_theme_stylebox_override("normal", settings_item_style)
+        export_button.add_theme_stylebox_override("pressed", settings_item_style)
+        export_button.add_theme_stylebox_override("hover", settings_item_style)
+        export_button.pressed.connect(_on_backup_export_pressed)
+        settings_panel.add_child(export_button)
+
+        var import_button: = Button.new()
+        import_button.name = "SettingsImportButton"
+        import_button.position = Vector2(116, 442)
+        import_button.size = Vector2(94, 27)
+        import_button.text = "Import"
+        import_button.focus_mode = Control.FOCUS_NONE
+        import_button.mouse_default_cursor_shape = Control.CURSOR_POINTING_HAND
+        import_button.add_theme_stylebox_override("normal", settings_item_style)
+        import_button.add_theme_stylebox_override("pressed", settings_item_style)
+        import_button.add_theme_stylebox_override("hover", settings_item_style)
+        import_button.pressed.connect(_on_backup_import_pressed)
+        settings_panel.add_child(import_button)
+
+        backup_import_dialog = ConfirmationDialog.new()
+        backup_import_dialog.title = "Импорт данных RGG"
+        backup_import_dialog.dialog_text = "Заменить данные колёс и настройки в этом браузере данными из архива?"
+        backup_import_dialog.confirmed.connect(_apply_pending_backup)
+        backup_import_dialog.canceled.connect(_clear_pending_backup)
+        add_child(backup_import_dialog)
+
     wheel_restore_all_button = Button.new()
     wheel_restore_all_button.name = "SettingsWheelRestoreAllButton"
     wheel_restore_all_button.position = Vector2(14, 174)
@@ -6936,6 +7522,7 @@ func _create_custom_background_controls() -> void :
 
     _load_saved_custom_background_mode()
     _load_saved_custom_background()
+    _start_web_background_animation()
     _load_saved_custom_roll_music()
 
 
@@ -6983,16 +7570,23 @@ func _create_result_link_buttons() -> void :
     mobygames_button = _setup_result_link_button(
         "LinkButtons/MobyGamesButton", 
         MOBYGAMES_ICON_PATH, 
-        Vector2(718, 536), 
-        Vector2(76, 34), 
+        Vector2(718, 526),
+        Vector2(70, 48),
         _on_mobygames_button_pressed
     )
     gamefaqs_button = _setup_result_link_button(
         "LinkButtons/GameFAQsButton", 
         GAMEFAQS_ICON_PATH, 
-        Vector2(780, 520), 
-        Vector2(168, 58), 
+        Vector2(795, 526),
+        Vector2(70, 48),
         _on_gamefaqs_button_pressed
+    )
+    howlongtobeat_button = _setup_result_link_button(
+        "LinkButtons/HowLongToBeatButton",
+        HOWLONGTOBEAT_ICON_PATH,
+        Vector2(872, 526),
+        Vector2(70, 48),
+        _on_howlongtobeat_button_pressed
     )
 
 
@@ -7061,6 +7655,8 @@ func _refresh_result_links_visibility() -> void :
         mobygames_button.visible = should_show
     if gamefaqs_button != null:
         gamefaqs_button.visible = should_show
+    if howlongtobeat_button != null:
+        howlongtobeat_button.visible = should_show
     if rggland_button != null:
         rggland_button.visible = false
 
@@ -7453,10 +8049,11 @@ func _resolve_special_roll_path(item_id: String, item_path: String) -> String:
 func _create_special_roll_tile(item: Dictionary) -> Panel:
     var item_id: String = item["id"]
     var item_title: String = item["title"]
-    var item_path: String = _resolve_special_roll_path(item_id, str(item["path"]))
+    var item_path: String = _resolve_special_roll_path(item_id, str(item.get("path", "")))
+    var item_url: String = str(item.get("url", ""))
     var item_icon_path: String = str(SPECIAL_ROLL_ICON_PATHS.get(item_id, ""))
     var use_full_text_icon: = item_id == "73"
-    var use_full_image_icon: = item_id == "metroidvania" or item_id == "nintendo" or item_id == "capcom" or item_id == "2007" or item_id == "migorei" or item_id == "rggland"
+    var use_full_image_icon: = item_id == "achievements" or item_id == "metroidvania" or item_id == "nintendo" or item_id == "capcom" or item_id == "2007" or item_id == "migorei" or item_id == "rggland"
     var tile: = Panel.new()
     tile.custom_minimum_size = Vector2(74, 81)
     tile.add_theme_stylebox_override("panel", bag_tile_default_style)
@@ -7475,7 +8072,9 @@ func _create_special_roll_tile(item: Dictionary) -> Panel:
         tile.add_child(icon_large)
     elif icon_texture != null:
         var icon_rect: = Rect2()
-        if use_full_image_icon:
+        if item_id == "achievements":
+            icon_rect = Rect2(Vector2(4, 4), Vector2(66, 57))
+        elif use_full_image_icon:
             icon_rect = Rect2(Vector2(4, 5), Vector2(66, 68))
         else:
             icon_rect = _scaled_browser_rect(Vector2(8, 6), Vector2(58, 24))
@@ -7499,11 +8098,11 @@ func _create_special_roll_tile(item: Dictionary) -> Panel:
         icon.text = _special_roll_icon_text(item_title)
         tile.add_child(icon)
 
-    if not use_full_text_icon and not use_full_image_icon:
+    if not use_full_text_icon and (not use_full_image_icon or item_id == "achievements"):
         var title: = Label.new()
         title.name = "TileTitleLabel"
-        title.position = Vector2(4, 41)
-        title.size = Vector2(66, 36)
+        title.position = Vector2(4, 61) if item_id == "achievements" else Vector2(4, 41)
+        title.size = Vector2(66, 16) if item_id == "achievements" else Vector2(66, 36)
         title.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
         title.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
         title.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
@@ -7519,8 +8118,11 @@ func _create_special_roll_tile(item: Dictionary) -> Panel:
     button.flat = true
     button.tooltip_text = str(item.get("tooltip", ""))
     button.mouse_default_cursor_shape = Control.CURSOR_POINTING_HAND
-    button.pressed.connect(_on_special_roll_item_pressed.bind(item_id, item_title, item_path))
-    button.gui_input.connect(_on_list_preview_input.bind(item_title, item_path))
+    if not item_url.is_empty():
+        button.pressed.connect(_open_external_url.bind(item_url))
+    else:
+        button.pressed.connect(_on_special_roll_item_pressed.bind(item_id, item_title, item_path))
+        button.gui_input.connect(_on_list_preview_input.bind(item_title, item_path))
     tile.add_child(button)
 
     return tile
@@ -8257,3 +8859,181 @@ func _read_text_auto(path: String) -> String:
     if not debug_path.is_empty():
         return _decode_text_bytes(FileAccess.get_file_as_bytes(debug_path), true)
     return _decode_text_bytes(FileAccess.get_file_as_bytes(runtime_path), true)
+
+
+func _on_backup_export_pressed() -> void:
+    if backup_background_callback_ref == null:
+        backup_background_callback_ref = JavaScriptBridge.create_callback(_on_backup_background_read)
+    var browser = JavaScriptBridge.get_interface("window")
+    if browser != null:
+        browser.rggReadBackupBackground(backup_background_callback_ref)
+
+
+func _on_backup_background_read(args) -> void:
+    if args == null or args.size() == 0:
+        return
+    var result = JSON.parse_string(str(args[0]))
+    if typeof(result) != TYPE_DICTIONARY or not str(result.get("error", "")).is_empty():
+        _show_wheel_info_popup("Не удалось прочитать фон для экспорта.")
+        return
+    var background_type: String = str(result.get("type", ""))
+    var background_mime: String = str(result.get("mime", ""))
+    var background_bytes: = _decode_data_url_bytes(str(result.get("data_url", "")))
+    if not (background_type in ["", "gif", "video"]) or (not background_type.is_empty() and background_bytes.is_empty()):
+        _show_wheel_info_popup("Не удалось добавить анимированный фон в архив.")
+        return
+    var writer: = ZIPPacker.new()
+    if writer.open(BACKUP_TEMP_PATH) != OK:
+        _show_wheel_info_popup("Не удалось создать архив.")
+        return
+    var manifest: = {"format": "rgg-browser-backup", "version": 1, "background_type": background_type, "background_mime": background_mime}
+    var success: = _backup_write_zip_entry(writer, "manifest.json", JSON.stringify(manifest).to_utf8_buffer())
+    for path in BACKUP_FILE_PATHS:
+        if not success:
+            break
+        if FileAccess.file_exists(path):
+            success = _backup_write_zip_entry(writer, path.get_file(), FileAccess.get_file_as_bytes(path))
+    if success and not background_type.is_empty():
+        success = _backup_write_zip_entry(writer, "animated_background.bin", background_bytes)
+    var close_error: = writer.close()
+    if not success or close_error != OK:
+        _delete_user_settings_file(BACKUP_TEMP_PATH)
+        _show_wheel_info_popup("Не удалось завершить архив.")
+        return
+    var archive_bytes: = FileAccess.get_file_as_bytes(BACKUP_TEMP_PATH)
+    _delete_user_settings_file(BACKUP_TEMP_PATH)
+    if archive_bytes.is_empty() or archive_bytes.size() > BACKUP_MAX_BYTES:
+        _show_wheel_info_popup("Архив пустой или больше 128 МБ.")
+        return
+    var filename: = "RGG_backup_%s.zip" % Time.get_datetime_string_from_system().replace(":", "-")
+    JavaScriptBridge.download_buffer(archive_bytes, filename, "application/zip")
+
+
+func _backup_write_zip_entry(writer: ZIPPacker, name: String, bytes: PackedByteArray) -> bool:
+    if writer.start_file(name) != OK:
+        return false
+    var write_ok: = writer.write_file(bytes) == OK
+    return writer.close_file() == OK and write_ok
+
+
+func _on_backup_import_pressed() -> void:
+    _clear_pending_backup()
+    _open_web_file_picker("backup", ".zip,application/zip")
+
+
+func _prepare_backup_import(archive_bytes: PackedByteArray) -> void:
+    if archive_bytes.is_empty() or archive_bytes.size() > BACKUP_MAX_BYTES:
+        _show_wheel_info_popup("Архив пустой или больше 128 МБ.")
+        return
+    var archive_file: = FileAccess.open(BACKUP_TEMP_PATH, FileAccess.WRITE)
+    if archive_file == null:
+        _show_wheel_info_popup("Не удалось открыть архив для проверки.")
+        return
+    archive_file.store_buffer(archive_bytes)
+    archive_file.close()
+    var reader: = ZIPReader.new()
+    if reader.open(BACKUP_TEMP_PATH) != OK:
+        _delete_user_settings_file(BACKUP_TEMP_PATH)
+        _show_wheel_info_popup("Неверный ZIP-архив.")
+        return
+    var allowed: = {"manifest.json": true, "animated_background.bin": true}
+    for path in BACKUP_FILE_PATHS:
+        allowed[path.get_file()] = true
+    var seen: = {}
+    var valid: = true
+    for name in reader.get_files():
+        if not allowed.has(name) or seen.has(name):
+            valid = false
+            break
+        seen[name] = true
+    var manifest = JSON.parse_string(reader.read_file("manifest.json").get_string_from_utf8()) if valid and reader.file_exists("manifest.json") else null
+    valid = valid and typeof(manifest) == TYPE_DICTIONARY
+    if valid:
+        valid = manifest.get("format", "") == "rgg-browser-backup" and manifest.get("version", 0) == 1
+    var background_type: String = str(manifest.get("background_type", "")) if valid else ""
+    var background_mime: String = str(manifest.get("background_mime", "")) if valid else ""
+    valid = valid and (background_type in ["", "gif", "video"])
+    valid = valid and (background_type.is_empty() != reader.file_exists("animated_background.bin"))
+    var files: Dictionary = {}
+    var total_bytes: int = 0
+    if valid:
+        for path in BACKUP_FILE_PATHS:
+            var name: = path.get_file()
+            if reader.file_exists(name):
+                var bytes: = reader.read_file(name)
+                total_bytes += bytes.size()
+                files[path] = bytes
+    var background_bytes: = reader.read_file("animated_background.bin") if valid and not background_type.is_empty() else PackedByteArray()
+    total_bytes += background_bytes.size()
+    reader.close()
+    _delete_user_settings_file(BACKUP_TEMP_PATH)
+    if not valid or total_bytes > BACKUP_MAX_BYTES or (not background_type.is_empty() and background_bytes.is_empty()):
+        _show_wheel_info_popup("Архив повреждён или не является резервной копией RGG.")
+        return
+    pending_backup_files = files
+    pending_backup_background = background_bytes
+    pending_backup_background_type = background_type
+    pending_backup_background_mime = background_mime
+    backup_import_dialog.popup_centered()
+
+
+func _apply_pending_backup() -> void:
+    backup_original_files.clear()
+    for path in BACKUP_FILE_PATHS:
+        if FileAccess.file_exists(path):
+            backup_original_files[path] = FileAccess.get_file_as_bytes(path)
+    for path in BACKUP_FILE_PATHS:
+        if pending_backup_files.has(path):
+            var file: = FileAccess.open(path, FileAccess.WRITE)
+            if file == null:
+                _restore_backup_originals()
+                _show_wheel_info_popup("Ошибка записи. Старые файлы восстановлены.")
+                return
+            file.store_buffer(pending_backup_files[path])
+            file.close()
+        elif FileAccess.file_exists(path):
+            if DirAccess.remove_absolute(ProjectSettings.globalize_path(path)) != OK:
+                _restore_backup_originals()
+                _show_wheel_info_popup("Ошибка записи. Старые файлы восстановлены.")
+                return
+    if backup_restore_callback_ref == null:
+        backup_restore_callback_ref = JavaScriptBridge.create_callback(_on_backup_background_restored)
+    var browser = JavaScriptBridge.get_interface("window")
+    if browser == null:
+        _restore_backup_originals()
+        _show_wheel_info_popup("Не удалось восстановить фон.")
+        return
+    var data_url: = ""
+    if not pending_backup_background.is_empty():
+        data_url = "data:%s;base64,%s" % [pending_backup_background_mime, Marshalls.raw_to_base64(pending_backup_background)]
+    browser.rggRestoreBackupBackground(pending_backup_background_type, pending_backup_background_mime, data_url, backup_restore_callback_ref)
+
+
+func _restore_backup_originals() -> void:
+    for path in BACKUP_FILE_PATHS:
+        if backup_original_files.has(path):
+            var file: = FileAccess.open(path, FileAccess.WRITE)
+            if file != null:
+                file.store_buffer(backup_original_files[path])
+                file.close()
+        elif FileAccess.file_exists(path):
+            DirAccess.remove_absolute(ProjectSettings.globalize_path(path))
+
+
+func _clear_pending_backup() -> void:
+    pending_backup_files.clear()
+    pending_backup_background = PackedByteArray()
+    pending_backup_background_type = ""
+    pending_backup_background_mime = ""
+
+
+func _on_backup_background_restored(args) -> void:
+    var result = JSON.parse_string(str(args[0])) if args != null and args.size() > 0 else null
+    if typeof(result) != TYPE_DICTIONARY or not str(result.get("error", "")).is_empty():
+        _restore_backup_originals()
+        _show_wheel_info_popup("Не удалось восстановить фон. Старые файлы восстановлены.")
+        return
+    backup_original_files.clear()
+    _clear_pending_backup()
+    JavaScriptBridge.force_fs_sync()
+    get_tree().reload_current_scene()
