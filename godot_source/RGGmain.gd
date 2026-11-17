@@ -7163,7 +7163,7 @@ func _create_settings_menu() -> void :
 
     var background_button: = Button.new()
     background_button.name = "SettingsBackgroundButton"
-    background_button.position = Vector2(14, 206)
+    background_button.position = Vector2(14, 204)
     background_button.size = Vector2(196, 26)
     background_button.text = "Сменить фон"
     background_button.focus_mode = Control.FOCUS_NONE
@@ -7178,7 +7178,7 @@ func _create_settings_menu() -> void :
 
     background_stretch_button = Button.new()
     background_stretch_button.name = "SettingsBackgroundStretchButton"
-    background_stretch_button.position = Vector2(14, 238)
+    background_stretch_button.position = Vector2(14, 234)
     background_stretch_button.size = Vector2(94, 24)
     background_stretch_button.text = "Растянуть"
     background_stretch_button.focus_mode = Control.FOCUS_NONE
@@ -7192,7 +7192,7 @@ func _create_settings_menu() -> void :
 
     background_center_button = Button.new()
     background_center_button.name = "SettingsBackgroundCenterButton"
-    background_center_button.position = Vector2(116, 238)
+    background_center_button.position = Vector2(116, 234)
     background_center_button.size = Vector2(94, 24)
     background_center_button.text = "Как есть"
     background_center_button.focus_mode = Control.FOCUS_NONE
@@ -7206,7 +7206,7 @@ func _create_settings_menu() -> void :
 
     var music_button: = Button.new()
     music_button.name = "SettingsMusicButton"
-    music_button.position = Vector2(14, 270)
+    music_button.position = Vector2(14, 262)
     music_button.size = Vector2(196, 26)
     music_button.text = "Сменить музыку"
     music_button.focus_mode = Control.FOCUS_NONE
@@ -7221,7 +7221,7 @@ func _create_settings_menu() -> void :
 
     var reset_button: = Button.new()
     reset_button.name = "SettingsResetButton"
-    reset_button.position = Vector2(14, 398)
+    reset_button.position = Vector2(14, 382)
     reset_button.size = Vector2(196, 38)
     reset_button.text = "Сбросить настройки\nкастомизации"
     reset_button.focus_mode = Control.FOCUS_NONE
@@ -7237,7 +7237,7 @@ func _create_settings_menu() -> void :
     if _is_web_runtime():
         var export_button: = Button.new()
         export_button.name = "SettingsExportButton"
-        export_button.position = Vector2(14, 442)
+        export_button.position = Vector2(14, 424)
         export_button.size = Vector2(94, 27)
         export_button.text = "Export"
         export_button.focus_mode = Control.FOCUS_NONE
@@ -7250,7 +7250,7 @@ func _create_settings_menu() -> void :
 
         var import_button: = Button.new()
         import_button.name = "SettingsImportButton"
-        import_button.position = Vector2(116, 442)
+        import_button.position = Vector2(116, 424)
         import_button.size = Vector2(94, 27)
         import_button.text = "Import"
         import_button.focus_mode = Control.FOCUS_NONE
@@ -7270,28 +7270,29 @@ func _create_settings_menu() -> void :
 
         var animation_label: = Label.new()
         animation_label.name = "SettingsAnimationModeLabel"
-        animation_label.position = Vector2(14, 474)
-        animation_label.size = Vector2(196, 16)
+        animation_label.position = Vector2(14, 455)
+        animation_label.size = Vector2(196, 18)
         animation_label.text = "Анимация GIF / видео"
         animation_label.mouse_filter = Control.MOUSE_FILTER_IGNORE
         animation_label.add_theme_color_override("font_color", Color(0.96, 0.96, 0.98, 1.0))
-        animation_label.add_theme_font_size_override("font_size", 11)
+        animation_label.add_theme_font_size_override("font_size", 14)
         settings_panel.add_child(animation_label)
 
         animated_background_mode_option = OptionButton.new()
         animated_background_mode_option.name = "SettingsAnimationModeOption"
-        animated_background_mode_option.position = Vector2(14, 490)
-        animated_background_mode_option.size = Vector2(196, 26)
+        animated_background_mode_option.position = Vector2(14, 477)
+        animated_background_mode_option.size = Vector2(196, 28)
         animated_background_mode_option.focus_mode = Control.FOCUS_NONE
         animated_background_mode_option.mouse_default_cursor_shape = Control.CURSOR_POINTING_HAND
         animated_background_mode_option.add_theme_stylebox_override("normal", settings_item_style)
         animated_background_mode_option.add_theme_stylebox_override("pressed", settings_item_style)
         animated_background_mode_option.add_theme_stylebox_override("hover", settings_item_style)
         animated_background_mode_option.add_theme_color_override("font_color", Color(0.96, 0.96, 0.98, 1.0))
-        animated_background_mode_option.add_theme_font_size_override("font_size", 11)
+        animated_background_mode_option.add_theme_font_size_override("font_size", 14)
+        animated_background_mode_option.get_popup().add_theme_font_size_override("font_size", 14)
         animated_background_mode_option.add_item("Всегда", 0)
-        animated_background_mode_option.add_item("Только при кручении", 1)
-        animated_background_mode_option.add_item("Пока колесо не крутится", 2)
+        animated_background_mode_option.add_item("При кручении", 1)
+        animated_background_mode_option.add_item("Без кручения", 2)
         _refresh_animated_background_mode_option()
         animated_background_mode_option.item_selected.connect(_on_animated_background_mode_selected)
         settings_panel.add_child(animated_background_mode_option)
@@ -7314,7 +7315,7 @@ func _create_settings_menu() -> void :
 
     var item_color_button: = Button.new()
     item_color_button.name = "SettingsItemColorButton"
-    item_color_button.position = Vector2(14, 302)
+    item_color_button.position = Vector2(14, 292)
     item_color_button.size = Vector2(196, 26)
     item_color_button.text = "Цвет пунктов"
     item_color_button.focus_mode = Control.FOCUS_NONE
@@ -7329,7 +7330,7 @@ func _create_settings_menu() -> void :
 
     var button_text_color_button: = Button.new()
     button_text_color_button.name = "SettingsButtonTextColorButton"
-    button_text_color_button.position = Vector2(14, 334)
+    button_text_color_button.position = Vector2(14, 322)
     button_text_color_button.size = Vector2(196, 26)
     button_text_color_button.text = "Цвет текста кнопок"
     button_text_color_button.focus_mode = Control.FOCUS_NONE
@@ -7344,7 +7345,7 @@ func _create_settings_menu() -> void :
 
     var button_color_button: = Button.new()
     button_color_button.name = "SettingsButtonColorButton"
-    button_color_button.position = Vector2(14, 366)
+    button_color_button.position = Vector2(14, 352)
     button_color_button.size = Vector2(196, 26)
     button_color_button.text = "Цвет кнопок"
     button_color_button.focus_mode = Control.FOCUS_NONE
