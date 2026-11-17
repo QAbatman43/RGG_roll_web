@@ -169,6 +169,8 @@ const engine = new Engine(GODOT_CONFIG);
 	let backgroundTimer = null;
 	let backgroundMedia = null;
 	let backgroundObjectUrl = null;
+	let backgroundPlaying = true;
+	let backgroundResume = null;
 
 	function openBackgroundStore() {
 		return new Promise(function (resolve, reject) {
@@ -236,13 +238,18 @@ const engine = new Engine(GODOT_CONFIG);
 		}
 	}
 
-	function stopBackgroundAnimation() {
-		backgroundGeneration += 1;
+	function clearBackgroundTimer() {
 		if (backgroundTimer !== null) {
 			clearInterval(backgroundTimer);
 			clearTimeout(backgroundTimer);
 			backgroundTimer = null;
 		}
+	}
+
+	function stopBackgroundAnimation() {
+		backgroundGeneration += 1;
+		clearBackgroundTimer();
+		backgroundResume = null;
 		disposeBackgroundMedia(backgroundMedia, backgroundObjectUrl);
 		backgroundMedia = null;
 		backgroundObjectUrl = null;
@@ -298,8 +305,20 @@ const engine = new Engine(GODOT_CONFIG);
 		stopBackgroundAnimation();
 		writeBackgroundMedia(null).catch(console.error);
 	};
-	window.rggStartBackgroundAnimation = function (frameCallback, errorCallback) {
+	window.rggSetBackgroundAnimationPlaying = function (playing) {
+		const wasPlaying = backgroundPlaying;
+		backgroundPlaying = Boolean(playing);
+		if (backgroundPlaying === wasPlaying) { return; }
+		if (!backgroundPlaying) {
+			clearBackgroundTimer();
+			if (backgroundMedia && backgroundMedia.tagName === "VIDEO") { backgroundMedia.pause(); }
+		} else if (backgroundResume) {
+			backgroundResume();
+		}
+	};
+	window.rggStartBackgroundAnimation = function (frameCallback, errorCallback, playing) {
 		const generation = stopBackgroundAnimation();
+		backgroundPlaying = playing !== false;
 		if (typeof indexedDB === "undefined") { return; }
 		let pendingMedia = null;
 		let pendingUrl = null;
@@ -324,7 +343,10 @@ const engine = new Engine(GODOT_CONFIG);
 					mediaOwnedByBackground = true;
 					let frameIndex = 0;
 					let canvasReady = false;
+					let decoding = false;
 					async function sendGifFrame() {
+						if (decoding || generation !== backgroundGeneration) { return; }
+						decoding = true;
 						try {
 							const result = await pendingMedia.decode({ frameIndex: frameIndex });
 							const frame = result.image;
@@ -343,7 +365,12 @@ const engine = new Engine(GODOT_CONFIG);
 								if (generation !== backgroundGeneration) { return; }
 								frameIndex = (frameIndex + 1) % track.frameCount;
 								const delay = Math.max(50, (frame.duration || 100000) / 1000);
-								backgroundTimer = setTimeout(sendGifFrame, delay);
+								if (backgroundPlaying) {
+									backgroundTimer = setTimeout(function () {
+										backgroundTimer = null;
+										sendGifFrame();
+									}, delay);
+								}
 							} finally {
 								frame.close();
 							}
@@ -352,8 +379,11 @@ const engine = new Engine(GODOT_CONFIG);
 								stopBackgroundAnimation();
 								errorCallback(error.message || "Не удалось воспроизвести GIF-фон");
 							}
+						} finally {
+							decoding = false;
 						}
 					}
+					backgroundResume = sendGifFrame;
 					await sendGifFrame();
 					return;
 				}
@@ -375,20 +405,45 @@ const engine = new Engine(GODOT_CONFIG);
 				const context = canvas.getContext("2d", { alpha: false });
 				if (!context) { throw new Error("Не удалось создать кадр фона"); }
 				function sendFrame() {
-					if (generation !== backgroundGeneration) { return; }
-					if (pendingMedia.readyState < 2) { return; }
+					if (generation !== backgroundGeneration || pendingMedia.readyState < 2) { return false; }
 					context.fillStyle = "#282828";
 					context.fillRect(0, 0, canvas.width, canvas.height);
 					context.drawImage(pendingMedia, 0, 0, canvas.width, canvas.height);
 					frameCallback(canvas.toDataURL("image/jpeg", 0.7));
+					return true;
 				}
-				sendFrame();
-				backgroundTimer = setInterval(function () {
-					try { sendFrame(); } catch (error) {
+				function tickVideoFrame() {
+					try {
+						if (sendFrame() && !backgroundPlaying) {
+							clearBackgroundTimer();
+							pendingMedia.pause();
+						}
+					} catch (error) {
 						stopBackgroundAnimation();
 						errorCallback("Не удалось воспроизвести анимированный фон");
 					}
-				}, 83);
+				}
+				backgroundResume = function () {
+					pendingMedia.play().then(function () {
+						if (generation !== backgroundGeneration || !backgroundPlaying) {
+							pendingMedia.pause();
+							return;
+						}
+						tickVideoFrame();
+						if (generation === backgroundGeneration && backgroundPlaying && backgroundTimer === null) {
+							backgroundTimer = setInterval(tickVideoFrame, 83);
+						}
+					}).catch(function (error) {
+						if (generation === backgroundGeneration) {
+							stopBackgroundAnimation();
+							errorCallback(error.message || "Не удалось продолжить видеофон");
+						}
+					});
+				};
+				tickVideoFrame();
+				if (generation === backgroundGeneration && (backgroundPlaying || pendingMedia.readyState < 2)) {
+					backgroundTimer = setInterval(tickVideoFrame, 83);
+				}
 			} catch (error) {
 				if (generation === backgroundGeneration) {
 					stopBackgroundAnimation();

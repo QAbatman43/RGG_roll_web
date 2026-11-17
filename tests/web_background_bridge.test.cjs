@@ -28,6 +28,8 @@ function createBrowser(saved = new Map(), withStorage = true) {
             this.readyState = 3;
             this.volume = 1;
             this.muted = false;
+            this.playing = false;
+            this.currentTime = 0;
             this.listeners = new Map();
             if (tagName === 'VIDEO') videos.push(this);
         }
@@ -43,8 +45,8 @@ function createBrowser(saved = new Map(), withStorage = true) {
         emit(name) { this.listeners.get(name)?.(); }
         removeAttribute() {}
         load() {}
-        pause() {}
-        play() { return Promise.resolve(); }
+        pause() { this.playing = false; }
+        play() { this.playing = true; return Promise.resolve(); }
     }
 
     const document = {
@@ -221,6 +223,31 @@ test('video longer than 20 seconds does not replace the current background', asy
     assert.equal(browser.saved.get('selected').blob.name, 'good.mp4');
 });
 
+test('video pauses on a still frame and resumes from the same position', async () => {
+    const browser = createBrowser();
+    await choose(browser, { name: 'loop.webm', size: 1024, duration: 12 });
+    const frames = [];
+    browser.window.rggStartBackgroundAnimation(frame => frames.push(frame), () => {}, false);
+    await settle();
+    const video = browser.videos.at(-1);
+    assert.equal(frames.length, 1);
+    assert.equal(video.playing, false);
+    assert.equal(browser.intervals.size, 0);
+
+    video.currentTime = 4.5;
+    browser.window.rggSetBackgroundAnimationPlaying(true);
+    await settle();
+    assert.equal(video.playing, true);
+    assert.equal(video.currentTime, 4.5);
+    assert.equal(browser.intervals.size, 1);
+
+    browser.window.rggSetBackgroundAnimationPlaying(false);
+    assert.equal(video.playing, false);
+    assert.equal(browser.intervals.size, 0);
+    assert.equal(frames.length, 2);
+    browser.window.rggStopBackgroundAnimation();
+});
+
 test('GIF is animated and a still image clears the saved animation', async () => {
     const browser = createBrowser();
     const gif = await choose(browser, { name: 'loop.gif', type: 'image/gif', size: 1024, arrayBuffer: async () => new ArrayBuffer(8) });
@@ -245,6 +272,35 @@ test('GIF is animated and a still image clears the saved animation', async () =>
     assert.equal(browser.saved.has('selected'), false);
     assert.equal(reloaded.timeouts.size, 0);
     assert.equal(reloaded.gifDecoders[0].closed, true);
+});
+
+test('GIF pauses after its first frame and resumes without reopening the decoder', async () => {
+    const browser = createBrowser();
+    await choose(browser, { name: 'loop.gif', type: 'image/gif', size: 1024, arrayBuffer: async () => new ArrayBuffer(8) });
+    const frames = [];
+    browser.window.rggStartBackgroundAnimation(frame => frames.push(frame), () => {}, false);
+    await settle();
+    assert.deepEqual(frames, ['data:image/jpeg;base64,0']);
+    assert.equal(browser.timeouts.size, 0);
+
+    browser.window.rggSetBackgroundAnimationPlaying(true);
+    await settle();
+    assert.deepEqual(frames, ['data:image/jpeg;base64,0', 'data:image/jpeg;base64,1']);
+    assert.equal(browser.timeouts.size, 1);
+    browser.window.rggSetBackgroundAnimationPlaying(true);
+    await settle();
+    assert.equal(frames.length, 2);
+    assert.equal(browser.timeouts.size, 1);
+    browser.window.rggSetBackgroundAnimationPlaying(false);
+    assert.equal(browser.timeouts.size, 0);
+
+    browser.window.rggSetBackgroundAnimationPlaying(true);
+    await settle();
+    assert.equal(frames[2], 'data:image/jpeg;base64,0');
+    assert.equal(browser.gifDecoders.length, 1);
+    assert.equal(browser.gifDecoders[0].closed, false);
+    browser.window.rggStopBackgroundAnimation();
+    assert.equal(browser.gifDecoders[0].closed, true);
 });
 
 test('oversized animation is rejected and reset clears saved media', async () => {

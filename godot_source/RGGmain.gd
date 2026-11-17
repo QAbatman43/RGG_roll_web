@@ -183,6 +183,10 @@ const CUSTOM_BACKGROUND_IMAGE_PATH: = "user://custom_background.png"
 const CUSTOM_BACKGROUND_MODE_PATH: = "user://custom_background_mode.txt"
 const CUSTOM_BACKGROUND_MODE_STRETCH: = "stretch"
 const CUSTOM_BACKGROUND_MODE_CENTER: = "center"
+const ANIMATED_BACKGROUND_MODE_PATH: = "user://animated_background_mode.txt"
+const ANIMATED_BACKGROUND_MODE_ALWAYS: = "always"
+const ANIMATED_BACKGROUND_MODE_ROLLING: = "rolling"
+const ANIMATED_BACKGROUND_MODE_IDLE: = "idle"
 const CUSTOM_ROLL_MUSIC_PATH: = "user://custom_roll_music.mp3"
 const BACKUP_FILE_PATHS: Array[String] = [
     GLOBAL_EVENTS_REMOVED_ENTRIES_PATH, EXTRA_USER_LIST_PATH, EXTRA_REMOVED_ENTRIES_PATH,
@@ -190,7 +194,7 @@ const BACKUP_FILE_PATHS: Array[String] = [
     WEAPON_WHEEL_REMOVED_ENTRIES_PATH, WEAPON_WHEEL_PITY_COUNT_PATH, WEAPON_WHEEL_PITY_UNDO_PATH,
     START_WHEEL_REMOVED_ENTRIES_PATH, START_WHEEL_PITY_COUNT_PATH, START_WHEEL_PITY_UNDO_PATH,
     START_WHEEL_COMPLETED_PATH, GARANT_REMOVED_ENTRIES_PATH, GARANT_DELETE_COUNT_PATH,
-    CUSTOM_BACKGROUND_IMAGE_PATH, CUSTOM_BACKGROUND_MODE_PATH, CUSTOM_ROLL_MUSIC_PATH,
+    CUSTOM_BACKGROUND_IMAGE_PATH, CUSTOM_BACKGROUND_MODE_PATH, ANIMATED_BACKGROUND_MODE_PATH, CUSTOM_ROLL_MUSIC_PATH,
     "user://custom_roll_item_color.txt", "user://custom_button_color.txt", "user://custom_button_fill_color.txt",
     "user://sound_muted.txt", "user://sound_volume_percent.txt", "user://tts_enabled.txt",
     "user://tts_volume_percent.txt", "user://tts_rate.txt", "user://tts_language.txt",
@@ -811,6 +815,7 @@ var suppress_tts_language_option_events: = false
 var last_tts_toggle_msec: = -1000000
 var settings_menu_open: = false
 var custom_background_mode: = CUSTOM_BACKGROUND_MODE_STRETCH
+var animated_background_mode: = ANIMATED_BACKGROUND_MODE_ALWAYS
 var custom_roll_music_stream: AudioStream
 var backup_background_callback_ref = null
 var backup_restore_callback_ref = null
@@ -874,6 +879,7 @@ var button_fill_color_dialog: ConfirmationDialog
 var button_fill_color_picker: ColorPicker
 var background_stretch_button: Button
 var background_center_button: Button
+var animated_background_mode_option: OptionButton
 @onready var digits_checkbox: CheckBox = $DigitsCheckBox
 @onready var letter_input: LineEdit = _resolve_letter_input()
 @onready var logo43: TextureRect = $Logo43
@@ -2170,6 +2176,7 @@ func _start_roll() -> void :
 
     selected_result_entry = ""
     rolling = true
+    _sync_web_background_playback()
     if wheel_roll_legendary_active:
         wheel_legendary_flash_timer.start()
     _refresh_wheel_delete_button()
@@ -2424,6 +2431,7 @@ func _rotate_visible_entries_back() -> void :
 
 func _roll_stopped() -> void :
     rolling = false
+    _sync_web_background_playback()
     stop_requested = false
     ultra_stop_pending = false
     final_settle_pending = false
@@ -3672,6 +3680,7 @@ func _on_settings_reset_button_pressed() -> void :
     _stop_web_background_animation(true)
     _delete_user_settings_file(CUSTOM_BACKGROUND_IMAGE_PATH)
     _delete_user_settings_file(CUSTOM_BACKGROUND_MODE_PATH)
+    _delete_user_settings_file(ANIMATED_BACKGROUND_MODE_PATH)
     _delete_user_settings_file(CUSTOM_ROLL_MUSIC_PATH)
     _delete_user_settings_file(CUSTOM_ROLL_ITEM_COLOR_PATH)
     _delete_user_settings_file(CUSTOM_BUTTON_COLOR_PATH)
@@ -3691,6 +3700,8 @@ func _on_settings_reset_button_pressed() -> void :
     tts_language_mode = DEFAULT_TTS_LANGUAGE_MODE
     cached_tts_voice_id = ""
     _set_custom_background_mode(CUSTOM_BACKGROUND_MODE_STRETCH, false)
+    animated_background_mode = ANIMATED_BACKGROUND_MODE_ALWAYS
+    _refresh_animated_background_mode_option()
     _load_saved_custom_background()
     _load_saved_custom_roll_music()
     _load_saved_custom_roll_item_color()
@@ -3769,6 +3780,7 @@ func _on_web_file_picker_result(args) -> void :
             _prepare_backup_import(_decode_data_url_bytes(backup_data_url))
         return
     if kind == "background" and str(result.get("media_type", "")) == "animated":
+        _stop_web_background_animation(false)
         _delete_user_settings_file(CUSTOM_BACKGROUND_IMAGE_PATH)
         background_image_rect.texture = null
         background_image_rect.visible = false
@@ -3805,7 +3817,27 @@ func _start_web_background_animation() -> void:
     if window_interface == null:
         return
     web_background_active = true
-    window_interface.rggStartBackgroundAnimation(web_background_frame_callback_ref, web_background_error_callback_ref)
+    window_interface.rggStartBackgroundAnimation(web_background_frame_callback_ref, web_background_error_callback_ref, _should_play_animated_background())
+
+
+
+
+func _should_play_animated_background() -> bool:
+    if animated_background_mode == ANIMATED_BACKGROUND_MODE_ROLLING:
+        return rolling
+    if animated_background_mode == ANIMATED_BACKGROUND_MODE_IDLE:
+        return not rolling
+    return true
+
+
+
+
+func _sync_web_background_playback() -> void:
+    if not web_background_active or not _is_web_runtime():
+        return
+    var window_interface = JavaScriptBridge.get_interface("window")
+    if window_interface != null:
+        window_interface.rggSetBackgroundAnimationPlaying(_should_play_animated_background())
 
 
 
@@ -3989,6 +4021,51 @@ func _load_saved_custom_background_mode() -> void :
         _set_custom_background_mode(CUSTOM_BACKGROUND_MODE_CENTER, false)
         return
     _set_custom_background_mode(CUSTOM_BACKGROUND_MODE_STRETCH, false)
+
+
+
+func _set_animated_background_mode(mode: String, persist: bool = true) -> void:
+    if not mode in [ANIMATED_BACKGROUND_MODE_ALWAYS, ANIMATED_BACKGROUND_MODE_ROLLING, ANIMATED_BACKGROUND_MODE_IDLE]:
+        mode = ANIMATED_BACKGROUND_MODE_ALWAYS
+    animated_background_mode = mode
+    _refresh_animated_background_mode_option()
+    _sync_web_background_playback()
+    if persist:
+        var file: = FileAccess.open(ANIMATED_BACKGROUND_MODE_PATH, FileAccess.WRITE)
+        if file != null:
+            file.store_string(mode)
+            file.close()
+
+
+
+func _on_animated_background_mode_selected(index: int) -> void:
+    match index:
+        1:
+            _set_animated_background_mode(ANIMATED_BACKGROUND_MODE_ROLLING)
+        2:
+            _set_animated_background_mode(ANIMATED_BACKGROUND_MODE_IDLE)
+        _:
+            _set_animated_background_mode(ANIMATED_BACKGROUND_MODE_ALWAYS)
+
+
+
+func _refresh_animated_background_mode_option() -> void:
+    if animated_background_mode_option == null:
+        return
+    var index: = 0
+    if animated_background_mode == ANIMATED_BACKGROUND_MODE_ROLLING:
+        index = 1
+    elif animated_background_mode == ANIMATED_BACKGROUND_MODE_IDLE:
+        index = 2
+    animated_background_mode_option.select(index)
+
+
+
+func _load_saved_animated_background_mode() -> void:
+    var mode: = ANIMATED_BACKGROUND_MODE_ALWAYS
+    if FileAccess.file_exists(ANIMATED_BACKGROUND_MODE_PATH):
+        mode = _read_text_auto(ANIMATED_BACKGROUND_MODE_PATH).strip_edges().to_lower()
+    _set_animated_background_mode(mode, false)
 
 
 
@@ -7191,6 +7268,34 @@ func _create_settings_menu() -> void :
         backup_import_dialog.canceled.connect(_clear_pending_backup)
         add_child(backup_import_dialog)
 
+        var animation_label: = Label.new()
+        animation_label.name = "SettingsAnimationModeLabel"
+        animation_label.position = Vector2(14, 474)
+        animation_label.size = Vector2(196, 16)
+        animation_label.text = "Анимация GIF / видео"
+        animation_label.mouse_filter = Control.MOUSE_FILTER_IGNORE
+        animation_label.add_theme_color_override("font_color", Color(0.96, 0.96, 0.98, 1.0))
+        animation_label.add_theme_font_size_override("font_size", 11)
+        settings_panel.add_child(animation_label)
+
+        animated_background_mode_option = OptionButton.new()
+        animated_background_mode_option.name = "SettingsAnimationModeOption"
+        animated_background_mode_option.position = Vector2(14, 490)
+        animated_background_mode_option.size = Vector2(196, 26)
+        animated_background_mode_option.focus_mode = Control.FOCUS_NONE
+        animated_background_mode_option.mouse_default_cursor_shape = Control.CURSOR_POINTING_HAND
+        animated_background_mode_option.add_theme_stylebox_override("normal", settings_item_style)
+        animated_background_mode_option.add_theme_stylebox_override("pressed", settings_item_style)
+        animated_background_mode_option.add_theme_stylebox_override("hover", settings_item_style)
+        animated_background_mode_option.add_theme_color_override("font_color", Color(0.96, 0.96, 0.98, 1.0))
+        animated_background_mode_option.add_theme_font_size_override("font_size", 11)
+        animated_background_mode_option.add_item("Всегда", 0)
+        animated_background_mode_option.add_item("Только при кручении", 1)
+        animated_background_mode_option.add_item("Пока колесо не крутится", 2)
+        _refresh_animated_background_mode_option()
+        animated_background_mode_option.item_selected.connect(_on_animated_background_mode_selected)
+        settings_panel.add_child(animated_background_mode_option)
+
     wheel_restore_all_button = Button.new()
     wheel_restore_all_button.name = "SettingsWheelRestoreAllButton"
     wheel_restore_all_button.position = Vector2(14, 174)
@@ -7566,6 +7671,7 @@ func _create_custom_background_controls() -> void :
     button_fill_color_dialog.add_child(button_fill_color_picker)
 
     _load_saved_custom_background_mode()
+    _load_saved_animated_background_mode()
     _load_saved_custom_background()
     _start_web_background_animation()
     _load_saved_custom_roll_music()
