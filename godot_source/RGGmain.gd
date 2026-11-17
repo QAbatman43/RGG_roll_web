@@ -13,10 +13,17 @@ const GUITMAN_LIST_ID: = "guitman"
 const GUITMAN_LIST_PATH: = "res://lists/guitman.dat"
 const GUITMAN_MODE_TITLE: = "Гитман"
 const GLOBAL_EVENTS_LIST_ID: = "global_events"
-const GLOBAL_EVENTS_LIST_PATH: = "res://lists/global_events.dat"
+const GLOBAL_EVENTS_LIST_PATH: = "res://lists/global_events_normal.dat"
+const GLOBAL_EVENTS_COMP_LIST_PATH: = "res://lists/global_events_comp.dat"
+const GLOBAL_EVENTS_SPECIAL_LIST_PATH: = "res://lists/global_events_special.dat"
 const GLOBAL_EVENTS_DESCRIPTION_LIST_PATH: = "res://lists/global_events_list.dat"
 const GLOBAL_EVENTS_REMOVED_ENTRIES_PATH: = "user://global_events_removed_entries.dat"
+const GLOBAL_EVENTS_COMP_REMOVED_ENTRIES_PATH: = "user://global_events_comp_removed_entries.dat"
+const GLOBAL_EVENTS_SPECIAL_REMOVED_ENTRIES_PATH: = "user://global_events_special_removed_entries.dat"
 const GLOBAL_EVENTS_MODE_TITLE: = "Глобалы"
+const GLOBAL_EVENTS_MODE_NORMAL_ID: = "normal"
+const GLOBAL_EVENTS_MODE_COMP_ID: = "comp"
+const GLOBAL_EVENTS_MODE_SPECIAL_ID: = "special"
 const BATMAN43_LIST_ID: = "batman43"
 const BATMAN43_LIST_PATH: = "res://lists/batman43.dat"
 const BATMAN43_MODE_TITLE: = "Говно от Бэтмена"
@@ -189,22 +196,30 @@ const ANIMATED_BACKGROUND_MODE_ROLLING: = "rolling"
 const ANIMATED_BACKGROUND_MODE_IDLE: = "idle"
 const CUSTOM_ROLL_MUSIC_PATH: = "user://custom_roll_music.mp3"
 const BACKUP_FILE_PATHS: Array[String] = [
-    GLOBAL_EVENTS_REMOVED_ENTRIES_PATH, EXTRA_USER_LIST_PATH, EXTRA_REMOVED_ENTRIES_PATH,
+    GLOBAL_EVENTS_REMOVED_ENTRIES_PATH, GLOBAL_EVENTS_COMP_REMOVED_ENTRIES_PATH,
+    GLOBAL_EVENTS_SPECIAL_REMOVED_ENTRIES_PATH, EXTRA_USER_LIST_PATH, EXTRA_REMOVED_ENTRIES_PATH,
     WHEEL_REMOVED_ENTRIES_PATH, WHEEL_PITY_COUNT_PATH, WHEEL_PITY_UNDO_PATH,
     WEAPON_WHEEL_REMOVED_ENTRIES_PATH, WEAPON_WHEEL_PITY_COUNT_PATH, WEAPON_WHEEL_PITY_UNDO_PATH,
     START_WHEEL_REMOVED_ENTRIES_PATH, START_WHEEL_PITY_COUNT_PATH, START_WHEEL_PITY_UNDO_PATH,
     START_WHEEL_COMPLETED_PATH, GARANT_REMOVED_ENTRIES_PATH, GARANT_DELETE_COUNT_PATH,
     CUSTOM_BACKGROUND_IMAGE_PATH, CUSTOM_BACKGROUND_MODE_PATH, ANIMATED_BACKGROUND_MODE_PATH, CUSTOM_ROLL_MUSIC_PATH,
     "user://custom_roll_item_color.txt", "user://custom_button_color.txt", "user://custom_button_fill_color.txt",
+    "user://slot_text_outline_enabled.txt", "user://slot_text_background_enabled.txt",
+    "user://slot_text_outline_color.txt", "user://slot_text_background_color.txt",
     "user://sound_muted.txt", "user://sound_volume_percent.txt", "user://tts_enabled.txt",
     "user://tts_volume_percent.txt", "user://tts_rate.txt", "user://tts_language.txt",
 ]
 const BACKUP_TEMP_PATH: = "user://rgg_transfer.zip"
 const BACKUP_MAX_BYTES: = 128 * 1024 * 1024
 const CUSTOM_ROLL_ITEM_COLOR_PATH: = "user://custom_roll_item_color.txt"
+const SLOT_TEXT_OUTLINE_PATH: = "user://slot_text_outline_enabled.txt"
+const SLOT_TEXT_BACKGROUND_PATH: = "user://slot_text_background_enabled.txt"
+const SLOT_TEXT_OUTLINE_COLOR_PATH: = "user://slot_text_outline_color.txt"
+const SLOT_TEXT_BACKGROUND_COLOR_PATH: = "user://slot_text_background_color.txt"
 const CUSTOM_BUTTON_COLOR_PATH: = "user://custom_button_color.txt"
 const CUSTOM_BUTTON_FILL_COLOR_PATH: = "user://custom_button_fill_color.txt"
 const COLOR_DIALOG_SIZE: = Vector2i(340, 330)
+const SLOT_COLOR_DIALOG_SIZE: = Vector2i(390, 450)
 const SOUND_MUTED_SETTING_PATH: = "user://sound_muted.txt"
 const SOUND_VOLUME_PERCENT_SETTING_PATH: = "user://sound_volume_percent.txt"
 const TTS_ENABLED_SETTING_PATH: = "user://tts_enabled.txt"
@@ -229,6 +244,8 @@ const DEBUG_LOCAL_LISTS_DIR: = "lists"
 const HARDCORE_LIST_PATH: = "res://lists/hardcore.dat"
 const HARDCORE_DESCRIPTION_LIST_PATH: = "res://lists/hardcore_list.dat"
 const LOOTBOX_DESCRIPTION_LIST_PATH: = "res://lists/lootboxdescr.dat"
+const ROULETTE_LIST_PATH: = "res://lists/roulette.dat"
+const ROULETTE_DESCRIPTION_LIST_PATH: = "res://lists/roulette_list.dat"
 const LOOTBOX_DESCRIPTION_TARGET_PATHS: Array[String] = [
     "res://lists/bombs.dat", 
     "res://lists/gremlins.dat", 
@@ -709,12 +726,19 @@ const WHEEL_MODE_CONFIGS: Array[Dictionary] = [
         "hard_title": LEGENDARY_CARP_TITLE,
     },
 ]
+const GLOBAL_EVENTS_MODE_CONFIGS: Array[Dictionary] = [
+    {"id": GLOBAL_EVENTS_MODE_NORMAL_ID, "title": "Обычные глобалы", "path": GLOBAL_EVENTS_LIST_PATH, "removed_path": GLOBAL_EVENTS_REMOVED_ENTRIES_PATH},
+    {"id": GLOBAL_EVENTS_MODE_COMP_ID, "title": "Компетитив глобалы", "path": GLOBAL_EVENTS_COMP_LIST_PATH, "removed_path": GLOBAL_EVENTS_COMP_REMOVED_ENTRIES_PATH},
+    {"id": GLOBAL_EVENTS_MODE_SPECIAL_ID, "title": "Спецролльные глобалы", "path": GLOBAL_EVENTS_SPECIAL_LIST_PATH, "removed_path": GLOBAL_EVENTS_SPECIAL_REMOVED_ENTRIES_PATH},
+]
 
 var selected_platform: = ""
 var selected_list_path: = ""
 var selected_list_title: = ""
 var selected_wheel_mode_id: = WHEEL_MODE_STANDARD_ID
+var selected_global_event_mode_id: = GLOBAL_EVENTS_MODE_NORMAL_ID
 var wheel_mode_menu_open: = false
+var global_event_mode_menu_open: = false
 
 var base_games: PackedStringArray = PackedStringArray()
 var games: PackedStringArray = PackedStringArray()
@@ -768,6 +792,7 @@ var secondary_color: = Color(0.78, 0.8, 0.85, 1.0)
 var image_cache: Dictionary = {}
 var web_text_cache: Dictionary = {}
 var slot_labels: Array[Label] = []
+var slot_text_backgrounds: Array[Panel] = []
 var slot_image_nodes: Array[TextureRect] = []
 var slot_click_buttons: Array[Button] = []
 var slot_scroll_tween: Tween
@@ -827,6 +852,14 @@ var pending_backup_background_mime: = ""
 var backup_original_files: Dictionary = {}
 var custom_roll_item_color: = DEFAULT_ROLL_ITEM_COLOR
 var custom_roll_item_color_enabled: = false
+var slot_text_outline_enabled: = false
+var slot_text_background_enabled: = false
+var slot_text_outline_color: = Color(0.0, 0.0, 0.0, 1.0)
+var slot_text_outline_color_custom: = false
+var slot_text_background_color: = Color(0.07, 0.06, 0.04, 0.68)
+var slot_text_background_color_custom: = false
+var slot_outline_button: Button
+var slot_background_button: Button
 var custom_button_color: = DEFAULT_UI_BUTTON_TEXT_COLOR
 var custom_button_color_enabled: = false
 var custom_button_fill_color: = Color(0.0, 0.0, 0.0, 0.0)
@@ -873,6 +906,10 @@ var background_file_dialog: FileDialog
 var music_file_dialog: FileDialog
 var item_color_dialog: ConfirmationDialog
 var item_color_picker: ColorPicker
+var slot_outline_color_dialog: ConfirmationDialog
+var slot_outline_color_picker: ColorPicker
+var slot_background_color_dialog: ConfirmationDialog
+var slot_background_color_picker: ColorPicker
 var button_color_dialog: ConfirmationDialog
 var button_color_picker: ColorPicker
 var button_fill_color_dialog: ConfirmationDialog
@@ -930,6 +967,8 @@ var lootbox_browser_backdrop: ColorRect
 var lootbox_browser_close_chip: Control
 var wheel_mode_menu_panel: Panel
 var wheel_mode_buttons: Dictionary = {}
+var global_event_mode_menu_panel: Panel
+var global_event_mode_buttons: Dictionary = {}
 var wheel_descriptions: Dictionary = {}
 var wheel_description_links: Dictionary = {}
 var hardcore_descriptions: Dictionary = {}
@@ -937,6 +976,8 @@ var global_event_descriptions: Dictionary = {}
 var global_event_deleted_visible_slots: Dictionary = {}
 var lootbox_descriptions: Dictionary = {}
 var lootbox_description_links: Dictionary = {}
+var roulette_descriptions: Dictionary = {}
+var roulette_description_links: Dictionary = {}
 var wheel_description_overlay: Control
 var wheel_description_title_label: Label
 var wheel_description_item_label: Label
@@ -955,6 +996,7 @@ var wheel_center_delete_button: TextureButton
 var wheel_restore_button: Button
 var wheel_restore_all_button: Button
 var wheel_restore_target_list_id: = ""
+var wheel_restore_target_global_mode_id: = ""
 var wheel_restore_overlay: Control
 var wheel_restore_message_label: Label
 var wheel_restore_cancel_button: Button
@@ -1044,12 +1086,14 @@ func _ready() -> void :
         bottom_placeholder_2, 
     ]
     _create_runtime_nodes()
+    _migrate_legacy_global_event_removals()
     _configure_roll_display()
     _create_slot_click_buttons()
     _create_platform_browser()
     _create_special_roll_browser()
     _create_lootbox_browser()
     _create_wheel_mode_menu()
+    _create_global_event_mode_menu()
     _create_result_link_buttons()
     _create_wheel_description_popup()
     _create_garant_card_popup()
@@ -1088,6 +1132,7 @@ func _ready() -> void :
     _refresh_settings_menu_visibility()
     _reset_selected_list_ui()
     _load_saved_custom_roll_item_color()
+    _load_saved_slot_text_effects()
     _load_saved_custom_button_color()
     _load_saved_custom_button_fill_color()
     _reset_roll_slots()
@@ -1141,7 +1186,7 @@ func _on_settings_closing_control_input(event: InputEvent, control: Control) -> 
 
 func _connect_list_preview_inputs() -> void :
     if hero_button != null:
-        hero_button.gui_input.connect(_on_list_preview_input.bind(GLOBAL_EVENTS_MODE_TITLE, GLOBAL_EVENTS_LIST_PATH))
+        hero_button.gui_input.connect(_on_global_event_button_preview_input)
     if platforms_button != null:
         platforms_button.gui_input.connect(_on_list_preview_input.bind(PLATFORMS_MODE_TITLE, PLATFORMS_LIST_PATH))
     if bag_button != null:
@@ -1163,6 +1208,15 @@ func _on_wheel_button_preview_input(event: InputEvent) -> void :
         return
     var config: = _current_wheel_mode_config()
     _on_list_preview_input(event, str(config.get("title", WHEEL_MODE_TITLE)), str(config.get("normal_path", WHEEL_LIST_PATH)))
+
+
+
+func _on_global_event_button_preview_input(event: InputEvent) -> void:
+    var mouse_event: = event as InputEventMouseButton
+    if mouse_event == null or not mouse_event.pressed or mouse_event.button_index != MOUSE_BUTTON_RIGHT:
+        return
+    var config: = _current_global_event_mode_config()
+    _on_list_preview_input(event, str(config.get("title", GLOBAL_EVENTS_MODE_TITLE)), str(config.get("path", GLOBAL_EVENTS_LIST_PATH)))
 
 
 
@@ -1522,7 +1576,7 @@ func _on_global_events_button_pressed() -> void :
         return
     if rolling:
         return
-    _select_list(GLOBAL_EVENTS_LIST_ID, GLOBAL_EVENTS_MODE_TITLE, GLOBAL_EVENTS_LIST_PATH, hero_tile)
+    _toggle_global_event_mode_menu()
 
 
 
@@ -1545,6 +1599,46 @@ func _on_platforms_button_pressed() -> void :
     if rolling:
         return
     _select_list(PLATFORMS_LIST_ID, PLATFORMS_MODE_TITLE, PLATFORMS_LIST_PATH, platforms_tile)
+
+
+func _get_global_event_mode_config(mode_id: String) -> Dictionary:
+    for config in GLOBAL_EVENTS_MODE_CONFIGS:
+        if str(config.get("id", "")) == mode_id:
+            return config
+    return GLOBAL_EVENTS_MODE_CONFIGS[0]
+
+
+
+func _current_global_event_mode_config() -> Dictionary:
+    return _get_global_event_mode_config(selected_global_event_mode_id)
+
+
+
+func _global_event_mode_id_for_path(path: String) -> String:
+    for config in GLOBAL_EVENTS_MODE_CONFIGS:
+        if str(config.get("path", "")) == path:
+            return str(config.get("id", GLOBAL_EVENTS_MODE_NORMAL_ID))
+    return ""
+
+
+
+func _is_global_event_mode_path(path: String) -> bool:
+    return not _global_event_mode_id_for_path(path).is_empty()
+
+
+
+func _select_global_event_mode(mode_id: String) -> void:
+    var config: = _get_global_event_mode_config(mode_id)
+    selected_global_event_mode_id = str(config.get("id", GLOBAL_EVENTS_MODE_NORMAL_ID))
+    _select_list(GLOBAL_EVENTS_LIST_ID, str(config.get("title", GLOBAL_EVENTS_MODE_TITLE)), str(config.get("path", GLOBAL_EVENTS_LIST_PATH)), hero_tile)
+    _update_global_event_mode_menu_selection()
+
+
+
+func _global_event_removed_entries_path(mode_id: String = "") -> String:
+    var config: = _get_global_event_mode_config(selected_global_event_mode_id if mode_id.is_empty() else mode_id)
+    return str(config.get("removed_path", GLOBAL_EVENTS_REMOVED_ENTRIES_PATH))
+
 
 
 func _get_wheel_mode_config(mode_id: String) -> Dictionary:
@@ -2096,8 +2190,10 @@ func _select_list(list_id: String, title: String, path: String, tile = null) -> 
         _load_wheel_descriptions()
     elif path == HARDCORE_LIST_PATH:
         _load_hardcore_descriptions()
-    elif path == GLOBAL_EVENTS_LIST_PATH:
+    elif _is_global_event_mode_path(path):
         _load_global_event_descriptions()
+    elif path == ROULETTE_LIST_PATH:
+        _load_roulette_descriptions()
     elif _is_lootbox_description_path(path):
         _load_lootbox_descriptions()
     base_games = _load_list(path)
@@ -2112,6 +2208,7 @@ func _select_list(list_id: String, title: String, path: String, tile = null) -> 
     _hide_list_preview_popup()
     _hide_extra_list_editor_popup()
     _hide_wheel_mode_menu()
+    _hide_global_event_mode_menu()
     _apply_letter_digit_filter()
     _build_search_urls("")
     _reset_roll_slots()
@@ -2641,7 +2738,16 @@ func _apply_final_roll_colors() -> void :
 func _set_slot_label_color(slot_index: int, color: Color) -> void :
     if slot_index < 0 or slot_index >= slot_labels.size():
         return
-    slot_labels[slot_index].add_theme_color_override("font_color", color)
+    var label: = slot_labels[slot_index]
+    label.add_theme_color_override("font_color", color)
+    if slot_text_outline_enabled:
+        var outline_color: = slot_text_outline_color if slot_text_outline_color_custom else Color(1.0 - color.r, 1.0 - color.g, 1.0 - color.b, 1.0)
+        label.add_theme_color_override("font_outline_color", outline_color)
+        label.add_theme_constant_override("outline_size", 4)
+    else:
+        label.remove_theme_color_override("font_outline_color")
+        label.remove_theme_constant_override("outline_size")
+    _update_slot_text_background(slot_index)
 
 
 
@@ -2721,13 +2827,13 @@ func _wheel_has_resettable_progress() -> bool:
 
 
 
-func _global_events_has_user_removals() -> bool:
-    return not _load_global_event_removed_entries().is_empty()
+func _global_events_has_user_removals(mode_id: String = "") -> bool:
+    return not _load_global_event_removed_entries(mode_id).is_empty()
 
 
 
 func _refresh_wheel_restore_button() -> void :
-    if wheel_restore_button != null and selected_list_path == GLOBAL_EVENTS_LIST_PATH:
+    if wheel_restore_button != null and _is_global_events_list_selected():
         wheel_restore_button.text = "Вернуть Глобалы"
         wheel_restore_button.visible = true
         wheel_restore_button.disabled = rolling or not _global_events_has_user_removals()
@@ -2968,6 +3074,7 @@ func _render_slots(scroll_direction: int = 0) -> void :
             label.text = _entry_to_display_text(entry)
             texture_node.texture = null
             texture_node.visible = false
+        _update_slot_text_background(i)
     if scroll_direction != 0:
         _animate_slot_scroll(scroll_direction)
     _refresh_wheel_delete_button()
@@ -3202,7 +3309,7 @@ func _is_lootbox_description_list_selected() -> bool:
 
 
 func _is_lootbox_description_path(path: String) -> bool:
-    return path in LOOTBOX_DESCRIPTION_TARGET_PATHS
+    return path == ROULETTE_LIST_PATH or path in LOOTBOX_DESCRIPTION_TARGET_PATHS
 
 
 
@@ -3287,6 +3394,7 @@ func _hide_optional_ui() -> void :
     _hide_garant_card_popup(false)
     _hide_list_preview_popup()
     _hide_wheel_mode_menu()
+    _hide_global_event_mode_menu()
 
 
 
@@ -3641,9 +3749,9 @@ func _configure_compact_color_picker(picker: ColorPicker) -> void :
 
 
 
-func _popup_color_dialog(dialog: ConfirmationDialog) -> void :
-    dialog.popup_centered(COLOR_DIALOG_SIZE)
-    dialog.size = COLOR_DIALOG_SIZE
+func _popup_color_dialog(dialog: ConfirmationDialog, dialog_size: Vector2i = COLOR_DIALOG_SIZE) -> void :
+    dialog.popup_centered(dialog_size)
+    dialog.size = dialog_size
 
 
 
@@ -3653,6 +3761,26 @@ func _on_settings_item_color_button_pressed() -> void :
         return
     item_color_picker.color = _resolve_roll_main_color()
     _popup_color_dialog(item_color_dialog)
+
+
+
+
+func _on_settings_slot_outline_color_button_pressed() -> void :
+    _set_settings_menu_open(false)
+    if slot_outline_color_dialog == null or slot_outline_color_picker == null:
+        return
+    slot_outline_color_picker.color = slot_text_outline_color if slot_text_outline_color_custom else Color(1.0 - main_color.r, 1.0 - main_color.g, 1.0 - main_color.b, 1.0)
+    _popup_color_dialog(slot_outline_color_dialog, SLOT_COLOR_DIALOG_SIZE)
+
+
+
+
+func _on_settings_slot_background_color_button_pressed() -> void :
+    _set_settings_menu_open(false)
+    if slot_background_color_dialog == null or slot_background_color_picker == null:
+        return
+    slot_background_color_picker.color = slot_text_background_color if slot_text_background_color_custom else _default_slot_background_color(main_color)
+    _popup_color_dialog(slot_background_color_dialog, SLOT_COLOR_DIALOG_SIZE)
 
 
 
@@ -3683,6 +3811,10 @@ func _on_settings_reset_button_pressed() -> void :
     _delete_user_settings_file(ANIMATED_BACKGROUND_MODE_PATH)
     _delete_user_settings_file(CUSTOM_ROLL_MUSIC_PATH)
     _delete_user_settings_file(CUSTOM_ROLL_ITEM_COLOR_PATH)
+    _delete_user_settings_file(SLOT_TEXT_OUTLINE_PATH)
+    _delete_user_settings_file(SLOT_TEXT_BACKGROUND_PATH)
+    _delete_user_settings_file(SLOT_TEXT_OUTLINE_COLOR_PATH)
+    _delete_user_settings_file(SLOT_TEXT_BACKGROUND_COLOR_PATH)
     _delete_user_settings_file(CUSTOM_BUTTON_COLOR_PATH)
     _delete_user_settings_file(CUSTOM_BUTTON_FILL_COLOR_PATH)
     _delete_user_settings_file(SOUND_MUTED_SETTING_PATH)
@@ -3705,6 +3837,7 @@ func _on_settings_reset_button_pressed() -> void :
     _load_saved_custom_background()
     _load_saved_custom_roll_music()
     _load_saved_custom_roll_item_color()
+    _load_saved_slot_text_effects()
     _load_saved_custom_button_color()
     _load_saved_custom_button_fill_color()
     _refresh_sound_mute_button()
@@ -3932,6 +4065,69 @@ func _on_roll_item_color_selected(color: Color) -> void :
         _apply_current_roll_colors()
     else:
         _apply_final_roll_colors()
+
+
+
+
+func _on_slot_outline_button_pressed() -> void :
+    slot_text_outline_enabled = not slot_text_outline_enabled
+    _save_bool_setting(SLOT_TEXT_OUTLINE_PATH, slot_text_outline_enabled)
+    _refresh_slot_effect_buttons()
+    if rolling:
+        _apply_current_roll_colors()
+    else:
+        _apply_final_roll_colors()
+
+
+
+
+func _on_slot_background_button_pressed() -> void :
+    slot_text_background_enabled = not slot_text_background_enabled
+    _save_bool_setting(SLOT_TEXT_BACKGROUND_PATH, slot_text_background_enabled)
+    _refresh_slot_effect_buttons()
+    for i in range(slot_labels.size()):
+        _update_slot_text_background(i)
+
+
+
+
+func _on_slot_outline_color_selected() -> void :
+    if slot_outline_color_picker == null:
+        return
+    slot_text_outline_color = slot_outline_color_picker.color
+    slot_text_outline_color_custom = true
+    slot_text_outline_enabled = true
+    _save_string_setting(SLOT_TEXT_OUTLINE_COLOR_PATH, slot_text_outline_color.to_html(true))
+    _save_bool_setting(SLOT_TEXT_OUTLINE_PATH, true)
+    _refresh_slot_effect_buttons()
+    if rolling:
+        _apply_current_roll_colors()
+    else:
+        _apply_final_roll_colors()
+
+
+
+
+func _on_slot_background_color_selected() -> void :
+    if slot_background_color_picker == null:
+        return
+    slot_text_background_color = slot_background_color_picker.color
+    slot_text_background_color_custom = true
+    slot_text_background_enabled = true
+    _save_string_setting(SLOT_TEXT_BACKGROUND_COLOR_PATH, slot_text_background_color.to_html(true))
+    _save_bool_setting(SLOT_TEXT_BACKGROUND_PATH, true)
+    _refresh_slot_effect_buttons()
+    for i in range(slot_labels.size()):
+        _update_slot_text_background(i)
+
+
+
+
+func _refresh_slot_effect_buttons() -> void :
+    if slot_outline_button != null:
+        slot_outline_button.text = "Убрать\nобводку" if slot_text_outline_enabled else "Добавить\nобводку"
+    if slot_background_button != null:
+        slot_background_button.text = "Убрать фон\nпунктов" if slot_text_background_enabled else "Добавить фон\nпунктов"
 
 
 
@@ -4256,6 +4452,28 @@ func _load_saved_custom_roll_item_color() -> void :
 
 
 
+
+func _load_saved_slot_text_effects() -> void :
+    slot_text_outline_enabled = _load_bool_setting(SLOT_TEXT_OUTLINE_PATH, false)
+    slot_text_background_enabled = _load_bool_setting(SLOT_TEXT_BACKGROUND_PATH, false)
+    slot_text_outline_color_custom = false
+    slot_text_background_color_custom = false
+    if FileAccess.file_exists(SLOT_TEXT_OUTLINE_COLOR_PATH):
+        var outline_text: = _read_text_auto(SLOT_TEXT_OUTLINE_COLOR_PATH).strip_edges()
+        if not outline_text.is_empty():
+            slot_text_outline_color = Color.from_string("#" + outline_text, Color(0.0, 0.0, 0.0, 1.0))
+            slot_text_outline_color_custom = true
+    if FileAccess.file_exists(SLOT_TEXT_BACKGROUND_COLOR_PATH):
+        var background_text: = _read_text_auto(SLOT_TEXT_BACKGROUND_COLOR_PATH).strip_edges()
+        if not background_text.is_empty():
+            slot_text_background_color = Color.from_string("#" + background_text, Color(0.07, 0.06, 0.04, 0.68))
+            slot_text_background_color_custom = true
+    _refresh_slot_effect_buttons()
+    for i in range(slot_labels.size()):
+        _update_slot_text_background(i)
+
+
+
 func _load_saved_custom_button_color() -> void :
     custom_button_color_enabled = false
     custom_button_color = DEFAULT_UI_BUTTON_TEXT_COLOR
@@ -4404,7 +4622,7 @@ func _restore_bottom_bar_tile_selection() -> void :
 
 
 func _settings_controls_available() -> bool:
-    return not platform_browser_open and not special_roll_browser_open and not lootbox_browser_open and not wheel_mode_menu_open
+    return not platform_browser_open and not special_roll_browser_open and not lootbox_browser_open and not wheel_mode_menu_open and not global_event_mode_menu_open
 
 
 
@@ -5273,9 +5491,21 @@ func _load_global_event_descriptions() -> void :
 
 
 func _load_lootbox_descriptions() -> void :
-    lootbox_descriptions.clear()
-    lootbox_description_links.clear()
-    var text: = _read_text_auto(LOOTBOX_DESCRIPTION_LIST_PATH)
+    _load_lootbox_description_file(LOOTBOX_DESCRIPTION_LIST_PATH, lootbox_descriptions, lootbox_description_links)
+
+
+
+
+func _load_roulette_descriptions() -> void :
+    _load_lootbox_description_file(ROULETTE_DESCRIPTION_LIST_PATH, roulette_descriptions, roulette_description_links)
+
+
+
+
+func _load_lootbox_description_file(path: String, descriptions: Dictionary, links: Dictionary) -> void :
+    descriptions.clear()
+    links.clear()
+    var text: = _read_text_auto(path)
     if text.is_empty():
         return
 
@@ -5297,9 +5527,9 @@ func _load_lootbox_descriptions() -> void :
             description_parts.append(part)
         var description: = "|".join(description_parts).strip_edges()
         if not title.is_empty():
-            lootbox_descriptions[title] = description
+            descriptions[title] = description
             if not link_url.is_empty():
-                lootbox_description_links[title] = link_url
+                links[title] = link_url
 
 
 
@@ -5349,10 +5579,11 @@ func _load_extra_removed_entries() -> PackedStringArray:
 
 
 
-func _load_global_event_removed_entries() -> PackedStringArray:
-    if not FileAccess.file_exists(GLOBAL_EVENTS_REMOVED_ENTRIES_PATH):
+func _load_global_event_removed_entries(mode_id: String = "") -> PackedStringArray:
+    var path: = _global_event_removed_entries_path(mode_id)
+    if not FileAccess.file_exists(path):
         return PackedStringArray()
-    var text: = _read_text_auto(GLOBAL_EVENTS_REMOVED_ENTRIES_PATH)
+    var text: = _read_text_auto(path)
     if text.is_empty():
         return PackedStringArray()
     var result: = PackedStringArray()
@@ -5391,12 +5622,63 @@ func _save_extra_removed_entries(entries: PackedStringArray) -> void :
 
 
 
-func _save_global_event_removed_entries(entries: PackedStringArray) -> void :
-    var file: = FileAccess.open(GLOBAL_EVENTS_REMOVED_ENTRIES_PATH, FileAccess.WRITE)
+func _save_global_event_removed_entries(entries: PackedStringArray, mode_id: String = "") -> bool:
+    var file: = FileAccess.open(_global_event_removed_entries_path(mode_id), FileAccess.WRITE)
     if file == null:
-        return
+        return false
     file.store_string("\n".join(entries))
     file.close()
+    return true
+
+
+
+func _migrate_legacy_global_event_removals() -> void:
+    var legacy_entries: = _load_global_event_removed_entries(GLOBAL_EVENTS_MODE_NORMAL_ID)
+    if legacy_entries.is_empty():
+        return
+    var normal_titles: Dictionary = {}
+    var comp_titles: Dictionary = {}
+    var special_titles: Dictionary = {}
+    var normal_text: = _read_text_auto(GLOBAL_EVENTS_LIST_PATH)
+    var comp_text: = _read_text_auto(GLOBAL_EVENTS_COMP_LIST_PATH)
+    var special_text: = _read_text_auto(GLOBAL_EVENTS_SPECIAL_LIST_PATH)
+    if normal_text.is_empty() or comp_text.is_empty() or special_text.is_empty():
+        return
+    for raw_line in normal_text.split("\n", false):
+        normal_titles[raw_line.strip_edges()] = true
+    for raw_line in comp_text.split("\n", false):
+        comp_titles[raw_line.strip_edges()] = true
+    for raw_line in special_text.split("\n", false):
+        special_titles[raw_line.strip_edges()] = true
+
+    var normal_entries: = PackedStringArray()
+    var comp_entries: = _load_global_event_removed_entries(GLOBAL_EVENTS_MODE_COMP_ID)
+    var special_entries: = _load_global_event_removed_entries(GLOBAL_EVENTS_MODE_SPECIAL_ID)
+    var changed: = false
+    var moved: = false
+    for entry in legacy_entries:
+        if comp_titles.has(entry):
+            if not comp_entries.has(entry):
+                comp_entries.append(entry)
+            moved = true
+            changed = true
+        elif special_titles.has(entry):
+            if not special_entries.has(entry):
+                special_entries.append(entry)
+            moved = true
+            changed = true
+        elif normal_titles.has(entry):
+            normal_entries.append(entry)
+        else:
+            changed = true
+    if not changed:
+        return
+    if moved:
+        if not _save_global_event_removed_entries(comp_entries, GLOBAL_EVENTS_MODE_COMP_ID):
+            return
+        if not _save_global_event_removed_entries(special_entries, GLOBAL_EVENTS_MODE_SPECIAL_ID):
+            return
+    _save_global_event_removed_entries(normal_entries, GLOBAL_EVENTS_MODE_NORMAL_ID)
 
 
 
@@ -5566,8 +5848,8 @@ func _apply_garant_user_removals(entries: PackedStringArray) -> PackedStringArra
 
 
 
-func _apply_global_event_user_removals(entries: PackedStringArray) -> PackedStringArray:
-    var removed_entries: = _load_global_event_removed_entries()
+func _apply_global_event_user_removals(entries: PackedStringArray, mode_id: String = "") -> PackedStringArray:
+    var removed_entries: = _load_global_event_removed_entries(mode_id)
     if removed_entries.is_empty():
         return entries
     var removed_counts: Dictionary = {}
@@ -5626,20 +5908,24 @@ func _get_global_event_description(title: String) -> String:
 
 
 func _get_lootbox_description(title: String) -> String:
+    if selected_list_path == ROULETTE_LIST_PATH:
+        if roulette_descriptions.is_empty():
+            _load_roulette_descriptions()
+        return str(roulette_descriptions.get(title, ""))
     if lootbox_descriptions.is_empty():
         _load_lootbox_descriptions()
-    if lootbox_descriptions.has(title):
-        return str(lootbox_descriptions[title])
-    return ""
+    return str(lootbox_descriptions.get(title, ""))
 
 
 
 func _get_lootbox_description_link(title: String) -> String:
+    if selected_list_path == ROULETTE_LIST_PATH:
+        if roulette_descriptions.is_empty() and roulette_description_links.is_empty():
+            _load_roulette_descriptions()
+        return str(roulette_description_links.get(title, ""))
     if lootbox_descriptions.is_empty() and lootbox_description_links.is_empty():
         _load_lootbox_descriptions()
-    if lootbox_description_links.has(title):
-        return str(lootbox_description_links[title])
-    return ""
+    return str(lootbox_description_links.get(title, ""))
 
 
 
@@ -6370,9 +6656,11 @@ func _show_wheel_restore_popup(target_list_id: String = "") -> void :
     if target_list_id.is_empty():
         target_list_id = GLOBAL_EVENTS_LIST_ID if _is_global_events_list_selected() else WHEEL_LIST_ID
     wheel_restore_target_list_id = target_list_id
+    wheel_restore_target_global_mode_id = selected_global_event_mode_id if target_list_id == GLOBAL_EVENTS_LIST_ID else ""
     if target_list_id == GLOBAL_EVENTS_LIST_ID:
-        wheel_restore_message_label.text = "ВСЕ ИЗНАЧАЛЬНЫЕ ГЛОБАЛЫ ВЕРНУТСЯ. И ЭТО ИЗМЕНЕНИЕ НЕЛЬЗЯ БУДЕТ ОТКАТИТЬ"
-        wheel_restore_ok_button.text = "ВЕРНУТЬ ВСЕ ГЛОБАЛЫ"
+        var config: = _get_global_event_mode_config(wheel_restore_target_global_mode_id)
+        wheel_restore_message_label.text = "%s: ВЕРНУТЬ ВСЕ УДАЛЁННЫЕ ПУНКТЫ? ОТМЕНИТЬ НЕЛЬЗЯ." % str(config.get("title", GLOBAL_EVENTS_MODE_TITLE)).to_upper()
+        wheel_restore_ok_button.text = "ВЕРНУТЬ ПУНКТЫ"
     else:
         wheel_restore_message_label.text = "ПУНКТЫ ВСЕХ КОЛЁС ВЕРНУТСЯ, А СЧЁТЧИКИ ГАРАНТА СБРОСЯТСЯ. ЭТО ИЗМЕНЕНИЕ НЕЛЬЗЯ БУДЕТ ОТКАТИТЬ"
         wheel_restore_ok_button.text = "ВЕРНУТЬ ВСЕ ПУНКТЫ КОЛЕСА"
@@ -6385,6 +6673,7 @@ func _hide_wheel_restore_popup() -> void :
     if wheel_restore_overlay != null:
         wheel_restore_overlay.visible = false
     wheel_restore_target_list_id = ""
+    wheel_restore_target_global_mode_id = ""
 
 
 
@@ -6396,8 +6685,9 @@ func _on_wheel_restore_cancel_pressed() -> void :
 func _on_wheel_restore_ok_pressed() -> void :
     var restore_global_events: = wheel_restore_target_list_id == GLOBAL_EVENTS_LIST_ID
     if restore_global_events:
-        var absolute_global_removed_path: = ProjectSettings.globalize_path(GLOBAL_EVENTS_REMOVED_ENTRIES_PATH)
-        if FileAccess.file_exists(GLOBAL_EVENTS_REMOVED_ENTRIES_PATH):
+        var removed_path: = _global_event_removed_entries_path(wheel_restore_target_global_mode_id)
+        var absolute_global_removed_path: = ProjectSettings.globalize_path(removed_path)
+        if FileAccess.file_exists(removed_path):
             DirAccess.remove_absolute(absolute_global_removed_path)
         global_event_deleted_visible_slots.clear()
     else:
@@ -6422,7 +6712,7 @@ func _on_wheel_restore_ok_pressed() -> void :
         if GARANT_FEATURE_ENABLED:
             _save_garant_delete_count(0)
     _hide_wheel_restore_popup()
-    if _is_wheel_list_selected() or selected_list_path == GLOBAL_EVENTS_LIST_PATH:
+    if _is_wheel_list_selected() or _is_global_events_list_selected():
         _reload_selected_list()
     _refresh_wheel_delete_button()
 
@@ -6548,7 +6838,7 @@ func _delete_global_event_entry(entry: String, slot_index: int) -> void :
     if slot_index >= 0:
         global_event_deleted_visible_slots[slot_index] = true
     _hide_wheel_description_popup()
-    if selected_list_path == GLOBAL_EVENTS_LIST_PATH:
+    if _is_global_events_list_selected():
         _reload_selected_list()
     _refresh_wheel_delete_button()
 
@@ -6646,6 +6936,7 @@ func _description_audit_specs() -> Array[Dictionary]:
     _load_hardcore_descriptions()
     _load_global_event_descriptions()
     _load_lootbox_descriptions()
+    _load_roulette_descriptions()
 
     var specs: Array[Dictionary] = []
     var seen_specs: Dictionary = {}
@@ -6672,13 +6963,14 @@ func _description_audit_specs() -> Array[Dictionary]:
         HARDCORE_DESCRIPTION_LIST_PATH,
         hardcore_descriptions
     )
-    _append_description_audit_spec(
-        specs,
-        seen_specs,
-        GLOBAL_EVENTS_LIST_PATH,
-        GLOBAL_EVENTS_DESCRIPTION_LIST_PATH,
-        global_event_descriptions
-    )
+    for config in GLOBAL_EVENTS_MODE_CONFIGS:
+        _append_description_audit_spec(
+            specs,
+            seen_specs,
+            str(config.get("path", "")),
+            GLOBAL_EVENTS_DESCRIPTION_LIST_PATH,
+            global_event_descriptions
+        )
     for source_path in LOOTBOX_DESCRIPTION_TARGET_PATHS:
         _append_description_audit_spec(
             specs,
@@ -6687,6 +6979,13 @@ func _description_audit_specs() -> Array[Dictionary]:
             LOOTBOX_DESCRIPTION_LIST_PATH,
             lootbox_descriptions
         )
+    _append_description_audit_spec(
+        specs,
+        seen_specs,
+        ROULETTE_LIST_PATH,
+        ROULETTE_DESCRIPTION_LIST_PATH,
+        roulette_descriptions
+    )
     return specs
 
 
@@ -7221,7 +7520,7 @@ func _create_settings_menu() -> void :
 
     var reset_button: = Button.new()
     reset_button.name = "SettingsResetButton"
-    reset_button.position = Vector2(14, 382)
+    reset_button.position = Vector2(14, 450)
     reset_button.size = Vector2(196, 38)
     reset_button.text = "Сбросить настройки\nкастомизации"
     reset_button.focus_mode = Control.FOCUS_NONE
@@ -7237,7 +7536,7 @@ func _create_settings_menu() -> void :
     if _is_web_runtime():
         var export_button: = Button.new()
         export_button.name = "SettingsExportButton"
-        export_button.position = Vector2(14, 424)
+        export_button.position = Vector2(14, 492)
         export_button.size = Vector2(94, 27)
         export_button.text = "Export"
         export_button.focus_mode = Control.FOCUS_NONE
@@ -7250,7 +7549,7 @@ func _create_settings_menu() -> void :
 
         var import_button: = Button.new()
         import_button.name = "SettingsImportButton"
-        import_button.position = Vector2(116, 424)
+        import_button.position = Vector2(116, 492)
         import_button.size = Vector2(94, 27)
         import_button.text = "Import"
         import_button.focus_mode = Control.FOCUS_NONE
@@ -7270,7 +7569,7 @@ func _create_settings_menu() -> void :
 
         var animation_label: = Label.new()
         animation_label.name = "SettingsAnimationModeLabel"
-        animation_label.position = Vector2(14, 455)
+        animation_label.position = Vector2(14, 523)
         animation_label.size = Vector2(196, 18)
         animation_label.text = "Анимация GIF / видео"
         animation_label.mouse_filter = Control.MOUSE_FILTER_IGNORE
@@ -7280,7 +7579,7 @@ func _create_settings_menu() -> void :
 
         animated_background_mode_option = OptionButton.new()
         animated_background_mode_option.name = "SettingsAnimationModeOption"
-        animated_background_mode_option.position = Vector2(14, 477)
+        animated_background_mode_option.position = Vector2(14, 545)
         animated_background_mode_option.size = Vector2(196, 28)
         animated_background_mode_option.focus_mode = Control.FOCUS_NONE
         animated_background_mode_option.mouse_default_cursor_shape = Control.CURSOR_POINTING_HAND
@@ -7328,9 +7627,68 @@ func _create_settings_menu() -> void :
     item_color_button.pressed.connect(_on_settings_item_color_button_pressed)
     settings_panel.add_child(item_color_button)
 
+    slot_outline_button = Button.new()
+    slot_outline_button.name = "SettingsSlotOutlineButton"
+    slot_outline_button.position = Vector2(14, 322)
+    slot_outline_button.size = Vector2(94, 30)
+    slot_outline_button.focus_mode = Control.FOCUS_NONE
+    slot_outline_button.mouse_default_cursor_shape = Control.CURSOR_POINTING_HAND
+    slot_outline_button.add_theme_stylebox_override("normal", settings_item_style)
+    slot_outline_button.add_theme_stylebox_override("pressed", settings_item_style)
+    slot_outline_button.add_theme_stylebox_override("hover", settings_item_style)
+    slot_outline_button.add_theme_color_override("font_color", Color(0.96, 0.96, 0.98, 1.0))
+    slot_outline_button.add_theme_font_size_override("font_size", 12)
+    slot_outline_button.pressed.connect(_on_slot_outline_button_pressed)
+    settings_panel.add_child(slot_outline_button)
+
+    slot_background_button = Button.new()
+    slot_background_button.name = "SettingsSlotBackgroundButton"
+    slot_background_button.position = Vector2(116, 322)
+    slot_background_button.size = Vector2(94, 30)
+    slot_background_button.focus_mode = Control.FOCUS_NONE
+    slot_background_button.mouse_default_cursor_shape = Control.CURSOR_POINTING_HAND
+    slot_background_button.add_theme_stylebox_override("normal", settings_item_style)
+    slot_background_button.add_theme_stylebox_override("pressed", settings_item_style)
+    slot_background_button.add_theme_stylebox_override("hover", settings_item_style)
+    slot_background_button.add_theme_color_override("font_color", Color(0.96, 0.96, 0.98, 1.0))
+    slot_background_button.add_theme_font_size_override("font_size", 12)
+    slot_background_button.pressed.connect(_on_slot_background_button_pressed)
+    settings_panel.add_child(slot_background_button)
+    _refresh_slot_effect_buttons()
+
+    var outline_color_button: = Button.new()
+    outline_color_button.name = "SettingsSlotOutlineColorButton"
+    outline_color_button.position = Vector2(14, 356)
+    outline_color_button.size = Vector2(94, 30)
+    outline_color_button.text = "Цвет\nобводки"
+    outline_color_button.focus_mode = Control.FOCUS_NONE
+    outline_color_button.mouse_default_cursor_shape = Control.CURSOR_POINTING_HAND
+    outline_color_button.add_theme_stylebox_override("normal", settings_item_style)
+    outline_color_button.add_theme_stylebox_override("pressed", settings_item_style)
+    outline_color_button.add_theme_stylebox_override("hover", settings_item_style)
+    outline_color_button.add_theme_color_override("font_color", Color(0.96, 0.96, 0.98, 1.0))
+    outline_color_button.add_theme_font_size_override("font_size", 12)
+    outline_color_button.pressed.connect(_on_settings_slot_outline_color_button_pressed)
+    settings_panel.add_child(outline_color_button)
+
+    var background_color_button: = Button.new()
+    background_color_button.name = "SettingsSlotBackgroundColorButton"
+    background_color_button.position = Vector2(116, 356)
+    background_color_button.size = Vector2(94, 30)
+    background_color_button.text = "Цвет фона\nпунктов"
+    background_color_button.focus_mode = Control.FOCUS_NONE
+    background_color_button.mouse_default_cursor_shape = Control.CURSOR_POINTING_HAND
+    background_color_button.add_theme_stylebox_override("normal", settings_item_style)
+    background_color_button.add_theme_stylebox_override("pressed", settings_item_style)
+    background_color_button.add_theme_stylebox_override("hover", settings_item_style)
+    background_color_button.add_theme_color_override("font_color", Color(0.96, 0.96, 0.98, 1.0))
+    background_color_button.add_theme_font_size_override("font_size", 12)
+    background_color_button.pressed.connect(_on_settings_slot_background_color_button_pressed)
+    settings_panel.add_child(background_color_button)
+
     var button_text_color_button: = Button.new()
     button_text_color_button.name = "SettingsButtonTextColorButton"
-    button_text_color_button.position = Vector2(14, 322)
+    button_text_color_button.position = Vector2(14, 390)
     button_text_color_button.size = Vector2(196, 26)
     button_text_color_button.text = "Цвет текста кнопок"
     button_text_color_button.focus_mode = Control.FOCUS_NONE
@@ -7345,7 +7703,7 @@ func _create_settings_menu() -> void :
 
     var button_color_button: = Button.new()
     button_color_button.name = "SettingsButtonColorButton"
-    button_color_button.position = Vector2(14, 352)
+    button_color_button.position = Vector2(14, 420)
     button_color_button.size = Vector2(196, 26)
     button_color_button.text = "Цвет кнопок"
     button_color_button.focus_mode = Control.FOCUS_NONE
@@ -7631,6 +7989,74 @@ func _create_custom_background_controls() -> void :
     item_color_picker.color = _resolve_roll_main_color()
     item_color_dialog.add_child(item_color_picker)
 
+    slot_outline_color_dialog = ConfirmationDialog.new()
+    slot_outline_color_dialog.name = "SlotOutlineColorDialog"
+    slot_outline_color_dialog.title = "Цвет обводки"
+    slot_outline_color_dialog.ok_button_text = "OK"
+    slot_outline_color_dialog.confirmed.connect(_on_slot_outline_color_selected)
+    slot_outline_color_dialog.min_size = SLOT_COLOR_DIALOG_SIZE
+    add_child(slot_outline_color_dialog)
+
+    slot_outline_color_picker = ColorPicker.new()
+    slot_outline_color_picker.name = "SlotOutlineColorPicker"
+    _configure_compact_color_picker(slot_outline_color_picker)
+    slot_outline_color_picker.sliders_visible = true
+    slot_outline_color_picker.edit_alpha = true
+    slot_outline_color_picker.anchor_right = 1.0
+    slot_outline_color_picker.anchor_bottom = 1.0
+    slot_outline_color_picker.offset_left = 12.0
+    slot_outline_color_picker.offset_top = 12.0
+    slot_outline_color_picker.offset_right = -12.0
+    slot_outline_color_picker.offset_bottom = -78.0
+    slot_outline_color_dialog.add_child(slot_outline_color_picker)
+
+    var outline_alpha_hint: = Label.new()
+    outline_alpha_hint.text = "A: 0% — прозрачно, 100% — непрозрачно"
+    outline_alpha_hint.anchor_right = 1.0
+    outline_alpha_hint.anchor_top = 1.0
+    outline_alpha_hint.anchor_bottom = 1.0
+    outline_alpha_hint.offset_left = 12.0
+    outline_alpha_hint.offset_top = -72.0
+    outline_alpha_hint.offset_right = -12.0
+    outline_alpha_hint.offset_bottom = -48.0
+    outline_alpha_hint.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+    outline_alpha_hint.add_theme_font_size_override("font_size", 12)
+    slot_outline_color_dialog.add_child(outline_alpha_hint)
+
+    slot_background_color_dialog = ConfirmationDialog.new()
+    slot_background_color_dialog.name = "SlotBackgroundColorDialog"
+    slot_background_color_dialog.title = "Цвет фона пунктов"
+    slot_background_color_dialog.ok_button_text = "OK"
+    slot_background_color_dialog.confirmed.connect(_on_slot_background_color_selected)
+    slot_background_color_dialog.min_size = SLOT_COLOR_DIALOG_SIZE
+    add_child(slot_background_color_dialog)
+
+    slot_background_color_picker = ColorPicker.new()
+    slot_background_color_picker.name = "SlotBackgroundColorPicker"
+    _configure_compact_color_picker(slot_background_color_picker)
+    slot_background_color_picker.sliders_visible = true
+    slot_background_color_picker.edit_alpha = true
+    slot_background_color_picker.anchor_right = 1.0
+    slot_background_color_picker.anchor_bottom = 1.0
+    slot_background_color_picker.offset_left = 12.0
+    slot_background_color_picker.offset_top = 12.0
+    slot_background_color_picker.offset_right = -12.0
+    slot_background_color_picker.offset_bottom = -78.0
+    slot_background_color_dialog.add_child(slot_background_color_picker)
+
+    var background_alpha_hint: = Label.new()
+    background_alpha_hint.text = "A: 0% — прозрачно, 100% — непрозрачно"
+    background_alpha_hint.anchor_right = 1.0
+    background_alpha_hint.anchor_top = 1.0
+    background_alpha_hint.anchor_bottom = 1.0
+    background_alpha_hint.offset_left = 12.0
+    background_alpha_hint.offset_top = -72.0
+    background_alpha_hint.offset_right = -12.0
+    background_alpha_hint.offset_bottom = -48.0
+    background_alpha_hint.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+    background_alpha_hint.add_theme_font_size_override("font_size", 12)
+    slot_background_color_dialog.add_child(background_alpha_hint)
+
     button_color_dialog = ConfirmationDialog.new()
     button_color_dialog.name = "ButtonColorDialog"
     button_color_dialog.title = "Цвет текста кнопок"
@@ -7691,11 +8117,55 @@ func _configure_roll_display() -> void :
         label.clip_text = false
         label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 
+    _create_slot_text_backgrounds()
+
     for i in range(slot_image_nodes.size()):
         var texture_node: = slot_image_nodes[i]
         var size: Vector2 = SLOT_IMAGE_SIZES[i]
         texture_node.position = slot_labels[i].position + (slot_labels[i].size - size) * 0.5
         texture_node.size = size
+
+
+
+
+func _create_slot_text_backgrounds() -> void :
+    for i in range(slot_labels.size()):
+        var panel: = Panel.new()
+        panel.name = "SlotTextBackground%d" % i
+        panel.show_behind_parent = true
+        panel.mouse_filter = Control.MOUSE_FILTER_IGNORE
+        panel.visible = false
+        var style: = StyleBoxFlat.new()
+        style.set_corner_radius_all(5)
+        panel.add_theme_stylebox_override("panel", style)
+        slot_labels[i].add_child(panel)
+        slot_text_backgrounds.append(panel)
+
+
+
+
+func _update_slot_text_background(slot_index: int) -> void :
+    if slot_index < 0 or slot_index >= slot_text_backgrounds.size():
+        return
+    var panel: = slot_text_backgrounds[slot_index]
+    var label: = slot_labels[slot_index]
+    panel.visible = slot_text_background_enabled and not label.text.is_empty()
+    if not panel.visible:
+        return
+    var font: = label.get_theme_font("font")
+    var font_size: = label.get_theme_font_size("font_size")
+    var text_size: = font.get_multiline_string_size(label.text, HORIZONTAL_ALIGNMENT_CENTER, label.size.x, font_size)
+    panel.size = Vector2(minf(text_size.x + 20.0, label.size.x), minf(text_size.y + 10.0, label.size.y))
+    panel.position = (label.size - panel.size) * 0.5
+    var style: StyleBoxFlat = panel.get_theme_stylebox("panel") as StyleBoxFlat
+    style.bg_color = slot_text_background_color if slot_text_background_color_custom else _default_slot_background_color(label.get_theme_color("font_color"))
+
+
+
+
+func _default_slot_background_color(text_color: Color) -> Color :
+    var luminance: = text_color.r * 0.2126 + text_color.g * 0.7152 + text_color.b * 0.0722
+    return Color(0.07, 0.06, 0.04, 0.68) if luminance >= 0.5 else Color(1.0, 1.0, 1.0, 0.68)
 
 
 
@@ -8086,6 +8556,94 @@ func _create_lootbox_browser() -> void :
 
 
 
+func _create_global_event_mode_menu() -> void:
+    global_event_mode_menu_panel = Panel.new()
+    global_event_mode_menu_panel.visible = false
+    global_event_mode_menu_panel.position = Vector2(304, 500)
+    global_event_mode_menu_panel.size = Vector2(236, 116)
+    global_event_mode_menu_panel.add_theme_stylebox_override("panel", _create_platform_browser_style())
+    add_child(global_event_mode_menu_panel)
+
+    var button_style: = _create_wheel_description_button_style()
+    for index in range(GLOBAL_EVENTS_MODE_CONFIGS.size()):
+        var config: Dictionary = GLOBAL_EVENTS_MODE_CONFIGS[index]
+        var mode_id: = str(config.get("id", ""))
+        var button: = Button.new()
+        button.name = "GlobalEventModeButton_%s" % mode_id
+        button.position = Vector2(10, 10 + index * 34)
+        button.size = Vector2(216, 28)
+        button.text = str(config.get("title", GLOBAL_EVENTS_MODE_TITLE))
+        button.focus_mode = Control.FOCUS_NONE
+        button.mouse_default_cursor_shape = Control.CURSOR_POINTING_HAND
+        button.add_theme_stylebox_override("normal", button_style)
+        button.add_theme_stylebox_override("pressed", button_style)
+        button.add_theme_stylebox_override("hover", button_style)
+        button.add_theme_color_override("font_color", Color(0.96, 0.96, 0.98, 1.0))
+        button.add_theme_font_size_override("font_size", 13)
+        button.pressed.connect(_on_global_event_mode_button_pressed.bind(mode_id))
+        global_event_mode_menu_panel.add_child(button)
+        global_event_mode_buttons[mode_id] = button
+
+    _update_global_event_mode_menu_selection()
+
+
+
+func _toggle_global_event_mode_menu(force_state: int = -1) -> void:
+    var should_open: = not global_event_mode_menu_open
+    if force_state == 0:
+        should_open = false
+    elif force_state == 1:
+        should_open = true
+    if should_open == global_event_mode_menu_open:
+        return
+    if should_open and platform_browser_open:
+        _toggle_platform_browser(0)
+    if should_open and special_roll_browser_open:
+        _toggle_special_roll_browser(0)
+    if should_open and lootbox_browser_open:
+        _toggle_lootbox_browser(0)
+    if should_open and wheel_mode_menu_open:
+        _hide_wheel_mode_menu()
+
+    global_event_mode_menu_open = should_open
+    if global_event_mode_menu_panel != null:
+        global_event_mode_menu_panel.visible = should_open
+        if should_open:
+            global_event_mode_menu_panel.move_to_front()
+            _update_global_event_mode_menu_selection()
+    _refresh_settings_menu_visibility()
+
+
+
+func _hide_global_event_mode_menu() -> void:
+    if not global_event_mode_menu_open and (global_event_mode_menu_panel == null or not global_event_mode_menu_panel.visible):
+        return
+    global_event_mode_menu_open = false
+    if global_event_mode_menu_panel != null:
+        global_event_mode_menu_panel.visible = false
+    _refresh_settings_menu_visibility()
+
+
+
+func _on_global_event_mode_button_pressed(mode_id: String) -> void:
+    if rolling:
+        return
+    _select_global_event_mode(mode_id)
+
+
+
+func _update_global_event_mode_menu_selection() -> void:
+    for mode_id_variant in global_event_mode_buttons.keys():
+        var mode_id: String = mode_id_variant
+        var button: Button = global_event_mode_buttons[mode_id]
+        if button == null:
+            continue
+        var prefix: = "> " if mode_id == selected_global_event_mode_id and _is_global_events_list_selected() else ""
+        var config: = _get_global_event_mode_config(mode_id)
+        button.text = "%s%s" % [prefix, str(config.get("title", GLOBAL_EVENTS_MODE_TITLE))]
+
+
+
 func _create_wheel_mode_menu() -> void :
     wheel_mode_menu_panel = Panel.new()
     wheel_mode_menu_panel.visible = false
@@ -8132,6 +8690,8 @@ func _toggle_wheel_mode_menu(force_state: int = -1) -> void :
         _toggle_special_roll_browser(0)
     if should_open and lootbox_browser_open:
         _toggle_lootbox_browser(0)
+    if should_open and global_event_mode_menu_open:
+        _hide_global_event_mode_menu()
 
     wheel_mode_menu_open = should_open
     if wheel_mode_menu_panel != null:
@@ -8605,6 +9165,8 @@ func _toggle_platform_browser(force_state: int = -1) -> void :
         _toggle_lootbox_browser(0)
     if should_open and wheel_mode_menu_open:
         _hide_wheel_mode_menu()
+    if should_open and global_event_mode_menu_open:
+        _hide_global_event_mode_menu()
 
     platform_browser_open = should_open
 
@@ -8644,6 +9206,8 @@ func _toggle_special_roll_browser(force_state: int = -1) -> void :
         _toggle_lootbox_browser(0)
     if should_open and wheel_mode_menu_open:
         _hide_wheel_mode_menu()
+    if should_open and global_event_mode_menu_open:
+        _hide_global_event_mode_menu()
 
     special_roll_browser_open = should_open
 
@@ -8684,6 +9248,8 @@ func _toggle_lootbox_browser(force_state: int = -1) -> void :
         _toggle_special_roll_browser(0)
     if should_open and wheel_mode_menu_open:
         _hide_wheel_mode_menu()
+    if should_open and global_event_mode_menu_open:
+        _hide_global_event_mode_menu()
 
     lootbox_browser_open = should_open
 
@@ -8922,8 +9488,9 @@ func _load_list(path: String) -> PackedStringArray:
         return _apply_wheel_user_removals(result, wheel_mode_id)
     if GARANT_FEATURE_ENABLED and path == GARANT_LIST_PATH:
         return _apply_garant_user_removals(result)
-    if path == GLOBAL_EVENTS_LIST_PATH:
-        return _apply_global_event_user_removals(result)
+    var global_event_mode_id: = _global_event_mode_id_for_path(path)
+    if not global_event_mode_id.is_empty():
+        return _apply_global_event_user_removals(result, global_event_mode_id)
     if path == EXTRA_LIST_PATH:
         return _apply_extra_user_removals(result)
     return result
