@@ -111,14 +111,14 @@ body {
 
 		<script src="rggweb.js"></script>
 		<script>
-const GODOT_CONFIG = {"args":[],"canvasResizePolicy":2,"emscriptenPoolSize":8,"ensureCrossOriginIsolationHeaders":true,"executable":"rggweb","experimentalVK":false,"fileSizes":{"rggweb.pck":30011348,"rggweb.wasm":39514754},"focusCanvas":true,"gdextensionLibs":[],"godotPoolSize":4};
+const GODOT_CONFIG = {"args":[],"canvasResizePolicy":2,"emscriptenPoolSize":8,"ensureCrossOriginIsolationHeaders":true,"executable":"rggweb","experimentalVK":false,"fileSizes":{"rggweb.pck":30011716,"rggweb.wasm":39514754},"focusCanvas":true,"gdextensionLibs":[],"godotPoolSize":4};
 const GODOT_THREADS_ENABLED = false;
 const engine = new Engine(GODOT_CONFIG);
 
 (function () {
 	// RGG custom web bridge start
 	// RGG audio preload start
-	const audioFiles = ["3poloski2007.mp3", "Disneyclub.mp3", "Hakon.mp3", "Rabi.wav", "Starwars.mp3", "anime_roll.mp3", "aopa.wav", "batman_theme.mp3", "browjey_roll.mp3", "capcom_snd.wav", "castlevania_snd.wav", "higan_roll.mp3", "konami_snd.wav", "kover_roll.mp3", "legendary_roll.mp3", "legendary_stop.mp3", "mario_coin.wav", "megaman_snd.wav", "migorei_roll.mp3", "ping_roll.mp3", "playstation.wav", "roguelite_roll.mp3", "roll.wav", "sonic_ring.wav", "special_73_roll.mp3", "spectrum.mp3", "stop.wav", "tanya_roll.mp3", "whl.wav", "zhem_roll.mp3", "пицца.mp3"];
+	const audioFiles = ["3poloski2007.mp3", "Disneyclub.mp3", "Hakon.mp3", "Rabi.wav", "Starwars.mp3", "anime_roll.mp3", "aopa.wav", "batman_theme.mp3", "browjey_roll.mp3", "capcom_snd.wav", "castlevania_snd.wav", "female_roll.mp3", "higan_roll.mp3", "konami_snd.wav", "kover_roll.mp3", "legendary_roll.mp3", "legendary_stop.mp3", "mario_coin.wav", "megaman_snd.wav", "migorei_roll.mp3", "ping_roll.mp3", "playstation.wav", "roguelite_roll.mp3", "roll.wav", "sonic_ring.wav", "special_73_roll.mp3", "spectrum.mp3", "stop.wav", "tanya_roll.mp3", "whl.wav", "zhem_roll.mp3", "пицца.mp3"];
 	const preloadedAudio = new Map();
 	let nextAudioIndex = 0;
 	async function preloadAudioWorker() {
