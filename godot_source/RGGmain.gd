@@ -322,6 +322,7 @@ const PLATFORM_BROWSER_ITEMS: Array[Dictionary] = [
 ]
 const SPECIAL_ROLL_ITEMS: Array[Dictionary] = [
     {"id": "achievements", "title": "Ачивки", "url": "https://rutonychat.com/steamachievementroulette/", "tooltip": "Невыполненные ачивки"},
+    {"id": "anthology", "title": "Антология", "path": "res://lists/anthology.dat", "tooltip": "Антология хуйни"},
     {"id": "guitman", "title": "Гитман", "path": "res://lists/guitman.dat", "tooltip": "Список игр с платформ, вышедших в ХХ веке, плюс GBA как каноничная платформа оригинального Retro Game Gauntlet"},
     {"id": "kernel", "title": "Kernel", "path": "res://lists/kernel.dat", "tooltip": "Недопройденные игры стримеров на конец сезона RGG-LAND"},
     {"id": "female", "title": "Female", "path": "res://lists/female.dat", "tooltip": "Игры с протагонистом женского пола"},
@@ -407,9 +408,11 @@ const SPECIAL_ROLL_ITEMS: Array[Dictionary] = [
     {"id": "higan", "title": "Higan", "path": "res://lists/higan.dat", "tooltip": "Игры от Higan"},
     {"id": "tower", "title": "Башня", "path": "res://lists/tower.dat", "tooltip": "Игры из Башни"},
     {"id": "japan", "title": "Япония", "path": "res://lists/japan.dat", "tooltip": "Игра с японским сеттингом"},
+    {"id": "foxi", "title": "Foxi", "path": "res://lists/foxi.dat", "tooltip": "Игры от Фокси"},
 ]
 const SPECIAL_ROLL_ICON_PATHS: = {
     "achievements": "res://images/specrolls/achievements.png",
+    "anthology": "res://images/specrolls/anthology.png",
     "2007": "res://images/specrolls/2007.png", 
     "allpc": "res://images/specrolls/allpc.png", 
     "anime": "res://images/specrolls/anime.png", 
@@ -479,6 +482,7 @@ const SPECIAL_ROLL_ICON_PATHS: = {
     "zhem": "res://images/specrolls/zhem.png", 
     "kernel": "res://images/specrolls/kernel.png", 
     "female": "res://images/specrolls/female.png", 
+    "foxi": "res://images/specrolls/foxi.jpg",
     "train": "res://images/specrolls/train.png", 
     "steam_unf": "res://images/specrolls/steam_unf.png", 
     "souls_unf": "res://images/specrolls/souls_unf.png", 
@@ -8973,7 +8977,8 @@ func _create_special_roll_tile(item: Dictionary) -> Panel:
     var item_url: String = str(item.get("url", ""))
     var item_icon_path: String = str(SPECIAL_ROLL_ICON_PATHS.get(item_id, ""))
     var use_full_text_icon: = item_id == "73"
-    var use_full_image_icon: = item_id == "achievements" or item_id == "metroidvania" or item_id == "nintendo" or item_id == "capcom" or item_id == "2007" or item_id == "migorei" or item_id == "rggland"
+    var image_with_title: = item_id == "achievements" or item_id == "anthology"
+    var use_full_image_icon: = image_with_title or item_id == "metroidvania" or item_id == "nintendo" or item_id == "capcom" or item_id == "2007" or item_id == "migorei" or item_id == "rggland"
     var tile: = Panel.new()
     tile.custom_minimum_size = Vector2(74, 81)
     tile.add_theme_stylebox_override("panel", bag_tile_default_style)
@@ -8992,7 +8997,7 @@ func _create_special_roll_tile(item: Dictionary) -> Panel:
         tile.add_child(icon_large)
     elif icon_texture != null:
         var icon_rect: = Rect2()
-        if item_id == "achievements":
+        if image_with_title:
             icon_rect = Rect2(Vector2(4, 4), Vector2(66, 57))
         elif use_full_image_icon:
             icon_rect = Rect2(Vector2(4, 5), Vector2(66, 68))
@@ -9018,11 +9023,11 @@ func _create_special_roll_tile(item: Dictionary) -> Panel:
         icon.text = _special_roll_icon_text(item_title)
         tile.add_child(icon)
 
-    if not use_full_text_icon and (not use_full_image_icon or item_id == "achievements"):
+    if not use_full_text_icon and (not use_full_image_icon or image_with_title):
         var title: = Label.new()
         title.name = "TileTitleLabel"
-        title.position = Vector2(4, 61) if item_id == "achievements" else Vector2(4, 41)
-        title.size = Vector2(66, 16) if item_id == "achievements" else Vector2(66, 36)
+        title.position = Vector2(4, 61) if image_with_title else Vector2(4, 41)
+        title.size = Vector2(66, 16) if image_with_title else Vector2(66, 36)
         title.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
         title.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
         title.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
