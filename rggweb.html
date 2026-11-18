@@ -111,12 +111,54 @@ body {
 
 		<script src="rggweb.js"></script>
 		<script>
-const GODOT_CONFIG = {"args":[],"canvasResizePolicy":2,"emscriptenPoolSize":8,"ensureCrossOriginIsolationHeaders":true,"executable":"rggweb","experimentalVK":false,"fileSizes":{"rggweb.pck":30010132,"rggweb.wasm":39514754},"focusCanvas":true,"gdextensionLibs":[],"godotPoolSize":4};
+const GODOT_CONFIG = {"args":[],"canvasResizePolicy":2,"emscriptenPoolSize":8,"ensureCrossOriginIsolationHeaders":true,"executable":"rggweb","experimentalVK":false,"fileSizes":{"rggweb.pck":30011636,"rggweb.wasm":39514754},"focusCanvas":true,"gdextensionLibs":[],"godotPoolSize":4};
 const GODOT_THREADS_ENABLED = false;
 const engine = new Engine(GODOT_CONFIG);
 
 (function () {
 	// RGG custom web bridge start
+	// RGG audio preload start
+	const audioFiles = ["3poloski2007.mp3", "Disneyclub.mp3", "Hakon.mp3", "Rabi.wav", "Starwars.mp3", "anime_roll.mp3", "aopa.wav", "batman_theme.mp3", "browjey_roll.mp3", "capcom_snd.wav", "castlevania_snd.wav", "higan_roll.mp3", "konami_snd.wav", "legendary_roll.mp3", "legendary_stop.mp3", "mario_coin.wav", "megaman_snd.wav", "migorei_roll.mp3", "ping_roll.mp3", "playstation.wav", "roguelite_roll.mp3", "roll.wav", "sonic_ring.wav", "special_73_roll.mp3", "spectrum.mp3", "stop.wav", "tanya_roll.mp3", "whl.wav", "zhem_roll.mp3", "пицца.mp3"];
+	const preloadedAudio = new Map();
+	let nextAudioIndex = 0;
+	async function preloadAudioWorker() {
+		while (nextAudioIndex < audioFiles.length) {
+			const filename = audioFiles[nextAudioIndex++];
+			for (const base of ["godot_source/audio/", "audio/"]) {
+				try {
+					const response = await fetch(base + encodeURIComponent(filename));
+					if (!response.ok) { continue; }
+					preloadedAudio.set(filename, await response.arrayBuffer());
+					break;
+				} catch (error) {
+				}
+			}
+		}
+	}
+	const audioPreloadPromise = Promise.all(Array.from({ length: Math.min(4, audioFiles.length) }, preloadAudioWorker))
+		.then(() => audioFiles.filter((filename) => preloadedAudio.has(filename)));
+	let audioPreloadCallbackRegistered = false;
+	let resolveAudioPrepared;
+	const audioPreparedPromise = new Promise((resolve) => { resolveAudioPrepared = resolve; });
+	window.rggTakePreloadedAudio = function (filename) {
+		const bytes = preloadedAudio.get(filename) || null;
+		preloadedAudio.delete(filename);
+		return bytes;
+	};
+	window.rggPreloadAudio = function (callback) {
+		audioPreloadCallbackRegistered = true;
+		audioPreloadPromise.then(function (filenames) {
+			try {
+				callback(JSON.stringify(filenames));
+			} catch (error) {
+				console.error("Audio preload callback failed:", error);
+				resolveAudioPrepared();
+			}
+		});
+	};
+	window.rggFinishAudioPreload = function () { resolveAudioPrepared(); };
+	// RGG audio preload end
+
 	window.rggRequestFullscreen = function () {
 		const target = document.documentElement;
 		const requestFullscreen = target.requestFullscreen || target.webkitRequestFullscreen || target.msRequestFullscreen;
@@ -682,7 +724,13 @@ const engine = new Engine(GODOT_CONFIG);
 					statusProgress.removeAttribute('max');
 				}
 			},
-		}).then(() => {
+		}).then(async () => {
+			statusProgress.removeAttribute('value');
+			statusProgress.removeAttribute('max');
+			await audioPreloadPromise;
+			if (audioPreloadCallbackRegistered) {
+				await audioPreparedPromise;
+			}
 			setStatusMode('hidden');
 		}, displayFailureNotice);
 	}

@@ -59,6 +59,14 @@ $insertAt = $iifeMarker.Index + $iifeMarker.Length
 $lineEnding = if ($html.Contains("`r`n")) { "`r`n" } else { "`n" }
 $html = $html.Insert($insertAt, $bridgeMatch.Value.TrimEnd() + $lineEnding + $lineEnding)
 
+$completionPattern = '(?ms)^\t\t\}\)\.then\((?:async )?\(\) => \{\r?\n.*?^\t\t\}, displayFailureNotice\);'
+$sourceCompletion = [regex]::Match($bridgeSource, $completionPattern)
+$exportCompletion = [regex]::Match($html, $completionPattern)
+if (-not $sourceCompletion.Success -or -not $exportCompletion.Success) {
+    throw "Godot startup completion block was not found"
+}
+$html = $html.Remove($exportCompletion.Index, $exportCompletion.Length).Insert($exportCompletion.Index, $sourceCompletion.Value)
+
 $utf8NoBom = [System.Text.UTF8Encoding]::new($false)
 [System.IO.File]::WriteAllText((Join-Path $repoRoot "rggweb.html"), $html, $utf8NoBom)
 [System.IO.File]::WriteAllText($indexPath, $html, $utf8NoBom)

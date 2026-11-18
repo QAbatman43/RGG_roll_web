@@ -60,3 +60,49 @@ test('web audio loader fetches a Unicode filename from the published audio folde
     assert.equal(requested[0], `godot_source/audio/${encodeURIComponent('пицца.mp3')}`);
     assert.deepEqual([...new Uint8Array(result)], [0x49, 0x44, 0x33]);
 });
+
+test('startup preloads every external sound and the Godot loader reuses its bytes', async () => {
+    const index = fs.readFileSync(path.join(root, 'index.html'), 'utf8');
+    const published = fs.readFileSync(path.join(root, 'rggweb.html'), 'utf8');
+    const audioBlock = (html) => {
+        const match = html.match(/\/\/ RGG audio preload start\r?\n([\s\S]*?)\r?\n\s*\/\/ RGG audio preload end/);
+        assert.ok(match, 'Audio preload bridge was not found');
+        assert.match(html, /await audioPreloadPromise;[\s\S]*?await audioPreparedPromise;/);
+        return match[1];
+    };
+    assert.equal(audioBlock(index), audioBlock(published));
+
+    const requested = [];
+    const browser = {};
+    vm.runInNewContext(audioBlock(index), {
+        window: browser,
+        fetch: async (url) => {
+            requested.push(url);
+            return { ok: true, arrayBuffer: async () => Uint8Array.from([0x49, 0x44, 0x33]).buffer };
+        },
+        encodeURIComponent,
+        Map,
+        Promise,
+        Array,
+        console,
+    });
+    const filenames = await new Promise((resolve) => browser.rggPreloadAudio((json) => resolve(JSON.parse(json))));
+    const references = [...script.matchAll(/"res:\/\/audio\/([^"\n]+\.(?:mp3|wav))"/g)].map((match) => match[1]);
+    assert.deepEqual(filenames.slice().sort(), references.slice().sort());
+    assert.ok(requested.includes(`godot_source/audio/${encodeURIComponent('пицца.mp3')}`));
+
+    const loader = script.slice(script.indexOf('func _load_audio_stream('));
+    const match = loader.match(/var script: = """\r?\n([\s\S]*?)\r?\n""" % JSON\.stringify\(path\.get_file\(\)\)/);
+    assert.ok(match);
+    const javascript = match[1].replace('%s', JSON.stringify('roll.wav'));
+    const bytes = vm.runInNewContext(javascript, {
+        window: browser,
+        XMLHttpRequest: class { constructor() { throw new Error('Unexpected first-roll request'); } },
+        ArrayBuffer,
+        Uint8Array,
+        encodeURIComponent,
+    });
+    assert.deepEqual([...new Uint8Array(bytes)], [0x49, 0x44, 0x33]);
+    assert.equal(browser.rggTakePreloadedAudio('roll.wav'), null);
+    browser.rggFinishAudioPreload();
+});

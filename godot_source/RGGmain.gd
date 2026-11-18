@@ -644,6 +644,12 @@ const ANIME_ROLL_SOUND_CANDIDATES: Array[String] = [
 const TANYA_ROLL_SOUND_CANDIDATES: Array[String] = [
     "res://audio/tanya_roll.mp3",
 ]
+const ROGUELITE_ROLL_SOUND_CANDIDATES: Array[String] = [
+    "res://audio/roguelite_roll.mp3",
+]
+const MIGOREI_ROLL_SOUND_CANDIDATES: Array[String] = [
+    "res://audio/migorei_roll.mp3",
+]
 const HARDCORE_ROLL_SOUND_CANDIDATES: Array[String] = [
     "res://audio/Rabi.wav", 
 ]
@@ -814,6 +820,7 @@ var secondary_color: = Color(0.78, 0.8, 0.85, 1.0)
 
 var image_cache: Dictionary = {}
 var audio_stream_cache: Dictionary = {}
+var web_audio_preload_callback_ref = null
 var web_text_cache: Dictionary = {}
 var slot_labels: Array[Label] = []
 var slot_text_backgrounds: Array[Panel] = []
@@ -1161,6 +1168,7 @@ func _ready() -> void :
     _load_saved_custom_button_color()
     _load_saved_custom_button_fill_color()
     _reset_roll_slots()
+    _start_web_audio_preload()
 
 
 
@@ -2398,6 +2406,10 @@ func _start_roll() -> void :
         roll_sound_candidates = ANIME_ROLL_SOUND_CANDIDATES
     elif selected_list_path == "res://lists/tanya.dat":
         roll_sound_candidates = TANYA_ROLL_SOUND_CANDIDATES
+    elif selected_list_path == "res://lists/roguelite.dat":
+        roll_sound_candidates = ROGUELITE_ROLL_SOUND_CANDIDATES
+    elif selected_list_path == "res://lists/migorei.dat":
+        roll_sound_candidates = MIGOREI_ROLL_SOUND_CANDIDATES
     elif selected_list_path == "res://lists/disney.dat":
         roll_sound_candidates = DISNEY_ROLL_SOUND_CANDIDATES
     elif selected_list_path == "res://lists/lukas.dat":
@@ -3546,6 +3558,32 @@ func _play_sound(candidates: Array[String], volume_db: float = 0.0) -> void :
 
 
 
+func _start_web_audio_preload() -> void:
+    if not _is_web_runtime():
+        return
+    if not bool(JavaScriptBridge.eval("typeof window.rggPreloadAudio === 'function'")):
+        return
+    web_audio_preload_callback_ref = JavaScriptBridge.create_callback(_on_web_audio_preload_ready)
+    var browser = JavaScriptBridge.get_interface("window")
+    if browser != null:
+        browser.rggPreloadAudio(web_audio_preload_callback_ref)
+
+
+func _on_web_audio_preload_ready(args) -> void:
+    var filenames: Array = []
+    if args != null and args.size() > 0:
+        var parsed = JSON.parse_string(str(args[0]))
+        if parsed is Array:
+            filenames = parsed
+    call_deferred("_warm_web_audio_streams", filenames)
+
+
+func _warm_web_audio_streams(filenames: Array) -> void:
+    for filename in filenames:
+        _load_audio_stream("res://audio/" + str(filename))
+    JavaScriptBridge.eval("window.rggFinishAudioPreload()")
+
+
 func _load_audio_stream(path: String) -> AudioStream:
     if path.is_empty():
         return null
@@ -3557,6 +3595,10 @@ func _load_audio_stream(path: String) -> AudioStream:
         var script: = """
 (function () {
     const filename = %s;
+    if (typeof window !== "undefined" && typeof window.rggTakePreloadedAudio === "function") {
+        const preloaded = window.rggTakePreloadedAudio(filename);
+        if (preloaded instanceof ArrayBuffer) { return preloaded; }
+    }
     for (const base of ["godot_source/audio/", "audio/"]) {
         try {
             const request = new XMLHttpRequest();
