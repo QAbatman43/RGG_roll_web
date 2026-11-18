@@ -595,6 +595,10 @@ const DOUBLE_ROLL_DURATION_LISTS: Array[String] = [
 const ROLL_SOUND_CANDIDATES: Array[String] = [
     "res://audio/roll.wav", 
 ]
+const BATMAN_ROLL_SOUND_PATH: = "res://audio/batman_theme.mp3"
+const BATMAN_ROLL_SOUND_CANDIDATES: Array[String] = [BATMAN_ROLL_SOUND_PATH]
+const BATMAN_ROLL_SLOWDOWN_TIME: = 12.0
+const BATMAN_ROLL_FALLBACK_GRACE: = 0.25
 const WHEEL_LEGENDARY_ROLL_SOUND_CANDIDATES: Array[String] = [
     "res://audio/legendary_roll.mp3",
 ]
@@ -625,6 +629,21 @@ const PIZZA_ROLL_SOUND_CANDIDATES: Array[String] = [
     "res://audio/пицца.mp3", 
 ]
 const PIZZA_ROLL_VOLUME_DB: = -10.0
+const PING_ROLL_SOUND_CANDIDATES: Array[String] = [
+    "res://audio/ping_roll.mp3",
+]
+const ROLL_73_SOUND_CANDIDATES: Array[String] = [
+    "res://audio/special_73_roll.mp3",
+]
+const BROWJEY_ROLL_SOUND_CANDIDATES: Array[String] = [
+    "res://audio/browjey_roll.mp3",
+]
+const ANIME_ROLL_SOUND_CANDIDATES: Array[String] = [
+    "res://audio/anime_roll.mp3",
+]
+const TANYA_ROLL_SOUND_CANDIDATES: Array[String] = [
+    "res://audio/tanya_roll.mp3",
+]
 const HARDCORE_ROLL_SOUND_CANDIDATES: Array[String] = [
     "res://audio/Rabi.wav", 
 ]
@@ -768,6 +787,10 @@ var final_stop_mode: = FINAL_STOP_FAST_NEXT
 var final_settle_pending: = false
 var final_stop_complete_pending: = false
 var planned_stop_step: = 0
+var batman_roll_active: = false
+var batman_roll_duration: = 0.0
+var batman_roll_start_msec: = 0
+var batman_roll_stream: AudioStream
 var planned_center_entry: = ""
 var text_color_stat: = 0
 var platform: = 0
@@ -790,6 +813,7 @@ var main_color: = DEFAULT_ROLL_ITEM_COLOR
 var secondary_color: = Color(0.78, 0.8, 0.85, 1.0)
 
 var image_cache: Dictionary = {}
+var audio_stream_cache: Dictionary = {}
 var web_text_cache: Dictionary = {}
 var slot_labels: Array[Label] = []
 var slot_text_backgrounds: Array[Panel] = []
@@ -815,6 +839,7 @@ var result_links_active: = false
 
 var rng: = RandomNumberGenerator.new()
 var roll_timer: Timer
+var batman_roll_end_timer: Timer
 var finalize_timer: Timer
 var wheel_legendary_flash_timer: Timer
 var delay_timer: Timer
@@ -2066,6 +2091,17 @@ func _on_roll_timer_timeout() -> void :
     if not rolling:
         return
 
+    if batman_roll_active:
+        var elapsed: = float(Time.get_ticks_msec() - batman_roll_start_msec) / 1000.0
+        var remaining: = maxf(0.0, batman_roll_duration - elapsed)
+        _advance_from_list(remaining <= BATMAN_ROLL_SLOWDOWN_TIME)
+        _apply_roll_color_animation()
+        mas_j += 1
+        var slowdown_progress: = clampf(1.0 - remaining / BATMAN_ROLL_SLOWDOWN_TIME, 0.0, 1.0)
+        roll_timer.wait_time = lerpf(MAIN_ROLL_WAIT, 0.5, slowdown_progress * slowdown_progress)
+        roll_timer.start()
+        return
+
     if planned_stop_step <= 0:
         _plan_roll_target(_generate_stopwheel())
 
@@ -2088,6 +2124,25 @@ func _on_roll_timer_timeout() -> void :
         ultra_button.disabled = true
         roll_timer.wait_time = _roll_wait_for_remaining_steps(planned_stop_step - mas_j)
         roll_timer.start()
+
+
+
+
+func _on_batman_roll_end_timer_timeout() -> void :
+    if not batman_roll_active or not rolling:
+        return
+    if audio_player.playing and audio_player.stream == batman_roll_stream:
+        batman_roll_end_timer.start(BATMAN_ROLL_FALLBACK_GRACE)
+        return
+    _finish_batman_roll_at_song_end()
+
+
+
+
+func _finish_batman_roll_at_song_end() -> void :
+    _stop_slot_scroll_animation()
+    _reset_slot_visual_positions()
+    _roll_stopped()
 
 
 
@@ -2233,6 +2288,9 @@ func _start_roll() -> void :
     ultra_delay_timer.stop()
     ultra_stop_timer.stop()
     roll_timer.stop()
+    batman_roll_end_timer.stop()
+    batman_roll_active = false
+    batman_roll_stream = null
     finalize_timer.stop()
     _stop_wheel_legendary_flashes()
     _hide_wheel_restore_popup()
@@ -2291,8 +2349,18 @@ func _start_roll() -> void :
 
     stop_length = clampi(shuffled_games.size(), MIN_STOP_LENGTH, MAX_STOP_LENGTH)
     _rnd_stopwheel()
-    var generated_stopwheel: = _generate_stopwheel()
-    _plan_roll_target(generated_stopwheel)
+    batman_roll_duration = 0.0
+    if selected_list_path == BATMAN43_LIST_PATH:
+        var batman_stream: = _load_audio_stream(BATMAN_ROLL_SOUND_PATH)
+        if batman_stream != null:
+            if batman_stream is AudioStreamMP3:
+                (batman_stream as AudioStreamMP3).loop = false
+            batman_roll_stream = batman_stream
+            batman_roll_duration = batman_stream.get_length()
+            batman_roll_active = batman_roll_duration > 0.0
+    if not batman_roll_active:
+        var generated_stopwheel: = _generate_stopwheel()
+        _plan_roll_target(generated_stopwheel)
 
     roll_button.text = "STOP"
     roll_button.disabled = true
@@ -2320,6 +2388,16 @@ func _start_roll() -> void :
     elif selected_list_path == "res://lists/pizza.dat":
         roll_sound_candidates = PIZZA_ROLL_SOUND_CANDIDATES
         roll_sound_volume_db = PIZZA_ROLL_VOLUME_DB
+    elif selected_list_path == "res://lists/ping.dat":
+        roll_sound_candidates = PING_ROLL_SOUND_CANDIDATES
+    elif selected_list_path == "res://lists/73.dat":
+        roll_sound_candidates = ROLL_73_SOUND_CANDIDATES
+    elif selected_list_path == "res://lists/browjey.dat":
+        roll_sound_candidates = BROWJEY_ROLL_SOUND_CANDIDATES
+    elif selected_list_path == "res://lists/anime.dat":
+        roll_sound_candidates = ANIME_ROLL_SOUND_CANDIDATES
+    elif selected_list_path == "res://lists/tanya.dat":
+        roll_sound_candidates = TANYA_ROLL_SOUND_CANDIDATES
     elif selected_list_path == "res://lists/disney.dat":
         roll_sound_candidates = DISNEY_ROLL_SOUND_CANDIDATES
     elif selected_list_path == "res://lists/lukas.dat":
@@ -2328,12 +2406,19 @@ func _start_roll() -> void :
         roll_sound_candidates = SPECTRUM_ROLL_SOUND_CANDIDATES
     elif selected_list_path == "res://lists/2007.dat":
         roll_sound_candidates = ROLL_2007_SOUND_CANDIDATES
+    elif selected_list_path == BATMAN43_LIST_PATH:
+        roll_sound_candidates = BATMAN_ROLL_SOUND_CANDIDATES
     elif custom_roll_music_stream != null:
         use_custom_default_roll_music = true
     if use_custom_default_roll_music:
         _play_stream(custom_roll_music_stream)
     else:
         _play_sound(roll_sound_candidates, roll_sound_volume_db)
+
+    if batman_roll_active:
+        batman_roll_start_msec = Time.get_ticks_msec()
+        var song_playing: = audio_player.playing and audio_player.stream == batman_roll_stream
+        batman_roll_end_timer.start(batman_roll_duration + (BATMAN_ROLL_FALLBACK_GRACE if song_playing else 0.0))
 
     roll_timer.wait_time = MAIN_ROLL_WAIT
     roll_timer.start()
@@ -2342,6 +2427,11 @@ func _start_roll() -> void :
 
 
 func _request_stop() -> void :
+    if batman_roll_active:
+        batman_roll_active = false
+        batman_roll_end_timer.stop()
+        roll_timer.wait_time = MAIN_ROLL_WAIT
+        roll_timer.start()
     stop_requested = true
     stop_via_ultra = false
     _button_flat_click()
@@ -2453,6 +2543,10 @@ func _button_megastop_click() -> void :
     if ultra_stop_pending:
         return
 
+    if batman_roll_active:
+        batman_roll_active = false
+        batman_roll_end_timer.stop()
+
     stop_via_ultra = true
     ultra_button.disabled = true
     roll_button.disabled = true
@@ -2528,6 +2622,9 @@ func _rotate_visible_entries_back() -> void :
 
 func _roll_stopped() -> void :
     rolling = false
+    batman_roll_active = false
+    batman_roll_end_timer.stop()
+    batman_roll_stream = null
     _sync_web_background_playback()
     stop_requested = false
     ultra_stop_pending = false
@@ -3414,6 +3511,9 @@ func _stop_audio_for_mute() -> void :
     if audio_player == null or not audio_player.playing:
         return
     audio_player.stop()
+    if batman_roll_active:
+        var elapsed: = float(Time.get_ticks_msec() - batman_roll_start_msec) / 1000.0
+        batman_roll_end_timer.start(maxf(0.01, batman_roll_duration - elapsed))
     if tts_waiting_for_stop_sound and not pending_tts_text.is_empty():
         tts_waiting_for_stop_sound = false
         tts_timer.start(TTS_DELAY_AFTER_STOP)
@@ -3436,15 +3536,62 @@ func _play_stream(stream: AudioStream, volume_db: float = 0.0) -> void :
 
 func _play_sound(candidates: Array[String], volume_db: float = 0.0) -> void :
     for candidate in candidates:
-        if not ResourceLoader.exists(candidate):
-            continue
-
-        var stream: = load(candidate) as AudioStream
+        var stream: = _load_audio_stream(candidate)
         if stream == null:
             continue
 
         _play_stream(stream, volume_db)
         return
+
+
+
+
+func _load_audio_stream(path: String) -> AudioStream:
+    if path.is_empty():
+        return null
+    if audio_stream_cache.has(path):
+        return audio_stream_cache[path] as AudioStream
+
+    var stream: AudioStream
+    if _is_web_runtime():
+        var script: = """
+(function () {
+    const filename = %s;
+    for (const base of ["godot_source/audio/", "audio/"]) {
+        try {
+            const request = new XMLHttpRequest();
+            request.open("GET", base + encodeURIComponent(filename), false);
+            request.overrideMimeType("text/plain; charset=x-user-defined");
+            try { request.responseType = "arraybuffer"; } catch (error) {}
+            request.send(null);
+            if (request.status !== 200 && request.status !== 0) { continue; }
+            if (request.response instanceof ArrayBuffer) { return request.response; }
+            const raw = request.responseText || "";
+            if (!raw) { continue; }
+            const bytes = new Uint8Array(raw.length);
+            for (let i = 0; i < raw.length; i += 1) { bytes[i] = raw.charCodeAt(i) & 0xFF; }
+            return bytes;
+        } catch (error) {}
+    }
+    return null;
+})()
+""" % JSON.stringify(path.get_file())
+        var bytes = JavaScriptBridge.eval(script, true)
+        if typeof(bytes) == TYPE_PACKED_BYTE_ARRAY and not bytes.is_empty():
+            match path.get_extension().to_lower():
+                "mp3":
+                    stream = AudioStreamMP3.load_from_buffer(bytes)
+                "wav":
+                    stream = AudioStreamWAV.load_from_buffer(bytes)
+        elif not ResourceLoader.exists(path):
+            push_warning("Не удалось загрузить внешний звук: %s" % path)
+            return null
+
+    if stream == null and ResourceLoader.exists(path):
+        stream = load(path) as AudioStream
+    if stream != null:
+        audio_stream_cache[path] = stream
+    return stream
 
 
 
@@ -4832,6 +4979,9 @@ func _sanitize_text_for_tts(text: String) -> String:
 
 
 func _on_audio_player_finished() -> void :
+    if batman_roll_active and rolling and audio_player.stream == batman_roll_stream:
+        _finish_batman_roll_at_song_end()
+        return
     if not tts_waiting_for_stop_sound:
         return
     if pending_tts_text.is_empty():
@@ -7248,6 +7398,12 @@ func _create_runtime_nodes() -> void :
     roll_timer.autostart = false
     roll_timer.timeout.connect(_on_roll_timer_timeout)
     add_child(roll_timer)
+
+    batman_roll_end_timer = Timer.new()
+    batman_roll_end_timer.one_shot = true
+    batman_roll_end_timer.ignore_time_scale = true
+    batman_roll_end_timer.timeout.connect(_on_batman_roll_end_timer_timeout)
+    add_child(batman_roll_end_timer)
 
     finalize_timer = Timer.new()
     finalize_timer.one_shot = false
