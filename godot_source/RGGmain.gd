@@ -650,6 +650,9 @@ const ROGUELITE_ROLL_SOUND_CANDIDATES: Array[String] = [
 const MIGOREI_ROLL_SOUND_CANDIDATES: Array[String] = [
     "res://audio/migorei_roll.mp3",
 ]
+const KOVER_ROLL_SOUND_CANDIDATES: Array[String] = [
+    "res://audio/kover_roll.mp3",
+]
 const HARDCORE_ROLL_SOUND_CANDIDATES: Array[String] = [
     "res://audio/Rabi.wav", 
 ]
@@ -2410,6 +2413,8 @@ func _start_roll() -> void :
         roll_sound_candidates = ROGUELITE_ROLL_SOUND_CANDIDATES
     elif selected_list_path == "res://lists/migorei.dat":
         roll_sound_candidates = MIGOREI_ROLL_SOUND_CANDIDATES
+    elif selected_list_path == "res://lists/kover.dat":
+        roll_sound_candidates = KOVER_ROLL_SOUND_CANDIDATES
     elif selected_list_path == "res://lists/disney.dat":
         roll_sound_candidates = DISNEY_ROLL_SOUND_CANDIDATES
     elif selected_list_path == "res://lists/lukas.dat":
