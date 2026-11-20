@@ -49,6 +49,8 @@ const START_WHEEL_REMOVED_ENTRIES_PATH: = "user://start_wheel_removed_entries.da
 const START_WHEEL_PITY_COUNT_PATH: = "user://start_wheel_pity_count.txt"
 const START_WHEEL_PITY_UNDO_PATH: = "user://start_wheel_pity_undo.json"
 const START_WHEEL_COMPLETED_PATH: = "user://start_wheel_completed.txt"
+const WHEEL_SPARK_PROGRESS_PATH: = "user://wheel_spark_progress.json"
+const WHEEL_SPARK_INTERVAL: = 300
 const WHEEL_MODE_STANDARD_ID: = "standard"
 const WHEEL_MODE_WEAPON_ID: = "weapon"
 const WHEEL_MODE_START_ID: = "start"
@@ -201,7 +203,7 @@ const BACKUP_FILE_PATHS: Array[String] = [
     WHEEL_REMOVED_ENTRIES_PATH, WHEEL_PITY_COUNT_PATH, WHEEL_PITY_UNDO_PATH,
     WEAPON_WHEEL_REMOVED_ENTRIES_PATH, WEAPON_WHEEL_PITY_COUNT_PATH, WEAPON_WHEEL_PITY_UNDO_PATH,
     START_WHEEL_REMOVED_ENTRIES_PATH, START_WHEEL_PITY_COUNT_PATH, START_WHEEL_PITY_UNDO_PATH,
-    START_WHEEL_COMPLETED_PATH, GARANT_REMOVED_ENTRIES_PATH, GARANT_DELETE_COUNT_PATH,
+    START_WHEEL_COMPLETED_PATH, WHEEL_SPARK_PROGRESS_PATH, GARANT_REMOVED_ENTRIES_PATH, GARANT_DELETE_COUNT_PATH,
     CUSTOM_BACKGROUND_IMAGE_PATH, CUSTOM_BACKGROUND_MODE_PATH, ANIMATED_BACKGROUND_MODE_PATH, CUSTOM_ROLL_MUSIC_PATH,
     "user://custom_roll_item_color.txt", "user://custom_button_color.txt", "user://custom_button_fill_color.txt",
     "user://slot_text_outline_enabled.txt", "user://slot_text_background_enabled.txt",
@@ -660,6 +662,9 @@ const KOVER_ROLL_SOUND_CANDIDATES: Array[String] = [
 const FEMALE_ROLL_SOUND_CANDIDATES: Array[String] = [
     "res://audio/female_roll.mp3",
 ]
+const FOXI_ROLL_SOUND_CANDIDATES: Array[String] = [
+    "res://audio/foxi_roll.mp3",
+]
 const HARDCORE_ROLL_SOUND_CANDIDATES: Array[String] = [
     "res://audio/Rabi.wav", 
 ]
@@ -1031,6 +1036,17 @@ var wheel_description_link_url: = ""
 var wheel_description_delete_entry: = ""
 var wheel_description_delete_slot_index: = -1
 var wheel_description_delete_source: = ""
+var wheel_spark_rolls: = 0
+var wheel_spark_claims: = 0
+var wheel_spark_overlay: Control
+var wheel_spark_list: ItemList
+var wheel_spark_card: TextureRect
+var wheel_spark_card_placeholder: Label
+var wheel_spark_description: RichTextLabel
+var wheel_spark_claim_button: Button
+var wheel_spark_confirm: ConfirmationDialog
+var wheel_spark_candidates: Array[Dictionary] = []
+var wheel_spark_selected_index: = -1
 var wheel_deleted_visible_slots: Dictionary = {}
 var garant_deleted_visible_slots: Dictionary = {}
 var extra_deleted_visible_slots: Dictionary = {}
@@ -1141,6 +1157,7 @@ func _ready() -> void :
     _create_garant_card_popup()
     _create_wheel_info_popup()
     _create_wheel_restore_popup()
+    _create_wheel_spark_popup()
     _create_list_preview_popup()
     _create_extra_list_editor_popup()
     _create_custom_background_controls()
@@ -1165,6 +1182,7 @@ func _ready() -> void :
         _connect_control_gui_input_once(letter_input, _on_settings_closing_control_input.bind(letter_input))
     _connect_list_preview_inputs()
     _load_saved_audio_toggle_settings()
+    _load_wheel_spark_progress()
     _refresh_tts_button()
     _refresh_tts_volume_controls()
     _refresh_tts_rate_button()
@@ -1828,9 +1846,9 @@ func _save_wheel_pity_undo_history(mode_id: String, history: Dictionary) -> void
 
 
 
-func _save_wheel_pity_undo_state(mode_id: String, entry: String, removed_count: int, pity_before: int, counted: bool) -> void:
+func _save_wheel_pity_undo_state(mode_id: String, entry: String, removed_count: int, pity_before: int, counted: bool, spark: bool = false) -> void:
     var history: = _load_wheel_pity_undo_history(mode_id)
-    history[str(removed_count)] = {"entry": entry.strip_edges(), "pity_before": pity_before, "counted": counted}
+    history[str(removed_count)] = {"entry": entry.strip_edges(), "pity_before": pity_before, "counted": counted, "spark": spark}
     _save_wheel_pity_undo_history(mode_id, history)
 
 
@@ -1876,6 +1894,66 @@ func _load_wheel_mode_entries(config: Dictionary, legendary: bool) -> PackedStri
     var entries: = _load_original_list_entries(path)
     return _apply_wheel_user_removals(entries, str(config.get("id", WHEEL_MODE_STANDARD_ID)))
 
+
+
+func _load_wheel_spark_progress() -> void:
+    var saved = JSON.parse_string(_read_text_auto(WHEEL_SPARK_PROGRESS_PATH)) if FileAccess.file_exists(WHEEL_SPARK_PROGRESS_PATH) else null
+    if typeof(saved) == TYPE_DICTIONARY:
+        wheel_spark_rolls = maxi(0, int(saved.get("rolls", 0)))
+        wheel_spark_claims = maxi(0, int(saved.get("claims", 0)))
+        return
+    # Existing saves have no spark file. Their three removal lists are the starting count.
+    wheel_spark_rolls = 0
+    for config in WHEEL_MODE_CONFIGS:
+        wheel_spark_rolls += _load_wheel_removed_entries(str(config.get("id", ""))).size()
+    wheel_spark_claims = 0
+    _save_wheel_spark_progress()
+
+
+func _save_wheel_spark_progress() -> void:
+    var file: = FileAccess.open(WHEEL_SPARK_PROGRESS_PATH, FileAccess.WRITE)
+    if file == null:
+        return
+    file.store_string(JSON.stringify({"rolls": wheel_spark_rolls, "claims": wheel_spark_claims}))
+    file.close()
+
+
+func _wheel_spark_due() -> bool:
+    if wheel_spark_rolls < (wheel_spark_claims + 1) * WHEEL_SPARK_INTERVAL:
+        return false
+    return not _get_wheel_spark_candidates().is_empty()
+
+
+func _refresh_wheel_spark_button() -> void:
+    if roll_button == null or rolling:
+        return
+    var due: = _wheel_spark_due()
+    roll_button.text = "ЗАБРАТЬ ЛЕГУ" if due else "Roll"
+    roll_button.add_theme_font_size_override("font_size", 17 if due else 30)
+    if due:
+        roll_button.disabled = false
+
+
+func _get_wheel_spark_candidates() -> Array[Dictionary]:
+    var acquired: Dictionary = {}
+    for config in WHEEL_MODE_CONFIGS:
+        for removed_entry in _load_wheel_removed_entries(str(config.get("id", ""))):
+            acquired[_entry_to_display_text(removed_entry)] = true
+    var candidates: Array[Dictionary] = []
+    var seen: Dictionary = {}
+    for legendary_path in [BASIC_WHEEL_LEGENDARY_LIST_PATH, WEAPON_WHEEL_LEGENDARY_LIST_PATH]:
+        for entry in _load_original_list_entries(legendary_path):
+            var title: = _entry_to_display_text(entry)
+            if title.is_empty() or acquired.has(title) or seen.has(title):
+                continue
+            seen[title] = true
+            var modes: Array[String] = []
+            for config in WHEEL_MODE_CONFIGS:
+                if str(config.get("legendary_path", "")) == legendary_path:
+                    modes.append(str(config.get("id", "")))
+            candidates.append({"entry": entry, "title": title, "modes": modes})
+    candidates.sort_custom(func(a: Dictionary, b: Dictionary) -> bool: return str(a["title"]).naturalnocasecmp_to(str(b["title"])) < 0)
+    return candidates
 
 
 func _prepare_wheel_roll_pool() -> void:
@@ -2094,6 +2172,9 @@ func _on_roll_button_pressed() -> void :
     if rolling:
         _request_stop()
         return
+    if _wheel_spark_due():
+        _show_wheel_spark_popup()
+        return
     _start_roll()
 
 
@@ -2224,6 +2305,7 @@ func _on_delay_timer_timeout() -> void :
         return
 
     roll_button.disabled = selected_list_path.is_empty() or games.is_empty() or _is_selected_start_wheel_complete()
+    _refresh_wheel_spark_button()
     ultra_button.disabled = true
 
 
@@ -2295,6 +2377,9 @@ func _select_list(list_id: String, title: String, path: String, tile = null) -> 
 
 
 func _start_roll() -> void :
+    if _wheel_spark_due():
+        _show_wheel_spark_popup()
+        return
     if _is_selected_start_wheel_complete():
         return
     if selected_list_path.is_empty():
@@ -2424,6 +2509,8 @@ func _start_roll() -> void :
         roll_sound_candidates = KOVER_ROLL_SOUND_CANDIDATES
     elif selected_list_path == "res://lists/female.dat":
         roll_sound_candidates = FEMALE_ROLL_SOUND_CANDIDATES
+    elif selected_list_path == "res://lists/foxi.dat":
+        roll_sound_candidates = FOXI_ROLL_SOUND_CANDIDATES
     elif selected_list_path == "res://lists/disney.dat":
         roll_sound_candidates = DISNEY_ROLL_SOUND_CANDIDATES
     elif selected_list_path == "res://lists/lukas.dat":
@@ -3010,6 +3097,7 @@ func _reset_selected_list_ui() -> void :
     _update_special_roll_selection("")
     _update_lootbox_selection("")
     _refresh_wheel_restore_button()
+    _refresh_wheel_spark_button()
 
 
 
@@ -3083,6 +3171,7 @@ func _apply_letter_digit_filter() -> void :
     if _garant_roll_available():
         can_roll_current_list = true
     roll_button.disabled = selected_list_path.is_empty() or not can_roll_current_list or _is_selected_start_wheel_complete()
+    _refresh_wheel_spark_button()
     ultra_button.disabled = true
     digits_checkbox.disabled = rolling or selected_list_path.is_empty() or base_games.is_empty() or filter_is_digit
     letter_input.editable = not rolling and not selected_list_path.is_empty() and not base_games.is_empty()
@@ -5286,6 +5375,162 @@ func _create_garant_card_popup() -> void :
 
 
 
+func _create_wheel_spark_popup() -> void:
+    wheel_spark_overlay = Control.new()
+    wheel_spark_overlay.name = "WheelSparkOverlay"
+    wheel_spark_overlay.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+    wheel_spark_overlay.mouse_filter = Control.MOUSE_FILTER_STOP
+    wheel_spark_overlay.visible = false
+    wheel_spark_overlay.z_index = 95
+    add_child(wheel_spark_overlay)
+
+    var backdrop: = ColorRect.new()
+    backdrop.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+    backdrop.color = Color(0, 0, 0, 0.76)
+    wheel_spark_overlay.add_child(backdrop)
+
+    var panel: = Panel.new()
+    panel.position = Vector2(25, 54)
+    panel.size = Vector2(950, 620)
+    panel.add_theme_stylebox_override("panel", _create_wheel_description_panel_style())
+    wheel_spark_overlay.add_child(panel)
+
+    var heading: = Label.new()
+    heading.position = Vector2(20, 12)
+    heading.size = Vector2(800, 38)
+    heading.text = "СПАРК: ВЫБЕРИТЕ ЛЕГЕНДАРНЫЙ ПУНКТ"
+    heading.add_theme_font_size_override("font_size", 23)
+    panel.add_child(heading)
+
+    wheel_spark_card = TextureRect.new()
+    wheel_spark_card.position = Vector2(20, 70)
+    wheel_spark_card.size = Vector2(230, 452)
+    wheel_spark_card.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+    wheel_spark_card.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+    panel.add_child(wheel_spark_card)
+
+    wheel_spark_card_placeholder = Label.new()
+    wheel_spark_card_placeholder.position = wheel_spark_card.position
+    wheel_spark_card_placeholder.size = wheel_spark_card.size
+    wheel_spark_card_placeholder.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+    wheel_spark_card_placeholder.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+    wheel_spark_card_placeholder.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+    wheel_spark_card_placeholder.text = "Выберите легендарный пункт"
+    panel.add_child(wheel_spark_card_placeholder)
+
+    wheel_spark_list = ItemList.new()
+    wheel_spark_list.position = Vector2(268, 70)
+    wheel_spark_list.size = Vector2(322, 452)
+    wheel_spark_list.select_mode = ItemList.SELECT_SINGLE
+    wheel_spark_list.item_selected.connect(_on_wheel_spark_item_selected)
+    panel.add_child(wheel_spark_list)
+
+    wheel_spark_description = RichTextLabel.new()
+    wheel_spark_description.position = Vector2(608, 70)
+    wheel_spark_description.size = Vector2(322, 452)
+    wheel_spark_description.bbcode_enabled = false
+    wheel_spark_description.selection_enabled = true
+    wheel_spark_description.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+    wheel_spark_description.add_theme_font_size_override("normal_font_size", 19)
+    panel.add_child(wheel_spark_description)
+
+    wheel_spark_claim_button = Button.new()
+    wheel_spark_claim_button.position = Vector2(268, 540)
+    wheel_spark_claim_button.size = Vector2(322, 48)
+    wheel_spark_claim_button.text = "ЗАБРАТЬ"
+    wheel_spark_claim_button.disabled = true
+    wheel_spark_claim_button.pressed.connect(_on_wheel_spark_claim_pressed)
+    panel.add_child(wheel_spark_claim_button)
+
+    var close_button: = Button.new()
+    close_button.position = Vector2(780, 540)
+    close_button.size = Vector2(150, 48)
+    close_button.text = "ЗАКРЫТЬ"
+    close_button.pressed.connect(_hide_wheel_spark_popup)
+    panel.add_child(close_button)
+
+    wheel_spark_confirm = ConfirmationDialog.new()
+    wheel_spark_confirm.title = "Подтверждение"
+    wheel_spark_confirm.ok_button_text = "Забрать"
+    wheel_spark_confirm.cancel_button_text = "Отмена"
+    wheel_spark_confirm.confirmed.connect(_on_wheel_spark_confirmed)
+    add_child(wheel_spark_confirm)
+
+
+func _show_wheel_spark_popup() -> void:
+    wheel_spark_candidates = _get_wheel_spark_candidates()
+    wheel_spark_selected_index = -1
+    wheel_spark_list.clear()
+    for candidate in wheel_spark_candidates:
+        wheel_spark_list.add_item(str(candidate["title"]))
+    wheel_spark_card.texture = null
+    wheel_spark_card_placeholder.visible = true
+    wheel_spark_card_placeholder.text = "Выберите легендарный пункт"
+    wheel_spark_description.clear()
+    wheel_spark_description.add_text("Нажмите на название, чтобы увидеть описание и карточку.")
+    wheel_spark_claim_button.disabled = true
+    wheel_spark_overlay.visible = true
+    wheel_spark_overlay.move_to_front()
+
+
+func _hide_wheel_spark_popup() -> void:
+    wheel_spark_overlay.visible = false
+    _stop_tts_playback()
+
+
+func _on_wheel_spark_item_selected(index: int) -> void:
+    if index < 0 or index >= wheel_spark_candidates.size():
+        return
+    wheel_spark_selected_index = index
+    var candidate: Dictionary = wheel_spark_candidates[index]
+    var title: = str(candidate["title"])
+    var description: = _get_wheel_description(title)
+    if description.is_empty():
+        description = "Описание не найдено."
+    wheel_spark_description.clear()
+    wheel_spark_description.add_text("%s\n\n%s" % [title, description])
+    var card: = _load_card_texture(_get_garant_card_path(title))
+    wheel_spark_card.texture = card
+    wheel_spark_card_placeholder.visible = card == null
+    wheel_spark_card_placeholder.text = "Карточки нет" if card == null else ""
+    wheel_spark_claim_button.disabled = false
+    _queue_tts_text_after_stop_sound("%s. %s" % [title, description])
+
+
+func _on_wheel_spark_claim_pressed() -> void:
+    if wheel_spark_selected_index < 0 or wheel_spark_selected_index >= wheel_spark_candidates.size():
+        return
+    wheel_spark_confirm.dialog_text = "Вы хотите забрать %s?" % str(wheel_spark_candidates[wheel_spark_selected_index]["title"])
+    wheel_spark_confirm.popup_centered(Vector2i(510, 150))
+
+
+func _on_wheel_spark_confirmed() -> void:
+    if not _wheel_spark_due() or wheel_spark_selected_index < 0 or wheel_spark_selected_index >= wheel_spark_candidates.size():
+        return
+    var selected: Dictionary = wheel_spark_candidates[wheel_spark_selected_index]
+    var title: = str(selected["title"])
+    var available: = false
+    for candidate in _get_wheel_spark_candidates():
+        if str(candidate["title"]) == title:
+            available = true
+            break
+    if not available:
+        _show_wheel_spark_popup()
+        return
+    for mode_id in selected["modes"]:
+        var removed_entries: = _load_wheel_removed_entries(mode_id)
+        removed_entries.append(str(selected["entry"]))
+        _save_wheel_removed_entries(removed_entries, mode_id)
+        _save_wheel_pity_undo_state(mode_id, str(selected["entry"]), removed_entries.size(), -1, false, true)
+    wheel_spark_claims += 1
+    _save_wheel_spark_progress()
+    _hide_wheel_spark_popup()
+    if _is_wheel_list_selected():
+        _reload_selected_list()
+    _refresh_wheel_delete_button()
+    _refresh_wheel_spark_button()
+
+
 func _create_wheel_info_popup() -> void :
     wheel_info_overlay = Control.new()
     wheel_info_overlay.name = "WheelInfoOverlay"
@@ -5353,7 +5598,7 @@ func _create_wheel_restore_popup() -> void :
     wheel_restore_message_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
     wheel_restore_message_label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
     wheel_restore_message_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-    wheel_restore_message_label.text = "ПУНКТЫ ВСЕХ КОЛЁС ВЕРНУТСЯ, А СЧЁТЧИКИ ГАРАНТА СБРОСЯТСЯ. ЭТО ИЗМЕНЕНИЕ НЕЛЬЗЯ БУДЕТ ОТКАТИТЬ"
+    wheel_restore_message_label.text = "ПУНКТЫ ВСЕХ КОЛЁС ВЕРНУТСЯ, А СЧЁТЧИКИ ГАРАНТА И СПАРКА СБРОСЯТСЯ. ЭТО ИЗМЕНЕНИЕ НЕЛЬЗЯ БУДЕТ ОТКАТИТЬ"
     wheel_restore_message_label.add_theme_color_override("font_color", Color(0.96, 0.96, 0.98, 1.0))
     wheel_restore_message_label.add_theme_font_size_override("font_size", 22)
     panel.add_child(wheel_restore_message_label)
@@ -6868,7 +7113,7 @@ func _show_wheel_restore_popup(target_list_id: String = "") -> void :
         wheel_restore_message_label.text = "%s: ВЕРНУТЬ ВСЕ УДАЛЁННЫЕ ПУНКТЫ? ОТМЕНИТЬ НЕЛЬЗЯ." % str(config.get("title", GLOBAL_EVENTS_MODE_TITLE)).to_upper()
         wheel_restore_ok_button.text = "ВЕРНУТЬ ПУНКТЫ"
     else:
-        wheel_restore_message_label.text = "ПУНКТЫ ВСЕХ КОЛЁС ВЕРНУТСЯ, А СЧЁТЧИКИ ГАРАНТА СБРОСЯТСЯ. ЭТО ИЗМЕНЕНИЕ НЕЛЬЗЯ БУДЕТ ОТКАТИТЬ"
+        wheel_restore_message_label.text = "ПУНКТЫ ВСЕХ КОЛЁС ВЕРНУТСЯ, А СЧЁТЧИКИ ГАРАНТА И СПАРКА СБРОСЯТСЯ. ЭТО ИЗМЕНЕНИЕ НЕЛЬЗЯ БУДЕТ ОТКАТИТЬ"
         wheel_restore_ok_button.text = "ВЕРНУТЬ ВСЕ ПУНКТЫ КОЛЕСА"
     wheel_restore_overlay.visible = true
     wheel_restore_overlay.move_to_front()
@@ -6915,12 +7160,16 @@ func _on_wheel_restore_ok_pressed() -> void :
         wheel_deleted_visible_slots.clear()
         garant_deleted_visible_slots.clear()
         wheel_result_pity_before = -1
+        wheel_spark_rolls = 0
+        wheel_spark_claims = 0
+        _save_wheel_spark_progress()
         if GARANT_FEATURE_ENABLED:
             _save_garant_delete_count(0)
     _hide_wheel_restore_popup()
     if _is_wheel_list_selected() or _is_global_events_list_selected():
         _reload_selected_list()
     _refresh_wheel_delete_button()
+    _refresh_wheel_spark_button()
 
 
 
@@ -6936,10 +7185,15 @@ func _on_wheel_undo_delete_button_pressed() -> void :
     var history_key: = str(removed_entries.size())
     var undo_state: Dictionary = history.get(history_key, {})
     var matches_last_entry: = str(undo_state.get("entry", "")) == removed_entries[removed_entries.size() - 1]
+    if matches_last_entry and bool(undo_state.get("spark", false)):
+        _show_wheel_info_popup("Полученную за %d круток легу нельзя отменить" % WHEEL_SPARK_INTERVAL)
+        return
     var counted: = bool(undo_state.get("counted", true)) if matches_last_entry else true
     var pity_before: = int(undo_state.get("pity_before", -1)) if matches_last_entry else -1
     removed_entries.remove_at(removed_entries.size() - 1)
     _save_wheel_removed_entries(removed_entries)
+    wheel_spark_rolls = maxi(0, wheel_spark_rolls - 1)
+    _save_wheel_spark_progress()
     if history.has(history_key):
         history.erase(history_key)
         _save_wheel_pity_undo_history(mode_id, history)
@@ -6955,6 +7209,7 @@ func _on_wheel_undo_delete_button_pressed() -> void :
     if _is_wheel_list_selected():
         _reload_selected_list()
     _refresh_wheel_delete_button()
+    _refresh_wheel_spark_button()
 
 
 
@@ -6979,6 +7234,8 @@ func _on_wheel_description_delete_pressed() -> void :
     var removed_entries: = _load_wheel_removed_entries()
     removed_entries.append(wheel_description_delete_entry)
     _save_wheel_removed_entries(removed_entries)
+    wheel_spark_rolls += 1
+    _save_wheel_spark_progress()
     var legendary_source: = wheel_result_source_path == str(_current_wheel_mode_config().get("legendary_path", ""))
     var deleted_reset_result: = (
         wheel_result_pity_before >= 0
@@ -7002,6 +7259,7 @@ func _on_wheel_description_delete_pressed() -> void :
     if _is_wheel_list_selected():
         _reload_selected_list()
     _refresh_wheel_delete_button()
+    _refresh_wheel_spark_button()
 
 
 
