@@ -621,7 +621,7 @@ layout_mode = 0
 offset_left = 770.0
 offset_top = 78.0
 offset_right = 994.0
-offset_bottom = 666.0
+offset_bottom = 700.0
 
 [node name="SoundMuteButton" type="Button" parent="SettingsPanel" unique_id=358096286]
 layout_mode = 0
