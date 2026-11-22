@@ -197,6 +197,11 @@ const ANIMATED_BACKGROUND_MODE_ALWAYS: = "always"
 const ANIMATED_BACKGROUND_MODE_ROLLING: = "rolling"
 const ANIMATED_BACKGROUND_MODE_IDLE: = "idle"
 const CUSTOM_ROLL_MUSIC_PATH: = "user://custom_roll_music.mp3"
+const CUSTOM_ROLL_MUSIC_PLAYLIST_PATH: = "user://custom_roll_music_playlist.zip"
+const CUSTOM_ROLL_MUSIC_PLAYLIST_PENDING_PATH: = "user://custom_roll_music_playlist_pending.zip"
+const CUSTOM_ROLL_MUSIC_PLAYLIST_PREVIOUS_PATH: = "user://custom_roll_music_playlist_previous.zip"
+const CUSTOM_ROLL_MUSIC_PLAYLIST_MAX_BYTES: = 90 * 1024 * 1024
+const CUSTOM_ROLL_MUSIC_PLAYLIST_MAX_TRACKS: = 32
 const BACKUP_FILE_PATHS: Array[String] = [
     GLOBAL_EVENTS_REMOVED_ENTRIES_PATH, GLOBAL_EVENTS_COMP_REMOVED_ENTRIES_PATH,
     GLOBAL_EVENTS_SPECIAL_REMOVED_ENTRIES_PATH, EXTRA_USER_LIST_PATH, EXTRA_REMOVED_ENTRIES_PATH,
@@ -204,7 +209,8 @@ const BACKUP_FILE_PATHS: Array[String] = [
     WEAPON_WHEEL_REMOVED_ENTRIES_PATH, WEAPON_WHEEL_PITY_COUNT_PATH, WEAPON_WHEEL_PITY_UNDO_PATH,
     START_WHEEL_REMOVED_ENTRIES_PATH, START_WHEEL_PITY_COUNT_PATH, START_WHEEL_PITY_UNDO_PATH,
     START_WHEEL_COMPLETED_PATH, WHEEL_SPARK_PROGRESS_PATH, GARANT_REMOVED_ENTRIES_PATH, GARANT_DELETE_COUNT_PATH,
-    CUSTOM_BACKGROUND_IMAGE_PATH, CUSTOM_BACKGROUND_MODE_PATH, ANIMATED_BACKGROUND_MODE_PATH, CUSTOM_ROLL_MUSIC_PATH,
+    CUSTOM_BACKGROUND_IMAGE_PATH, CUSTOM_BACKGROUND_MODE_PATH, ANIMATED_BACKGROUND_MODE_PATH,
+    CUSTOM_ROLL_MUSIC_PATH, CUSTOM_ROLL_MUSIC_PLAYLIST_PATH,
     "user://custom_roll_item_color.txt", "user://custom_button_color.txt", "user://custom_button_fill_color.txt",
     "user://slot_text_outline_enabled.txt", "user://slot_text_background_enabled.txt",
     "user://slot_text_outline_color.txt", "user://slot_text_background_color.txt",
@@ -888,7 +894,12 @@ var last_tts_toggle_msec: = -1000000
 var settings_menu_open: = false
 var custom_background_mode: = CUSTOM_BACKGROUND_MODE_STRETCH
 var animated_background_mode: = ANIMATED_BACKGROUND_MODE_ALWAYS
-var custom_roll_music_stream: AudioStream
+var custom_roll_music_streams: Array[AudioStreamMP3] = []
+var custom_music_pack_writer: ZIPPacker
+var custom_music_pack_request_id: = ""
+var custom_music_pack_expected_count: = 0
+var custom_music_pack_count: = 0
+var custom_music_pack_total_bytes: = 0
 var backup_background_callback_ref = null
 var backup_restore_callback_ref = null
 var backup_import_dialog: ConfirmationDialog
@@ -951,6 +962,7 @@ var calc_result_output: TextEdit
 var background_image_rect: TextureRect
 var background_file_dialog: FileDialog
 var music_file_dialog: FileDialog
+var music_multiple_file_dialog: FileDialog
 var item_color_dialog: ConfirmationDialog
 var item_color_picker: ColorPicker
 var slot_outline_color_dialog: ConfirmationDialog
@@ -2521,10 +2533,10 @@ func _start_roll() -> void :
         roll_sound_candidates = ROLL_2007_SOUND_CANDIDATES
     elif selected_list_path == BATMAN43_LIST_PATH:
         roll_sound_candidates = BATMAN_ROLL_SOUND_CANDIDATES
-    elif custom_roll_music_stream != null:
+    elif not custom_roll_music_streams.is_empty():
         use_custom_default_roll_music = true
     if use_custom_default_roll_music:
-        _play_stream(custom_roll_music_stream)
+        _play_stream(custom_roll_music_streams[rng.randi_range(0, custom_roll_music_streams.size() - 1)])
     else:
         _play_sound(roll_sound_candidates, roll_sound_volume_db)
 
@@ -4028,6 +4040,15 @@ func _on_settings_music_button_pressed() -> void :
     music_file_dialog.popup_centered_ratio(0.75)
 
 
+func _on_settings_music_multiple_button_pressed() -> void:
+    _set_settings_menu_open(false)
+    if _is_web_runtime():
+        _open_web_file_picker("music_multiple", ".mp3,audio/mpeg")
+        return
+    if music_multiple_file_dialog != null:
+        music_multiple_file_dialog.popup_centered_ratio(0.75)
+
+
 
 func _configure_compact_color_picker(picker: ColorPicker) -> void :
     picker.color_modes_visible = false
@@ -4098,10 +4119,13 @@ func _on_settings_button_fill_color_button_pressed() -> void :
 func _on_settings_reset_button_pressed() -> void :
     _set_settings_menu_open(false)
     _stop_web_background_animation(true)
+    _cancel_custom_music_pack()
     _delete_user_settings_file(CUSTOM_BACKGROUND_IMAGE_PATH)
     _delete_user_settings_file(CUSTOM_BACKGROUND_MODE_PATH)
     _delete_user_settings_file(ANIMATED_BACKGROUND_MODE_PATH)
     _delete_user_settings_file(CUSTOM_ROLL_MUSIC_PATH)
+    _delete_user_settings_file(CUSTOM_ROLL_MUSIC_PLAYLIST_PATH)
+    _delete_user_settings_file(CUSTOM_ROLL_MUSIC_PLAYLIST_PREVIOUS_PATH)
     _delete_user_settings_file(CUSTOM_ROLL_ITEM_COLOR_PATH)
     _delete_user_settings_file(SLOT_TEXT_OUTLINE_PATH)
     _delete_user_settings_file(SLOT_TEXT_BACKGROUND_PATH)
@@ -4196,6 +4220,21 @@ func _on_web_file_picker_result(args) -> void :
     var result: Dictionary = payload
     var kind: = str(result.get("kind", ""))
     var error_message: = str(result.get("error", ""))
+    if kind == "music_multiple":
+        var request_id: = str(result.get("request_id", ""))
+        if not error_message.is_empty():
+            if request_id == custom_music_pack_request_id:
+                _cancel_custom_music_pack()
+            _show_wheel_info_popup(error_message)
+            return
+        var stage: = str(result.get("stage", ""))
+        if stage == "begin":
+            _begin_custom_music_pack(request_id, int(result.get("count", 0)))
+        elif request_id == custom_music_pack_request_id and stage == "track":
+            _append_custom_music_pack_track(_decode_data_url_bytes(str(result.get("data_url", ""))))
+        elif request_id == custom_music_pack_request_id and stage == "end":
+            _finish_custom_music_pack()
+        return
     if not error_message.is_empty():
         _show_wheel_info_popup(error_message)
         return
@@ -4319,15 +4358,118 @@ func _decode_data_url_bytes(data_url: String) -> PackedByteArray:
 
 
 func _store_custom_roll_music_bytes(music_bytes: PackedByteArray) -> void :
-    if music_bytes.is_empty():
+    if not _is_valid_custom_mp3(music_bytes):
+        _show_wheel_info_popup("Не удалось прочитать MP3.")
         return
+    _cancel_custom_music_pack()
     var target_file: = FileAccess.open(CUSTOM_ROLL_MUSIC_PATH, FileAccess.WRITE)
     if target_file == null:
+        _show_wheel_info_popup("Не удалось сохранить музыку.")
         return
     target_file.store_buffer(music_bytes)
     target_file.close()
+    _delete_user_settings_file(CUSTOM_ROLL_MUSIC_PLAYLIST_PATH)
     _load_saved_custom_roll_music()
 
+
+
+func _is_valid_custom_mp3(bytes: PackedByteArray) -> bool:
+    return bytes.size() > 100 and (
+        (bytes[0] == 73 and bytes[1] == 68 and bytes[2] == 51)
+        or (bytes[0] == 255 and (bytes[1] & 224) == 224)
+    )
+
+
+func _cancel_custom_music_pack() -> void:
+    if custom_music_pack_writer != null:
+        custom_music_pack_writer.close()
+        custom_music_pack_writer = null
+    custom_music_pack_request_id = ""
+    custom_music_pack_expected_count = 0
+    custom_music_pack_count = 0
+    custom_music_pack_total_bytes = 0
+    _delete_user_settings_file(CUSTOM_ROLL_MUSIC_PLAYLIST_PENDING_PATH)
+
+
+func _begin_custom_music_pack(request_id: String, track_count: int) -> void:
+    _cancel_custom_music_pack()
+    if request_id.is_empty() or track_count < 1 or track_count > CUSTOM_ROLL_MUSIC_PLAYLIST_MAX_TRACKS:
+        _show_wheel_info_popup("Выберите от 1 до 32 MP3-файлов.")
+        return
+    custom_music_pack_writer = ZIPPacker.new()
+    if custom_music_pack_writer.open(CUSTOM_ROLL_MUSIC_PLAYLIST_PENDING_PATH) != OK:
+        custom_music_pack_writer = null
+        _show_wheel_info_popup("Не удалось сохранить набор музыки.")
+        return
+    custom_music_pack_request_id = request_id
+    custom_music_pack_expected_count = track_count
+
+
+func _append_custom_music_pack_track(bytes: PackedByteArray) -> void:
+    if custom_music_pack_writer == null:
+        return
+    if not _is_valid_custom_mp3(bytes) or custom_music_pack_count >= custom_music_pack_expected_count:
+        _cancel_custom_music_pack()
+        _show_wheel_info_popup("Один из файлов не является MP3.")
+        return
+    custom_music_pack_total_bytes += bytes.size()
+    if custom_music_pack_total_bytes > CUSTOM_ROLL_MUSIC_PLAYLIST_MAX_BYTES:
+        _cancel_custom_music_pack()
+        _show_wheel_info_popup("Набор музыки должен быть не больше 90 МБ.")
+        return
+    var entry_name: = "track_%03d.mp3" % custom_music_pack_count
+    if custom_music_pack_writer.start_file(entry_name) != OK:
+        _cancel_custom_music_pack()
+        _show_wheel_info_popup("Не удалось добавить трек в набор.")
+        return
+    var write_ok: = custom_music_pack_writer.write_file(bytes) == OK
+    var close_ok: = custom_music_pack_writer.close_file() == OK
+    if not write_ok or not close_ok:
+        _cancel_custom_music_pack()
+        _show_wheel_info_popup("Не удалось записать трек.")
+        return
+    custom_music_pack_count += 1
+
+
+func _finish_custom_music_pack() -> void:
+    if custom_music_pack_writer == null:
+        return
+    var expected_count: = custom_music_pack_expected_count
+    var complete: = custom_music_pack_count == custom_music_pack_expected_count
+    var close_ok: = custom_music_pack_writer.close() == OK
+    custom_music_pack_writer = null
+    custom_music_pack_request_id = ""
+    if not complete or not close_ok:
+        _cancel_custom_music_pack()
+        _show_wheel_info_popup("Набор музыки загрузился не полностью.")
+        return
+    var current_path: = ProjectSettings.globalize_path(CUSTOM_ROLL_MUSIC_PLAYLIST_PATH)
+    var pending_path: = ProjectSettings.globalize_path(CUSTOM_ROLL_MUSIC_PLAYLIST_PENDING_PATH)
+    var previous_path: = ProjectSettings.globalize_path(CUSTOM_ROLL_MUSIC_PLAYLIST_PREVIOUS_PATH)
+    _delete_user_settings_file(CUSTOM_ROLL_MUSIC_PLAYLIST_PREVIOUS_PATH)
+    var had_previous: = FileAccess.file_exists(CUSTOM_ROLL_MUSIC_PLAYLIST_PATH)
+    if had_previous and DirAccess.rename_absolute(current_path, previous_path) != OK:
+        _cancel_custom_music_pack()
+        _show_wheel_info_popup("Не удалось заменить набор музыки.")
+        return
+    if DirAccess.rename_absolute(pending_path, current_path) != OK:
+        if had_previous:
+            DirAccess.rename_absolute(previous_path, current_path)
+        _cancel_custom_music_pack()
+        _show_wheel_info_popup("Не удалось заменить набор музыки.")
+        return
+    _load_saved_custom_roll_music()
+    if custom_roll_music_streams.size() != expected_count:
+        _delete_user_settings_file(CUSTOM_ROLL_MUSIC_PLAYLIST_PATH)
+        if had_previous:
+            DirAccess.rename_absolute(previous_path, current_path)
+        _load_saved_custom_roll_music()
+        _cancel_custom_music_pack()
+        _show_wheel_info_popup("Не удалось загрузить сохранённые треки.")
+        return
+    _delete_user_settings_file(CUSTOM_ROLL_MUSIC_PLAYLIST_PREVIOUS_PATH)
+    _delete_user_settings_file(CUSTOM_ROLL_MUSIC_PATH)
+    _cancel_custom_music_pack()
 
 
 func _on_music_file_selected(path: String) -> void :
@@ -4342,6 +4484,28 @@ func _on_music_file_selected(path: String) -> void :
         return
     _store_custom_roll_music_bytes(music_bytes)
 
+
+
+func _on_music_multiple_files_selected(paths: PackedStringArray) -> void:
+    _begin_custom_music_pack(str(Time.get_ticks_usec()), paths.size())
+    if custom_music_pack_writer == null:
+        return
+    for path in paths:
+        if path.get_extension().to_lower() != "mp3":
+            _cancel_custom_music_pack()
+            _show_wheel_info_popup("Выберите только MP3-файлы.")
+            return
+        var source_file: = FileAccess.open(path, FileAccess.READ)
+        if source_file == null:
+            _cancel_custom_music_pack()
+            _show_wheel_info_popup("Не удалось прочитать один из треков.")
+            return
+        var bytes: = source_file.get_buffer(source_file.get_length())
+        source_file.close()
+        _append_custom_music_pack_track(bytes)
+        if custom_music_pack_writer == null:
+            return
+    _finish_custom_music_pack()
 
 
 func _on_roll_item_color_selected(color: Color) -> void :
@@ -4584,7 +4748,26 @@ func _load_saved_custom_background() -> void :
 
 
 func _load_saved_custom_roll_music() -> void :
-    custom_roll_music_stream = null
+    custom_roll_music_streams.clear()
+    if not FileAccess.file_exists(CUSTOM_ROLL_MUSIC_PLAYLIST_PATH) and FileAccess.file_exists(CUSTOM_ROLL_MUSIC_PLAYLIST_PREVIOUS_PATH):
+        DirAccess.rename_absolute(ProjectSettings.globalize_path(CUSTOM_ROLL_MUSIC_PLAYLIST_PREVIOUS_PATH), ProjectSettings.globalize_path(CUSTOM_ROLL_MUSIC_PLAYLIST_PATH))
+    if FileAccess.file_exists(CUSTOM_ROLL_MUSIC_PLAYLIST_PATH):
+        var reader: = ZIPReader.new()
+        if reader.open(CUSTOM_ROLL_MUSIC_PLAYLIST_PATH) == OK:
+            var track_names: = reader.get_files()
+            track_names.sort()
+            for track_name in track_names:
+                if not track_name.begins_with("track_") or not track_name.ends_with(".mp3"):
+                    continue
+                var track_bytes: = reader.read_file(track_name)
+                if not _is_valid_custom_mp3(track_bytes):
+                    continue
+                var track_stream: = AudioStreamMP3.new()
+                track_stream.data = track_bytes
+                custom_roll_music_streams.append(track_stream)
+            reader.close()
+        if not custom_roll_music_streams.is_empty():
+            return
     if not FileAccess.file_exists(CUSTOM_ROLL_MUSIC_PATH):
         return
     var music_file: = FileAccess.open(CUSTOM_ROLL_MUSIC_PATH, FileAccess.READ)
@@ -4592,11 +4775,11 @@ func _load_saved_custom_roll_music() -> void :
         return
     var music_bytes: = music_file.get_buffer(music_file.get_length())
     music_file.close()
-    if music_bytes.is_empty():
+    if not _is_valid_custom_mp3(music_bytes):
         return
     var mp3_stream: = AudioStreamMP3.new()
     mp3_stream.data = music_bytes
-    custom_roll_music_stream = mp3_stream
+    custom_roll_music_streams.append(mp3_stream)
 
 
 
@@ -7976,17 +8159,32 @@ func _create_settings_menu() -> void :
     var music_button: = Button.new()
     music_button.name = "SettingsMusicButton"
     music_button.position = Vector2(14, 262)
-    music_button.size = Vector2(196, 26)
-    music_button.text = "Сменить музыку"
+    music_button.size = Vector2(94, 28)
+    music_button.text = "Сменить\nмузыку"
     music_button.focus_mode = Control.FOCUS_NONE
     music_button.mouse_default_cursor_shape = Control.CURSOR_POINTING_HAND
     music_button.add_theme_stylebox_override("normal", settings_item_style)
     music_button.add_theme_stylebox_override("pressed", settings_item_style)
     music_button.add_theme_stylebox_override("hover", settings_item_style)
     music_button.add_theme_color_override("font_color", Color(0.96, 0.96, 0.98, 1.0))
-    music_button.add_theme_font_size_override("font_size", 14)
+    music_button.add_theme_font_size_override("font_size", 12)
     music_button.pressed.connect(_on_settings_music_button_pressed)
     settings_panel.add_child(music_button)
+
+    var multiple_music_button: = Button.new()
+    multiple_music_button.name = "SettingsMultipleMusicButton"
+    multiple_music_button.position = Vector2(116, 262)
+    multiple_music_button.size = Vector2(94, 28)
+    multiple_music_button.text = "Выбрать\nнесколько"
+    multiple_music_button.focus_mode = Control.FOCUS_NONE
+    multiple_music_button.mouse_default_cursor_shape = Control.CURSOR_POINTING_HAND
+    multiple_music_button.add_theme_stylebox_override("normal", settings_item_style)
+    multiple_music_button.add_theme_stylebox_override("pressed", settings_item_style)
+    multiple_music_button.add_theme_stylebox_override("hover", settings_item_style)
+    multiple_music_button.add_theme_color_override("font_color", Color(0.96, 0.96, 0.98, 1.0))
+    multiple_music_button.add_theme_font_size_override("font_size", 12)
+    multiple_music_button.pressed.connect(_on_settings_music_multiple_button_pressed)
+    settings_panel.add_child(multiple_music_button)
 
     var reset_button: = Button.new()
     reset_button.name = "SettingsResetButton"
@@ -8438,6 +8636,16 @@ func _create_custom_background_controls() -> void :
     ])
     music_file_dialog.file_selected.connect(_on_music_file_selected)
     add_child(music_file_dialog)
+
+    music_multiple_file_dialog = FileDialog.new()
+    music_multiple_file_dialog.name = "MusicMultipleFileDialog"
+    music_multiple_file_dialog.use_native_dialog = true
+    music_multiple_file_dialog.access = FileDialog.ACCESS_FILESYSTEM
+    music_multiple_file_dialog.file_mode = FileDialog.FILE_MODE_OPEN_FILES
+    music_multiple_file_dialog.title = "Выбери несколько MP3"
+    music_multiple_file_dialog.filters = PackedStringArray(["*.mp3 ; MP3"])
+    music_multiple_file_dialog.files_selected.connect(_on_music_multiple_files_selected)
+    add_child(music_multiple_file_dialog)
 
     item_color_dialog = ConfirmationDialog.new()
     item_color_dialog.name = "ItemColorDialog"

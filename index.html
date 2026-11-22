@@ -111,7 +111,7 @@ body {
 
 		<script src="rggweb.js"></script>
 		<script>
-const GODOT_CONFIG = {"args":[],"canvasResizePolicy":2,"emscriptenPoolSize":8,"ensureCrossOriginIsolationHeaders":true,"executable":"rggweb","experimentalVK":false,"fileSizes":{"rggweb.pck":31156720,"rggweb.wasm":39514754},"focusCanvas":true,"gdextensionLibs":[],"godotPoolSize":4};
+const GODOT_CONFIG = {"args":[],"canvasResizePolicy":2,"emscriptenPoolSize":8,"ensureCrossOriginIsolationHeaders":true,"executable":"rggweb","experimentalVK":false,"fileSizes":{"rggweb.pck":31162048,"rggweb.wasm":39514754},"focusCanvas":true,"gdextensionLibs":[],"godotPoolSize":4};
 const GODOT_THREADS_ENABLED = false;
 const engine = new Engine(GODOT_CONFIG);
 
@@ -503,6 +503,7 @@ const engine = new Engine(GODOT_CONFIG);
 		const input = document.createElement("input");
 		input.type = "file";
 		input.accept = accept || "";
+		input.multiple = kind === "music_multiple";
 		input.style.display = "none";
 
 		function cleanup() {
@@ -520,6 +521,33 @@ const engine = new Engine(GODOT_CONFIG);
 		}
 
 		input.addEventListener("change", async function () {
+			if (kind === "music_multiple") {
+				const files = Array.from(input.files || []);
+				if (!files.length) { cleanup(); return; }
+				const requestId = String(Date.now()) + "-" + Math.random().toString(36).slice(2);
+				try {
+					if (files.length > 32) { throw new Error("Выберите не больше 32 MP3-файлов"); }
+					if (files.some(function (file) { return !/\.mp3$/i.test(file.name); })) {
+						throw new Error("Выберите только MP3-файлы");
+					}
+					const totalBytes = files.reduce(function (total, file) { return total + file.size; }, 0);
+					if (totalBytes > 90 * 1024 * 1024) { throw new Error("Набор музыки должен быть не больше 90 МБ"); }
+					callback(JSON.stringify({ kind: kind, stage: "begin", request_id: requestId, count: files.length }));
+					for (let index = 0; index < files.length; index += 1) {
+						const dataUrl = await new Promise(function (resolve, reject) {
+							const reader = new FileReader();
+							reader.onload = function () { resolve(String(reader.result || "")); };
+							reader.onerror = function () { reject(new Error("Не удалось прочитать MP3-файл")); };
+							reader.readAsDataURL(files[index]);
+						});
+						callback(JSON.stringify({ kind: kind, stage: "track", request_id: requestId, data_url: dataUrl }));
+					}
+					sendPayload({ kind: kind, stage: "end", request_id: requestId });
+				} catch (error) {
+					sendPayload({ kind: kind, request_id: requestId, error: error.message || "Не удалось сохранить музыку" });
+				}
+				return;
+			}
 			const file = input.files && input.files[0];
 			if (!file) {
 				sendPayload({ kind: kind || "", data_url: "" });
