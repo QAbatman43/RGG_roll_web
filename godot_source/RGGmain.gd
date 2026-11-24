@@ -112,10 +112,30 @@ const LEGENDARY_RUSTY_UNICORN_TITLE: = "Легендарный Единорог 
 const LEGENDARY_HAKON_HIPPO_TITLE: = "Легендарный Бегемот Хакона"
 const LEGENDARY_HAKON_KNOCKBACK_POTION_TITLE: = "Легендарное Зелье отбрасывания Хакона"
 const LEGENDARY_PEPA_MASK_TITLE: = "Легендарная Маска Пепы"
-const LEGENDARY_LILA_CHRYSALID_TITLE: = "Легендарный Крисалид Лилы"
+const LEGENDARY_LILA_CHRYSALID_TITLE: = "Легендарный Криссалид Лилы"
+const LEGENDARY_LILA_CHRYSALID_LEGACY_TITLE: = "Легендарный Крисалид Лилы"
 const LEGENDARY_PHOENIX_GREMLIN_TITLE: = "Легендарный Гремлин Феникса"
 const LEGENDARY_MARISON_HARPOON_TITLE: = "Легендарный Гарпун Марисона"
 const LEGENDARY_FROPSI_CHAMOMILE_BREW_TITLE: = "Легендарный Ромашковый Отвар Фропси"
+const LEGENDARY_SNOWBOY_RAT_TITLE: = "Легендарная Крыса Сноубоя"
+const LEGENDARY_TORNIS_PROBE_TITLE: = "Легендарный Щуп Торниса"
+const LEGENDARY_KOLENOCHKA_NASRALOPITHECUS_TITLE: = "Легендарный Насралопитек Коленочки"
+const LEGENDARY_HORI_TICKET_TITLE: = "Легендарный Талон Хори"
+const LEGENDARY_FOXY_SOCK_TITLE: = "Легендарный Носок Фокси"
+const LEGENDARY_ZERG_UPPERCUT_TITLE: = "Легендарный Апперкот Зерга"
+const LEGENDARY_SANYA_MAD_GUN_TITLE: = "Легендарная Безумная Пушка Сани"
+const LEGENDARY_DAILYHARDCORE_MISSILE_TITLE: = "Легендарная Случайная Баллистическая ракета Дейлихардкора"
+const LEGENDARY_ALASKA_ULTRASONIC_GUN_TITLE: = "Легендарная Ультразвуковая Пушка Аляски"
+const LEGENDARY_SANYA_JUSTICE_SWORD_TITLE: = "Легендарный Меч правосудия Сани"
+const LEGENDARY_MILIREY_VAMPIRISM_TITLE: = "Легендарный Вампиризм Милирей"
+const LEGENDARY_AMELIA_VAMPIRE_LASSO_TITLE: = "Легендарное Вампирское Лассо Амелии"
+const LEGENDARY_KOVRA_TOMAHAWK_TITLE: = "Легендарный Томагавк Ковра"
+const LEGENDARY_TIAN_FLAMETHROWER_TITLE: = "Легендарный Огнемет Тиана"
+const LEGENDARY_SEVERINA_BYPASS_TITLE: = "Легендарный Обходешник Северины Соды"
+const LEGENDARY_ALOE_RECYCLER_TITLE: = "Легендарный Переработчик Предметов АлоэКоалы"
+const LEGENDARY_TOSTAR_HARPOON_TITLE: = "Легендарный Гарпун Тостара"
+const LEGENDARY_TOSTAR_KITE_TITLE: = "Легендарный Воздушный Змей Тостара"
+const LEGENDARY_GOODBOY_SPEAR_TITLE: = "Легендарное Копье Гудбоя"
 const GARANT_FEATURE_ENABLED: = false
 const GARANT_LIST_ID: = "garant"
 const GARANT_LIST_PATH: = "res://lists/garant.dat"
@@ -188,6 +208,25 @@ const LEGENDARY_LILA_CHRYSALID_CARD_PATH: = "res://images/cards/legendary_lila_c
 const LEGENDARY_PHOENIX_GREMLIN_CARD_PATH: = "res://images/cards/legendary_phoenix_gremlin.png"
 const LEGENDARY_MARISON_HARPOON_CARD_PATH: = "res://images/cards/legendary_marison_harpoon.png"
 const LEGENDARY_FROPSI_CHAMOMILE_BREW_CARD_PATH: = "res://images/cards/legendary_fropsi_chamomile_brew.png"
+const LEGENDARY_SNOWBOY_RAT_CARD_PATH: = "res://images/cards/legendary_snowboy_rat.png"
+const LEGENDARY_TORNIS_PROBE_CARD_PATH: = "res://images/cards/legendary_tornis_probe.png"
+const LEGENDARY_KOLENOCHKA_NASRALOPITHECUS_CARD_PATH: = "res://images/cards/legendary_kolenochka_nasralopithecus.png"
+const LEGENDARY_HORI_TICKET_CARD_PATH: = "res://images/cards/legendary_hori_ticket.png"
+const LEGENDARY_FOXY_SOCK_CARD_PATH: = "res://images/cards/legendary_foxy_sock.png"
+const LEGENDARY_ZERG_UPPERCUT_CARD_PATH: = "res://images/cards/legendary_zerg_uppercut.png"
+const LEGENDARY_SANYA_MAD_GUN_CARD_PATH: = "res://images/cards/legendary_sanya_mad_gun.png"
+const LEGENDARY_DAILYHARDCORE_MISSILE_CARD_PATH: = "res://images/cards/legendary_dailyhardcore_ballistic_missile.png"
+const LEGENDARY_ALASKA_ULTRASONIC_GUN_CARD_PATH: = "res://images/cards/legendary_alaska_ultrasonic_gun.png"
+const LEGENDARY_SANYA_JUSTICE_SWORD_CARD_PATH: = "res://images/cards/legendary_sanya_justice_sword.png"
+const LEGENDARY_MILIREY_VAMPIRISM_CARD_PATH: = "res://images/cards/legendary_milirey_vampirism.png"
+const LEGENDARY_AMELIA_VAMPIRE_LASSO_CARD_PATH: = "res://images/cards/legendary_amelia_vampire_lasso.png"
+const LEGENDARY_KOVRA_TOMAHAWK_CARD_PATH: = "res://images/cards/legendary_kovra_tomahawk.png"
+const LEGENDARY_TIAN_FLAMETHROWER_CARD_PATH: = "res://images/cards/legendary_tian_flamethrower.png"
+const LEGENDARY_SEVERINA_BYPASS_CARD_PATH: = "res://images/cards/legendary_severina_bypass.png"
+const LEGENDARY_ALOE_RECYCLER_CARD_PATH: = "res://images/cards/legendary_aloe_recycler.png"
+const LEGENDARY_TOSTAR_HARPOON_CARD_PATH: = "res://images/cards/legendary_tostar_harpoon.png"
+const LEGENDARY_TOSTAR_KITE_CARD_PATH: = "res://images/cards/legendary_tostar_kite.png"
+const LEGENDARY_GOODBOY_SPEAR_CARD_PATH: = "res://images/cards/legendary_goodboy_spear.png"
 const CUSTOM_BACKGROUND_IMAGE_PATH: = "user://custom_background.png"
 const CUSTOM_BACKGROUND_MODE_PATH: = "user://custom_background_mode.txt"
 const CUSTOM_BACKGROUND_MODE_STRETCH: = "stretch"
@@ -670,6 +709,9 @@ const FEMALE_ROLL_SOUND_CANDIDATES: Array[String] = [
 ]
 const FOXI_ROLL_SOUND_CANDIDATES: Array[String] = [
     "res://audio/foxi_roll.mp3",
+]
+const TOWER_ROLL_SOUND_CANDIDATES: Array[String] = [
+    "res://audio/tower_roll.mp3",
 ]
 const HARDCORE_ROLL_SOUND_CANDIDATES: Array[String] = [
     "res://audio/Rabi.wav", 
@@ -2523,6 +2565,8 @@ func _start_roll() -> void :
         roll_sound_candidates = FEMALE_ROLL_SOUND_CANDIDATES
     elif selected_list_path == "res://lists/foxi.dat":
         roll_sound_candidates = FOXI_ROLL_SOUND_CANDIDATES
+    elif selected_list_path == "res://lists/tower.dat":
+        roll_sound_candidates = TOWER_ROLL_SOUND_CANDIDATES
     elif selected_list_path == "res://lists/disney.dat":
         roll_sound_candidates = DISNEY_ROLL_SOUND_CANDIDATES
     elif selected_list_path == "res://lists/lukas.dat":
@@ -6508,8 +6552,9 @@ func _apply_extra_user_removals(entries: PackedStringArray) -> PackedStringArray
 func _get_wheel_description(title: String) -> String:
     if wheel_descriptions.is_empty():
         _load_wheel_descriptions()
-    if wheel_descriptions.has(title):
-        return str(wheel_descriptions[title])
+    var lookup_title: = _canonicalize_lila_chrysalid_title(title)
+    if wheel_descriptions.has(lookup_title):
+        return str(wheel_descriptions[lookup_title])
     return ""
 
 
@@ -6517,8 +6562,9 @@ func _get_wheel_description(title: String) -> String:
 func _get_wheel_description_link(title: String) -> String:
     if wheel_descriptions.is_empty() and wheel_description_links.is_empty():
         _load_wheel_descriptions()
-    if wheel_description_links.has(title):
-        return str(wheel_description_links[title])
+    var lookup_title: = _canonicalize_lila_chrysalid_title(title)
+    if wheel_description_links.has(lookup_title):
+        return str(wheel_description_links[lookup_title])
     return ""
 
 
@@ -6542,24 +6588,26 @@ func _get_global_event_description(title: String) -> String:
 
 
 func _get_lootbox_description(title: String) -> String:
+    var lookup_title: = _canonicalize_lila_chrysalid_title(title)
     if selected_list_path == ROULETTE_LIST_PATH:
         if roulette_descriptions.is_empty():
             _load_roulette_descriptions()
-        return str(roulette_descriptions.get(title, ""))
+        return str(roulette_descriptions.get(lookup_title, ""))
     if lootbox_descriptions.is_empty():
         _load_lootbox_descriptions()
-    return str(lootbox_descriptions.get(title, ""))
+    return str(lootbox_descriptions.get(lookup_title, ""))
 
 
 
 func _get_lootbox_description_link(title: String) -> String:
+    var lookup_title: = _canonicalize_lila_chrysalid_title(title)
     if selected_list_path == ROULETTE_LIST_PATH:
         if roulette_descriptions.is_empty() and roulette_description_links.is_empty():
             _load_roulette_descriptions()
-        return str(roulette_description_links.get(title, ""))
+        return str(roulette_description_links.get(lookup_title, ""))
     if lootbox_descriptions.is_empty() and lootbox_description_links.is_empty():
         _load_lootbox_descriptions()
-    return str(lootbox_description_links.get(title, ""))
+    return str(lootbox_description_links.get(lookup_title, ""))
 
 
 
@@ -6702,28 +6750,36 @@ func _get_garant_description(title: String) -> String:
 
 
 
+func _canonicalize_lila_chrysalid_title(title: String) -> String:
+    if title == LEGENDARY_LILA_CHRYSALID_LEGACY_TITLE:
+        return LEGENDARY_LILA_CHRYSALID_TITLE
+    return title
+
+
+
 func _is_garant_card_title(title: String) -> bool:
     return not _get_garant_card_path(title).is_empty()
 
 
 
 func _get_garant_card_path(title: String) -> String:
+    var lookup_title: = _canonicalize_lila_chrysalid_title(title)
     if title == LEGENDARY_CARP_TITLE:
         return LEGENDARY_CARP_CARD_PATH
-    if title == LEGENDARY_KAL_TITLE:
-        return LEGENDARY_KAL_CARD_PATH
-    if title == RAT_GOD_TITLE:
-        return RAT_GOD_CARD_PATH
-    if title == LEGENDARY_FAIRY_TITLE:
-        return LEGENDARY_FAIRY_CARD_PATH
+    # if title == LEGENDARY_KAL_TITLE:
+    #     return LEGENDARY_KAL_CARD_PATH
+    # if title == RAT_GOD_TITLE:
+    #     return RAT_GOD_CARD_PATH
+    # if title == LEGENDARY_FAIRY_TITLE:
+    #     return LEGENDARY_FAIRY_CARD_PATH
     if title == LEGENDARY_DAISY_TITLE:
         return LEGENDARY_DAISY_CARD_PATH
     if title == LEGENDARY_YUCHI_WHEEL_TITLE:
         return LEGENDARY_YUCHI_WHEEL_CARD_PATH
-    if title == WHEEL_HELL_TITLE:
-        return WHEEL_HELL_CARD_PATH
-    if title == LEGENDARY_METEOR_HAT_TITLE:
-        return LEGENDARY_METEOR_HAT_CARD_PATH
+    # if title == WHEEL_HELL_TITLE:
+    #     return WHEEL_HELL_CARD_PATH
+    # if title == LEGENDARY_METEOR_HAT_TITLE:
+    #     return LEGENDARY_METEOR_HAT_CARD_PATH
     if title == LEGENDARY_CUCUMBER_TITLE:
         return LEGENDARY_CUCUMBER_CARD_PATH
     if title == LEGENDARY_ALISKA_HAT_TITLE:
@@ -6736,54 +6792,54 @@ func _get_garant_card_path(title: String) -> String:
         return NEGATIVE_TELEPORT_CARD_PATH
     if title == LEGENDARY_HIGAN_BOMB_TITLE:
         return LEGENDARY_HIGAN_BOMB_CARD_PATH
-    if title == LEGENDARY_ANCHOR_TITLE:
-        return LEGENDARY_ANCHOR_CARD_PATH
-    if title == LEGENDARY_RAT_PEDAL_TITLE:
-        return LEGENDARY_RAT_PEDAL_CARD_PATH
-    if title == LEGENDARY_PIRANHA_TITLE:
-        return LEGENDARY_PIRANHA_CARD_PATH
-    if title == LEGENDARY_TOMATO_TITLE:
-        return LEGENDARY_TOMATO_CARD_PATH
-    if title == LEGENDARY_CARROT_TITLE:
-        return LEGENDARY_CARROT_CARD_PATH
+    # if title == LEGENDARY_ANCHOR_TITLE:
+    #     return LEGENDARY_ANCHOR_CARD_PATH
+    # if title == LEGENDARY_RAT_PEDAL_TITLE:
+    #     return LEGENDARY_RAT_PEDAL_CARD_PATH
+    # if title == LEGENDARY_PIRANHA_TITLE:
+    #     return LEGENDARY_PIRANHA_CARD_PATH
+    # if title == LEGENDARY_TOMATO_TITLE:
+    #     return LEGENDARY_TOMATO_CARD_PATH
+    # if title == LEGENDARY_CARROT_TITLE:
+    #     return LEGENDARY_CARROT_CARD_PATH
     if title == LEGENDARY_SHNUM_GLOVE_TITLE:
         return LEGENDARY_SHNUM_GLOVE_CARD_PATH
-    if title == LEGENDARY_BREAM_TITLE:
-        return LEGENDARY_BREAM_CARD_PATH
+    # if title == LEGENDARY_BREAM_TITLE:
+    #     return LEGENDARY_BREAM_CARD_PATH
     if title == LEGENDARY_QUANTUM_CUBE_TITLE:
         return LEGENDARY_QUANTUM_CUBE_CARD_PATH
-    if title == LEGENDARY_ISAAC_CUBE_TITLE:
-        return LEGENDARY_ISAAC_CUBE_CARD_PATH
+    # if title == LEGENDARY_ISAAC_CUBE_TITLE:
+    #     return LEGENDARY_ISAAC_CUBE_CARD_PATH
     if title == LEGENDARY_VARAN_POTATO_TITLE:
         return LEGENDARY_VARAN_POTATO_CARD_PATH
-    if title == CULMINATION_TITLE:
-        return CULMINATION_CARD_PATH
+    # if title == CULMINATION_TITLE:
+    #     return CULMINATION_CARD_PATH
     if title == LEGENDARY_FREAK_MAP_TITLE:
         return LEGENDARY_FREAK_MAP_CARD_PATH
-    if title == LEGENDARY_GOLDEN_CUBE_TITLE:
-        return LEGENDARY_GOLDEN_CUBE_CARD_PATH
+    # if title == LEGENDARY_GOLDEN_CUBE_TITLE:
+    #     return LEGENDARY_GOLDEN_CUBE_CARD_PATH
     if title == LEGENDARY_IRVIN_SHOP_ROLL_TITLE:
         return LEGENDARY_IRVIN_SHOP_ROLL_CARD_PATH
     if title == LEGENDARY_PTICHKERS_TITLE:
         return LEGENDARY_PTICHKERS_CARD_PATH
     if title == LEGENDARY_RUBEN_ENERGY_TITLE:
         return LEGENDARY_RUBEN_ENERGY_CARD_PATH
-    if title == LEGENDARY_PROJECTILE_TITLE:
-        return LEGENDARY_PROJECTILE_CARD_PATH
-    if title == LEGENDARY_DEMOBILIZATION_POTION_TITLE:
-        return LEGENDARY_DEMOBILIZATION_POTION_CARD_PATH
-    if title == LEGENDARY_TIME_MACHINE_TITLE:
-        return LEGENDARY_TIME_MACHINE_CARD_PATH
-    if title == LEGENDARY_DOUGH_TITLE:
-        return LEGENDARY_DOUGH_CARD_PATH
-    if title == LEGENDARY_MAGNETISM_POTION_TITLE:
-        return LEGENDARY_MAGNETISM_POTION_CARD_PATH
-    if title == LEGENDARY_SEEPAGE_POTION_TITLE:
-        return LEGENDARY_SEEPAGE_POTION_CARD_PATH
-    if title == LEGENDARY_PRIORITY_POTION_TITLE:
-        return LEGENDARY_PRIORITY_POTION_CARD_PATH
-    if title == LEGENDARY_MUTUAL_AID_POTION_TITLE:
-        return LEGENDARY_MUTUAL_AID_POTION_CARD_PATH
+    # if title == LEGENDARY_PROJECTILE_TITLE:
+    #     return LEGENDARY_PROJECTILE_CARD_PATH
+    # if title == LEGENDARY_DEMOBILIZATION_POTION_TITLE:
+    #     return LEGENDARY_DEMOBILIZATION_POTION_CARD_PATH
+    # if title == LEGENDARY_TIME_MACHINE_TITLE:
+    #     return LEGENDARY_TIME_MACHINE_CARD_PATH
+    # if title == LEGENDARY_DOUGH_TITLE:
+    #     return LEGENDARY_DOUGH_CARD_PATH
+    # if title == LEGENDARY_MAGNETISM_POTION_TITLE:
+    #     return LEGENDARY_MAGNETISM_POTION_CARD_PATH
+    # if title == LEGENDARY_SEEPAGE_POTION_TITLE:
+    #     return LEGENDARY_SEEPAGE_POTION_CARD_PATH
+    # if title == LEGENDARY_PRIORITY_POTION_TITLE:
+    #     return LEGENDARY_PRIORITY_POTION_CARD_PATH
+    # if title == LEGENDARY_MUTUAL_AID_POTION_TITLE:
+    #     return LEGENDARY_MUTUAL_AID_POTION_CARD_PATH
     if title == LEGENDARY_NOYKA_PIZZA_TITLE:
         return LEGENDARY_NOYKA_PIZZA_CARD_PATH
     if title == LEGENDARY_TOSTAR_AMULET_TITLE:
@@ -6824,7 +6880,7 @@ func _get_garant_card_path(title: String) -> String:
         return LEGENDARY_HAKON_KNOCKBACK_POTION_CARD_PATH
     if title == LEGENDARY_PEPA_MASK_TITLE:
         return LEGENDARY_PEPA_MASK_CARD_PATH
-    if title == LEGENDARY_LILA_CHRYSALID_TITLE:
+    if lookup_title == LEGENDARY_LILA_CHRYSALID_TITLE:
         return LEGENDARY_LILA_CHRYSALID_CARD_PATH
     if title == LEGENDARY_PHOENIX_GREMLIN_TITLE:
         return LEGENDARY_PHOENIX_GREMLIN_CARD_PATH
@@ -6832,6 +6888,44 @@ func _get_garant_card_path(title: String) -> String:
         return LEGENDARY_MARISON_HARPOON_CARD_PATH
     if title == LEGENDARY_FROPSI_CHAMOMILE_BREW_TITLE:
         return LEGENDARY_FROPSI_CHAMOMILE_BREW_CARD_PATH
+    if title == LEGENDARY_SNOWBOY_RAT_TITLE:
+        return LEGENDARY_SNOWBOY_RAT_CARD_PATH
+    if title == LEGENDARY_TORNIS_PROBE_TITLE:
+        return LEGENDARY_TORNIS_PROBE_CARD_PATH
+    if title == LEGENDARY_KOLENOCHKA_NASRALOPITHECUS_TITLE:
+        return LEGENDARY_KOLENOCHKA_NASRALOPITHECUS_CARD_PATH
+    if title == LEGENDARY_HORI_TICKET_TITLE:
+        return LEGENDARY_HORI_TICKET_CARD_PATH
+    if title == LEGENDARY_FOXY_SOCK_TITLE:
+        return LEGENDARY_FOXY_SOCK_CARD_PATH
+    if title == LEGENDARY_ZERG_UPPERCUT_TITLE:
+        return LEGENDARY_ZERG_UPPERCUT_CARD_PATH
+    if title == LEGENDARY_SANYA_MAD_GUN_TITLE:
+        return LEGENDARY_SANYA_MAD_GUN_CARD_PATH
+    if title == LEGENDARY_DAILYHARDCORE_MISSILE_TITLE:
+        return LEGENDARY_DAILYHARDCORE_MISSILE_CARD_PATH
+    if title == LEGENDARY_ALASKA_ULTRASONIC_GUN_TITLE:
+        return LEGENDARY_ALASKA_ULTRASONIC_GUN_CARD_PATH
+    if title == LEGENDARY_SANYA_JUSTICE_SWORD_TITLE:
+        return LEGENDARY_SANYA_JUSTICE_SWORD_CARD_PATH
+    if title == LEGENDARY_MILIREY_VAMPIRISM_TITLE:
+        return LEGENDARY_MILIREY_VAMPIRISM_CARD_PATH
+    if title == LEGENDARY_AMELIA_VAMPIRE_LASSO_TITLE:
+        return LEGENDARY_AMELIA_VAMPIRE_LASSO_CARD_PATH
+    if title == LEGENDARY_KOVRA_TOMAHAWK_TITLE:
+        return LEGENDARY_KOVRA_TOMAHAWK_CARD_PATH
+    if title == LEGENDARY_TIAN_FLAMETHROWER_TITLE:
+        return LEGENDARY_TIAN_FLAMETHROWER_CARD_PATH
+    if title == LEGENDARY_SEVERINA_BYPASS_TITLE:
+        return LEGENDARY_SEVERINA_BYPASS_CARD_PATH
+    if title == LEGENDARY_ALOE_RECYCLER_TITLE:
+        return LEGENDARY_ALOE_RECYCLER_CARD_PATH
+    if title == LEGENDARY_TOSTAR_HARPOON_TITLE:
+        return LEGENDARY_TOSTAR_HARPOON_CARD_PATH
+    if title == LEGENDARY_TOSTAR_KITE_TITLE:
+        return LEGENDARY_TOSTAR_KITE_CARD_PATH
+    if title == LEGENDARY_GOODBOY_SPEAR_TITLE:
+        return LEGENDARY_GOODBOY_SPEAR_CARD_PATH
     if title == GARANT_GOLDEN_TELEPORT_TITLE:
         return GARANT_GOLDEN_TELEPORT_CARD_PATH
     if title == GARANT_TELEPORT_TITLE:
@@ -6841,11 +6935,50 @@ func _get_garant_card_path(title: String) -> String:
 
 
 func _get_garant_card_glow_color(title: String) -> Color:
+    var lookup_title: = _canonicalize_lila_chrysalid_title(title)
+    if title == LEGENDARY_GOODBOY_SPEAR_TITLE:
+        return Color(1.0, 0.72, 0.2, 1.0)
+    if title == LEGENDARY_TOSTAR_KITE_TITLE:
+        return Color(0.84, 0.46, 1.0, 1.0)
+    if title == LEGENDARY_TOSTAR_HARPOON_TITLE:
+        return Color(0.84, 0.46, 1.0, 1.0)
+    if title == LEGENDARY_ALOE_RECYCLER_TITLE:
+        return Color(0.3, 0.75, 1.0, 1.0)
+    if title == LEGENDARY_SEVERINA_BYPASS_TITLE:
+        return Color(0.85, 0.35, 1.0, 1.0)
+    if title == LEGENDARY_TIAN_FLAMETHROWER_TITLE:
+        return Color(1.0, 0.45, 0.12, 1.0)
+    if title == LEGENDARY_KOVRA_TOMAHAWK_TITLE:
+        return Color(1.0, 0.72, 0.2, 1.0)
+    if title == LEGENDARY_AMELIA_VAMPIRE_LASSO_TITLE:
+        return Color(1.0, 0.15, 0.25, 1.0)
+    if title == LEGENDARY_MILIREY_VAMPIRISM_TITLE:
+        return Color(1.0, 0.15, 0.25, 1.0)
+    if title == LEGENDARY_SANYA_JUSTICE_SWORD_TITLE:
+        return Color(1.0, 0.72, 0.2, 1.0)
+    if title == LEGENDARY_ALASKA_ULTRASONIC_GUN_TITLE:
+        return Color(1.0, 0.3, 0.55, 1.0)
+    if title == LEGENDARY_DAILYHARDCORE_MISSILE_TITLE:
+        return Color(1.0, 0.45, 0.12, 1.0)
+    if title == LEGENDARY_SANYA_MAD_GUN_TITLE:
+        return Color(1.0, 0.45, 0.12, 1.0)
+    if title == LEGENDARY_ZERG_UPPERCUT_TITLE:
+        return Color(1.0, 0.45, 0.12, 1.0)
+    if title == LEGENDARY_FOXY_SOCK_TITLE:
+        return Color(1.0, 0.7, 0.2, 1.0)
+    if title == LEGENDARY_HORI_TICKET_TITLE:
+        return Color(0.78, 0.35, 1.0, 1.0)
+    if title == LEGENDARY_KOLENOCHKA_NASRALOPITHECUS_TITLE:
+        return Color(1.0, 0.72, 0.2, 1.0)
+    if title == LEGENDARY_TORNIS_PROBE_TITLE:
+        return Color(0.3, 0.68, 1.0, 1.0)
+    if title == LEGENDARY_SNOWBOY_RAT_TITLE:
+        return Color(0.45, 0.8, 1.0, 1.0)
     if title == LEGENDARY_MARISON_HARPOON_TITLE:
         return Color(0.32, 0.8, 1.0, 1.0)
     if title == LEGENDARY_FROPSI_CHAMOMILE_BREW_TITLE:
         return Color(0.72, 0.94, 0.26, 1.0)
-    if title == LEGENDARY_LILA_CHRYSALID_TITLE:
+    if lookup_title == LEGENDARY_LILA_CHRYSALID_TITLE:
         return Color(1.0, 0.38, 0.85, 1.0)
     if title == LEGENDARY_PHOENIX_GREMLIN_TITLE:
         return Color(1.0, 0.47, 0.12, 1.0)
