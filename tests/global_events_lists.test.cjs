@@ -7,7 +7,7 @@ const root = path.join(__dirname, '..');
 
 function readList(folder, name) {
     const bytes = fs.readFileSync(path.join(root, folder, 'global_events_' + name + '.dat'));
-    return new TextDecoder('utf-16le').decode(bytes).replace(/^\uFEFF/, '').split(/\r?\n/).map(line => line.trim()).filter(Boolean);
+    return new TextDecoder('utf-8', { fatal: true }).decode(bytes).replace(/^\uFEFF/, '').split(/\r?\n/).map(line => line.trim()).filter(Boolean);
 }
 
 test('global event categories have unique entries and matching descriptions', () => {
