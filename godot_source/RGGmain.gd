@@ -136,6 +136,7 @@ const LEGENDARY_ALOE_RECYCLER_TITLE: = "Легендарный Перерабо�
 const LEGENDARY_TOSTAR_HARPOON_TITLE: = "Легендарный Гарпун Тостара"
 const LEGENDARY_TOSTAR_KITE_TITLE: = "Легендарный Воздушный Змей Тостара"
 const LEGENDARY_GOODBOY_SPEAR_TITLE: = "Легендарное Копье Гудбоя"
+const LEGENDARY_SABI_SAUCE_TITLE: = "Легендарный Соус Саби"
 const GARANT_FEATURE_ENABLED: = false
 const GARANT_LIST_ID: = "garant"
 const GARANT_LIST_PATH: = "res://lists/garant.dat"
@@ -227,6 +228,7 @@ const LEGENDARY_ALOE_RECYCLER_CARD_PATH: = "res://images/cards/legendary_aloe_re
 const LEGENDARY_TOSTAR_HARPOON_CARD_PATH: = "res://images/cards/legendary_tostar_harpoon.png"
 const LEGENDARY_TOSTAR_KITE_CARD_PATH: = "res://images/cards/legendary_tostar_kite.png"
 const LEGENDARY_GOODBOY_SPEAR_CARD_PATH: = "res://images/cards/legendary_goodboy_spear.png"
+const LEGENDARY_SABI_SAUCE_CARD_PATH: = "res://images/cards/legendary_sabi_sauce.png"
 const CUSTOM_BACKGROUND_IMAGE_PATH: = "user://custom_background.png"
 const CUSTOM_BACKGROUND_MODE_PATH: = "user://custom_background_mode.txt"
 const CUSTOM_BACKGROUND_MODE_STRETCH: = "stretch"
@@ -6926,6 +6928,8 @@ func _get_garant_card_path(title: String) -> String:
         return LEGENDARY_TOSTAR_KITE_CARD_PATH
     if title == LEGENDARY_GOODBOY_SPEAR_TITLE:
         return LEGENDARY_GOODBOY_SPEAR_CARD_PATH
+    if title == LEGENDARY_SABI_SAUCE_TITLE:
+        return LEGENDARY_SABI_SAUCE_CARD_PATH
     if title == GARANT_GOLDEN_TELEPORT_TITLE:
         return GARANT_GOLDEN_TELEPORT_CARD_PATH
     if title == GARANT_TELEPORT_TITLE:
@@ -6936,6 +6940,8 @@ func _get_garant_card_path(title: String) -> String:
 
 func _get_garant_card_glow_color(title: String) -> Color:
     var lookup_title: = _canonicalize_lila_chrysalid_title(title)
+    if title == LEGENDARY_SABI_SAUCE_TITLE:
+        return Color(1.0, 0.45, 0.12, 1.0)
     if title == LEGENDARY_GOODBOY_SPEAR_TITLE:
         return Color(1.0, 0.72, 0.2, 1.0)
     if title == LEGENDARY_TOSTAR_KITE_TITLE:
