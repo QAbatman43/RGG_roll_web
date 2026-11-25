@@ -1083,7 +1083,6 @@ var roulette_descriptions: Dictionary = {}
 var roulette_description_links: Dictionary = {}
 var wheel_description_overlay: Control
 var wheel_description_title_label: Label
-var wheel_description_item_label: Label
 var wheel_description_body_label: RichTextLabel
 var wheel_description_delete_button: Button
 var wheel_description_link_button: Button
@@ -5393,18 +5392,9 @@ func _create_wheel_description_popup() -> void :
     panel.add_theme_stylebox_override("panel", _create_wheel_description_panel_style())
     wheel_description_overlay.add_child(panel)
 
-    wheel_description_item_label = Label.new()
-    wheel_description_item_label.position = Vector2(24, 22)
-    wheel_description_item_label.size = Vector2(804, 42)
-    wheel_description_item_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-    wheel_description_item_label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
-    wheel_description_item_label.add_theme_color_override("font_color", Color(0.96, 0.96, 0.98, 1.0))
-    wheel_description_item_label.add_theme_font_size_override("font_size", 24)
-    panel.add_child(wheel_description_item_label)
-
     wheel_description_body_label = RichTextLabel.new()
-    wheel_description_body_label.position = Vector2(28, 86)
-    wheel_description_body_label.size = Vector2(796, 220)
+    wheel_description_body_label.position = Vector2(28, 26)
+    wheel_description_body_label.size = Vector2(796, 280)
     wheel_description_body_label.bbcode_enabled = false
     wheel_description_body_label.fit_content = false
     wheel_description_body_label.scroll_active = true
@@ -6711,7 +6701,6 @@ func _show_wheel_description_popup(title: String, description: String, link_url:
     for image_node in slot_image_nodes:
         image_node.visible = false
     wheel_description_title_label.text = title
-    wheel_description_item_label.text = title
     wheel_description_body_label.clear()
     wheel_description_body_label.add_text(description)
     wheel_description_link_url = link_url
