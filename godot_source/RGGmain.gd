@@ -643,6 +643,7 @@ const DOUBLE_ROLL_DURATION_LISTS: Array[String] = [
     "res://lists/2007.dat", 
     "res://lists/lukas.dat", 
     "res://lists/hakon.dat", 
+    "res://lists/touhou.dat",
 ]
 
 const ROLL_SOUND_CANDIDATES: Array[String] = [
@@ -669,6 +670,9 @@ const SPECTRUM_ROLL_SOUND_CANDIDATES: Array[String] = [
 ]
 const HAKON_ROLL_SOUND_CANDIDATES: Array[String] = [
     "res://audio/Hakon.mp3", 
+]
+const TOUHOU_ROLL_SOUND_CANDIDATES: Array[String] = [
+    "res://audio/touhou_roll.mp3",
 ]
 const HIGAN_ROLL_SOUND_CANDIDATES: Array[String] = [
     "res://audio/higan_roll.mp3",
@@ -2537,6 +2541,8 @@ func _start_roll() -> void :
         roll_sound_candidates = HARDCORE_ROLL_SOUND_CANDIDATES
     elif selected_list_path == "res://lists/hakon.dat":
         roll_sound_candidates = HAKON_ROLL_SOUND_CANDIDATES
+    elif selected_list_path == "res://lists/touhou.dat":
+        roll_sound_candidates = TOUHOU_ROLL_SOUND_CANDIDATES
     elif selected_list_path == "res://lists/higan.dat":
         roll_sound_candidates = HIGAN_ROLL_SOUND_CANDIDATES
         roll_sound_volume_db = HIGAN_ROLL_VOLUME_DB
@@ -3343,6 +3349,7 @@ func _render_slots(scroll_direction: int = 0) -> void :
             label.text = _entry_to_display_text(entry)
             texture_node.texture = null
             texture_node.visible = false
+        _sync_slot_click_button(i)
         _update_slot_text_background(i)
     if scroll_direction != 0:
         _animate_slot_scroll(scroll_direction)
@@ -8988,6 +8995,18 @@ func _create_slot_click_buttons() -> void :
         button.gui_input.connect(_on_slot_result_input.bind(i))
         add_child(button)
         slot_click_buttons.append(button)
+        slot_labels[i].resized.connect(_sync_slot_click_button.bind(i))
+        _sync_slot_click_button(i)
+
+
+
+func _sync_slot_click_button(slot_index: int) -> void :
+    if slot_index < 0 or slot_index >= slot_click_buttons.size():
+        return
+    var label: = slot_labels[slot_index]
+    var button: = slot_click_buttons[slot_index]
+    button.position = label.position
+    button.size = label.size
 
 
 
